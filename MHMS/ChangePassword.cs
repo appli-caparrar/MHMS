@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MHMS.Connection;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
@@ -18,7 +19,7 @@ namespace MHMS
 {
     public partial class ChangePassword : Form
     {
-        static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS"].ConnectionString;
+        //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS_ACTUAL"].ConnectionString;
         //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS2"].ConnectionString;
 
         public ChangePassword()
@@ -124,7 +125,7 @@ namespace MHMS
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
                 client.UseDefaultCredentials = false;
                 client.Host = "10.113.10.1";
-                mail.Subject = "[MHMS] - NOTIFICATION";
+                mail.Subject = "[BIPH_MHMS] - NOTIFICATION";
 
                 mail.Body = innerString;
                 mail.IsBodyHtml = true;
@@ -158,17 +159,44 @@ namespace MHMS
         {
             if (Email.Text == "")
             {
-                MessageBox.Show("Please type your email address!", "");
+                MessageBox.Show("Please type your email address!", "Required!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
             else
             {
                 if (Email.Text != "Email address")
                 {
-                    GenerateCode();
-                    SendEmail();
+                    SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn);
+
+                    if (con.State == ConnectionState.Closed)
+                    {
+                        con.Open();
+                    }
+
+                    SqlCommand SelectUserEmail = new SqlCommand("SP_SelectUserEmail", con);
+                    SelectUserEmail.CommandType = CommandType.StoredProcedure;
+                    SelectUserEmail.Parameters.AddWithValue("@Email", Email.Text);
+                    SqlDataAdapter da = new SqlDataAdapter(SelectUserEmail);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+
+                    if (dt.Rows.Count >= 1)
+                    {
+                        SqlDataReader reader = SelectUserEmail.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            GenerateCode();
+                            SendEmail();
+                        }
+                        
+                    }
+                    else
+                    {
+                        MessageBox.Show("Sorry can't find your email address, Please check your email and try again.", "Invalid Email!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+                    }
                 }
             }
-           
         }
 
         //====================================================================================================================>>>>>>>>>>>>
@@ -183,7 +211,9 @@ namespace MHMS
 
             Email.Text = LoginForm.EmailAddress;
             Email.ForeColor = Color.FromArgb(72, 91, 232);
-            
+
+            Email.Select();
+
             //EmailPanel.Location = new Point(
             //this.ClientSize.Width / 2 - EmailPanel.Size.Width / 2,
             //this.ClientSize.Height / 2 - EmailPanel.Size.Height / 2);
@@ -303,7 +333,8 @@ namespace MHMS
             else
             {
                 // -> SQL query to reset password
-                SqlConnection con = new SqlConnection(MHMS_Conn);
+                SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn);
+
                 if (con.State == ConnectionState.Closed)
                 {
                     con.Open();

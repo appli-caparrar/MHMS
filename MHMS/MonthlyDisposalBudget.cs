@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MHMS.Connection;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
@@ -16,11 +17,11 @@ namespace MHMS
     {
 
         //Connection String
-        static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS"].ConnectionString;
+        //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS_ACTUAL"].ConnectionString;
         //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS2"].ConnectionString;
 
         //SQL Connection
-        SqlConnection con = new SqlConnection(MHMS_Conn);
+        SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn);
 
         public MonthlyDisposalBudget()
         {
@@ -192,9 +193,9 @@ namespace MHMS
             con.Close();
         }
 
-        private void DisposalBudgetDataGrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void FiscalYearDropdown_SelectedIndexChanged(object sender, EventArgs e)
         {
-           
+
         }
 
         //====================================================================================================================>>>>>>>>>>>>

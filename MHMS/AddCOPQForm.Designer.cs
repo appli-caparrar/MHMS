@@ -102,10 +102,10 @@
             this.DateAndTimeLabel.Dock = System.Windows.Forms.DockStyle.Right;
             this.DateAndTimeLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.DateAndTimeLabel.ForeColor = System.Drawing.Color.White;
-            this.DateAndTimeLabel.Location = new System.Drawing.Point(683, 0);
+            this.DateAndTimeLabel.Location = new System.Drawing.Point(682, 0);
             this.DateAndTimeLabel.Name = "DateAndTimeLabel";
             this.DateAndTimeLabel.Padding = new System.Windows.Forms.Padding(0, 20, 9, 0);
-            this.DateAndTimeLabel.Size = new System.Drawing.Size(92, 35);
+            this.DateAndTimeLabel.Size = new System.Drawing.Size(93, 35);
             this.DateAndTimeLabel.TabIndex = 18;
             this.DateAndTimeLabel.Text = "Date and TIme";
             // 
@@ -502,6 +502,7 @@
             this.Name = "AddCOPQForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "AddCOPQForm";
+            this.Load += new System.EventHandler(this.AddCOPQForm_Load);
             this.TopPanel.ResumeLayout(false);
             this.TopPanel.PerformLayout();
             this.panel3.ResumeLayout(false);

@@ -1,5 +1,6 @@
 ﻿using ExcelDataReader;
 using MHMS.Class;
+using MHMS.Connection;
 using MHMS.Forms;
 using System;
 using System.Collections.Generic;
@@ -22,11 +23,11 @@ namespace MHMS
     {
 
         //Connection String
-        static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS"].ConnectionString;
+        //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS_ACTUAL"].ConnectionString;
         //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS2"].ConnectionString;
 
         //SQL Connection
-        SqlConnection con = new SqlConnection(MHMS_Conn);
+        SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn);
 
         public UpdatePartsLossData2()
         {
@@ -75,9 +76,14 @@ namespace MHMS
         {
             LoadSection(); //load section in dropdown list
 
+            //MonthDropdwn.Text = DateTime.Now.ToString("MMMM");
+            //FiscalYearDropdown.Text = DateTime.Now.ToString("yyyy");
+
+            AddYears();
+
             SectionDropdown.Text = LoginForm.UserSection;//When this form loaded the dropdown list value automatically set equal to user section
 
-            if (SectionLabel.Text == "BPS" || SectionLabel.Text == "Production Engineering")
+            if (SectionLabel.Text == "BPS")
             {
                 SectionDropdown.Enabled = true;
             }
@@ -103,10 +109,22 @@ namespace MHMS
 
         //======================================================================================================================>>>>>>>>>>
 
+        private void AddYears()
+        {
+            var currentYear = DateTime.Today.Year;
+            for (int i = 3; i >= 0; i--)
+            {
+                // Now just add an entry that's the current year minus the counter
+                FiscalYearDropdown.Items.Add((currentYear - i).ToString());
+            }
+        }
+
+        //======================================================================================================================>>>>>>>>>>
+
         private void SelectLastInsertedDefectDate()
         {
             // -> SQL query to select User Account
-            SqlConnection con = new SqlConnection(MHMS_Conn);
+            SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn);
             if (con.State == ConnectionState.Closed)
             {
                 con.Open();
@@ -135,31 +153,41 @@ namespace MHMS
 
             if (SectionDropdown.Text == "Tape Cassette")
             {
-                MessageBox.Show("The template is preparing to open, Please wait a seconds...", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("The template is preparing to open, Please click OK to continue.", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                 Process.Start(@"\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\GMMS&SAP Template\Revised_010523\TC_GMMS & SAP Template.v4.xlsm");
                
             }
             else if (SectionDropdown.Text == "Ink Cartridge")
             {
-                MessageBox.Show("The template is preparing to open, Please wait a seconds...", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("The template is preparing to open, Please click OK to continue.", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                 Process.Start(@"\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\GMMS&SAP Template\Revised_010523\IC_GMMS & SAP Template.v4.xlsm");
                
             }
             else if (SectionDropdown.Text == "Ink Head")
             {
-                MessageBox.Show("The template is preparing to open, Please wait a seconds...", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("The template is preparing to open, Please click OK to continue.", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                 Process.Start(@"\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\GMMS&SAP Template\Revised_010523\IH_GMMS & SAP Template.v4.xlsm");
             }
-            else if (SectionDropdown.Text == "Printer")
+            else if (SectionDropdown.Text == "Printer 1")
             {
-                MessageBox.Show("The template is preparing to open, Please wait a seconds...", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("The template is preparing to open, Please click OK to continue.", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                 Process.Start(@"\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\GMMS&SAP Template\Revised_010523\PRT_GMMS & SAP Template.v4.xlsm");
-               
+            }
+            else if (SectionDropdown.Text == "Printer 2")
+            {
+                MessageBox.Show("The template is preparing to open, Please click OK to continue.", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                Process.Start(@"\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\GMMS&SAP Template\Revised_010523\PRT_GMMS & SAP Template.v4.xlsm");
             }
             else if (SectionDropdown.Text == "P-Touch")
             {
-                MessageBox.Show("The template is preparing to open, Please wait a seconds...", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Process.Start(@"\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\GMMS&SAP Template\Revised_010523\PT_GMMS & SAP Template4.xlsm");
+                MessageBox.Show("The template is preparing to open, Please click OK to continue.", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                Process.Start(@"\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\GMMS&SAP Template\Revised_010523\PT_GMMS & SAP Template.v4.xlsm");
             }
         }
 
@@ -189,14 +217,24 @@ namespace MHMS
         }
 
         //==================================================================================================================>>>>>>>>>>>>>
+        string fileName = string.Empty;
+        string fileNameWithExt = string.Empty;
+        string fileExt = string.Empty;
 
         private void BrowseButton_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                string filePath = string.Empty;
 
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
+                    filePath = openFileDialog.FileName;//get the path of the file
+                    fileName = Path.GetFileNameWithoutExtension(filePath); // get the file name without extension
+                    fileNameWithExt = Path.GetFileName(filePath);
+                    fileExt = Path.GetExtension(filePath);//get the file extension
+                    FilePath.Text = filePath;
+
                     FilePath.Text = openFileDialog.FileName;
                     try
                     {
@@ -487,9 +525,9 @@ namespace MHMS
                         obj.Creator = dt.Rows[i]["Creator"].ToString();
                         obj.Department = dt.Rows[i]["Dept"].ToString();
                         obj.AdjustedAmount = dt.Rows[i]["ADJ. AMOUNT"].ToString();
-                        
-                        obj.Date = dt.Rows[i]["Date"].ToString();
-                        obj.DailyAdjustedAmount = dt.Rows[i]["Daily Adjusted Amount"].ToString();
+                        obj.UploadDate = DateTime.Now.ToString("MM/dd/yyyy");
+                        //obj.Date = dt.Rows[i]["Date"].ToString();
+                        //obj.DailyAdjustedAmount = dt.Rows[i]["Daily Adjusted Amount"].ToString();
 
                         if (SectionDropdown.Text == "P-Touch")
                         {
@@ -557,35 +595,97 @@ namespace MHMS
         }
 
         //==================================================================================================================>>>>>>>>>>>>>
+        string SaveDirectory;
+        string NewFileName;
 
         private void UploadButton_Click(object sender, EventArgs e)
         {
+            if (SectionDropdown.Text == "Tape Cassette")
+            {
+                if (DataTypeDropdown.Text == "Defect")
+                {
+                    //File destination
+                    SaveDirectory = @"\\apbiphbpswb01\RELEASE\COPQ Files\Defect Uploaded Files\";
+                }
+                else
+                { 
+                    //File destination
+                    SaveDirectory = @"\\apbiphbpswb01\RELEASE\COPQ Files\Parst Loss Uploaded Files\Tape Cassette\";
+                }
+            }
+            else if (SectionDropdown.Text == "Ink Cartridge")
+            {
+                //File destination
+                SaveDirectory = @"\\apbiphbpswb01\RELEASE\COPQ Files\Parst Loss Uploaded Files\Ink Cartridge\";
+            }
+            else if (SectionDropdown.Text == "Printer")
+            {
+                //File destination
+                SaveDirectory = @"\\apbiphbpswb01\RELEASE\COPQ Files\Parst Loss Uploaded Files\Printer\";
+            }
+            else if (SectionDropdown.Text == "P-Touch")
+            {
+                //File destination
+                SaveDirectory = @"\\apbiphbpswb01\RELEASE\COPQ Files\Parst Loss Uploaded Files\P-Touch\";
+            }
+            else if (SectionDropdown.Text == "Ink Head")
+            {
+                //File destination
+                SaveDirectory = @"\\apbiphbpswb01\RELEASE\COPQ Files\Parst Loss Uploaded Files\Ink Head\";
+            }
+
+            
             if (SectionDropdown.Text == "")
             {
-                MessageBox.Show("Please select section!", "Reminders", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Please select section.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else if (DataTypeDropdown.Text == "")
             {
-                MessageBox.Show("Please select the data type!", "Reminders", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Please select the data type.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else if (MonthDropdwn.Text == "")
+            {
+                MessageBox.Show("Please select the month based on create date of data to upload.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else if (FiscalYearDropdown.Text == "")
+            {
+                MessageBox.Show("Please select the year based on create date of data to upload.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else if (FilePath.Text == "")
             {
-                MessageBox.Show("Please select file!", "Reminders", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Please select file.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 FilePath.Select();
             }
             else if (SheetDropdownList.Text == "Select sheet")
             {
-                MessageBox.Show("Please select Sheet", "Required!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Please select Sheet!", "Required!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 SheetDropdownList.Select();
             }
             else
             {
                 if (DataTypeDropdown.Text == "Defect")
                 {
+                    
                     try
                     {
-                        InsertDefectData(); // insert defect Data
-                        SelectLastInsertedDefectDate(); // Update the upload date
+                        if (File.Exists(SaveDirectory + fileNameWithExt)) // if the file to upload is already exists this function will rename the file and insert the new file to the database
+                        {
+                            NewFileName = "Copy_" + fileName + "_" + DateTime.Now.ToString("MMddyyyyhhmmss") + fileExt; // Create new filename if already exist
+                            string newFileSavePath = Path.Combine(SaveDirectory, NewFileName); // combine the path of new folder to filename
+                            File.Copy(FilePath.Text, newFileSavePath, true);
+
+                            InsertDefectData(); // insert defect Data
+                            SelectLastInsertedDefectDate(); // Update the upload date
+                        }
+                        else
+                        {
+                            string FileDestination = Path.Combine(SaveDirectory, fileNameWithExt); // combine the path of new folder and filename
+                            File.Copy(FilePath.Text, FileDestination, true);
+
+                            InsertDefectData(); // insert defect Data
+                            SelectLastInsertedDefectDate(); // Update the upload date
+                        }
+                        
                         COPQPartsLossForm.HaveNewUploadedData = true;
                     }
                     catch (Exception ex)
@@ -595,20 +695,37 @@ namespace MHMS
                 }
                 else
                 {
-                    try
-                    {
-                        //InsertPartsLossData_TEST();
-                        InsertPartsLossData();
-                        InsertPartsLossReport();
-                        SelectGMMSAndSAPLastUpdated();
+                    //try
+                    //{
+                        if (File.Exists(SaveDirectory + fileNameWithExt)) // if the file to upload is already exists this function will rename the file and insert the new file to the database
+                        {
+                            NewFileName = "Copy_" + fileName + "_" + DateTime.Now.ToString("MMddyyyyhhmmss") + fileExt; // Create new filename if already exist
+                            string newFileSavePath = Path.Combine(SaveDirectory, NewFileName); // combine the path of new folder to filename
+                            File.Copy(FilePath.Text, newFileSavePath, true);
+
+                            InsertPartsLossReport();
+                            InsertPartsLossData();
+                            SelectGMMSAndSAPLastUpdated();
+                        }
+                        else
+                        {
+                            string FileDestination = Path.Combine(SaveDirectory, fileNameWithExt); // combine the path of new folder and filename
+                            File.Copy(FilePath.Text, FileDestination, true);
+
+                            InsertPartsLossReport();
+                            InsertPartsLossData();
+                            SelectGMMSAndSAPLastUpdated();
+
+                        }
 
                         //Refresh
                         COPQPartsLossForm.HaveNewUploadedData = true;
-                    }
-                    catch (Exception)
-                    {
-                        throw;
-                    }
+
+                    //}
+                    //catch (Exception)
+                    //{
+                    //    throw;
+                    //}
                 }
             }
         }
@@ -666,7 +783,7 @@ namespace MHMS
                 {
                     // FUNCTION FOR CHECKING IF MH LOSS ALREADY EXIST IN DB.
 
-                    SqlConnection con = new SqlConnection(MHMS_Conn);
+                    SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn);
 
                     if (con.State == ConnectionState.Closed)
                     {
@@ -739,23 +856,18 @@ namespace MHMS
             DeletePartsLossReportPreviousUpload();
 
             DapperPlusManager.Entity<PartsLossData_Class>().Table("PartsLossReport");
-            List<PartsLossData_Class> PartsLossReport = UploadPartsLossDatagrid.DataSource as List<PartsLossData_Class>;
-            if (PartsLossReport != null)
+            List<PartsLossData_Class> PartsLossReportData = UploadPartsLossDatagrid.DataSource as List<PartsLossData_Class>;
+            if (PartsLossReportData != null)
             {
-                using (IDbConnection db = new SqlConnection("Server=apbiph1131;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
+                using (IDbConnection db = new SqlConnection("Server=APBIPHBPSDB01;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
                 {
-                    db.BulkInsert(PartsLossReport);
+                    db.BulkInsert(PartsLossReportData);
 
                     //MessageBox.Show("Production engineering parts loss data inserted successfully!", "DONE", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
 
             DeletePartsLossReportNullValues();
-            //Clear fields after upload
-            //FilePath.Text = "";
-            //SheetDropdownList.Text = "";
-            //UploadPartsLossDatagrid.DataSource = null;
-            //this.Close();
         }
 
         //==================================================================================================================>>>>>>>>>>>>>
@@ -766,7 +878,7 @@ namespace MHMS
             List<Defect_Class> DefectData = UploadPartsLossDatagrid.DataSource as List<Defect_Class>;
             if (DefectData != null)
             {
-                using (IDbConnection db = new SqlConnection("Server=apbiph1131;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
+                using (IDbConnection db = new SqlConnection("Server=APBIPHBPSDB01;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
                 {
                     db.BulkInsert(DefectData);
                 }
@@ -847,21 +959,21 @@ namespace MHMS
 
 
         private void InsertPartsLossData()
-            {
-            if (SectionDropdown.Text == "Production Engineering")
+        {
+            if (SectionDropdown.Text == "BPS")
             {
                 DeletePartsLossPreviousUpload(); //delete all previous upload in part loss data table 
-                DeleteTop5Recurrence(); //delete previous top 5 in top 5 recurrence table
+                //DeleteTop5Recurrence(); //delete previous top 5 in top 5 recurrence table
 
                 DapperPlusManager.Entity<PartsLossData_Class>().Table("PartsLossData_ProductionEngineering");
                 List<PartsLossData_Class> PartsLossData = UploadPartsLossDatagrid.DataSource as List<PartsLossData_Class>;
                 if (PartsLossData != null)
                 {
-                    using (IDbConnection db = new SqlConnection("Server=apbiph1131;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
+                    using (IDbConnection db = new SqlConnection("Server=APBIPHBPSDB01;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
                     {
                         db.BulkInsert(PartsLossData);
 
-                        MessageBox.Show("Production engineering parts loss data inserted successfully!", "DONE", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("BPS parts loss data inserted successfully!", "DONE", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
 
@@ -873,18 +985,17 @@ namespace MHMS
             }
             else if (SectionDropdown.Text == "Ink Cartridge")
             {
+                DeletePartsLossPreviousUpload(); //delete all previous upload in part loss data table 
+                //DeleteTop5Recurrence(); //delete previous top 5 in top 5 recurrence table
 
                 DapperPlusManager.Entity<PartsLossData_Class>().Table("PartsLossData_InkCartridge");
                 List<PartsLossData_Class> PartsLossData = UploadPartsLossDatagrid.DataSource as List<PartsLossData_Class>;
                 if (PartsLossData != null)
                 {
-                    using (IDbConnection db = new SqlConnection("Server=apbiph1131;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
+                    using (IDbConnection db = new SqlConnection("Server=APBIPHBPSDB01;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
                     {
-                        DeletePartsLossPreviousUpload(); //delete all previous upload in part loss data table 
-                        DeleteTop5Recurrence(); //delete previous top 5 in top 5 recurrence table
+                       
                         db.BulkInsert(PartsLossData);
-
-                        
 
                         MessageBox.Show("Ink Cartridge parts loss data inserted successfully!", "DONE", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
@@ -899,13 +1010,13 @@ namespace MHMS
             else if (SectionDropdown.Text == "Ink Head")
             {
                 DeletePartsLossPreviousUpload(); //delete all previous upload in part loss data table 
-                DeleteTop5Recurrence(); //delete previous top 5 in top 5 recurrence table
+                //DeleteTop5Recurrence(); //delete previous top 5 in top 5 recurrence table
 
                 DapperPlusManager.Entity<PartsLossData_Class>().Table("PartsLossData_InkHead");
                 List<PartsLossData_Class> PartsLossData = UploadPartsLossDatagrid.DataSource as List<PartsLossData_Class>;
                 if (PartsLossData != null)
                 {
-                    using (IDbConnection db = new SqlConnection("Server=apbiph1131;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
+                    using (IDbConnection db = new SqlConnection("Server=APBIPHBPSDB01;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
                     {
                         db.BulkInsert(PartsLossData);
 
@@ -922,13 +1033,13 @@ namespace MHMS
             else if (SectionDropdown.Text == "Molding Production")
             {
                 DeletePartsLossPreviousUpload(); //delete all previous upload in part loss data table 
-                DeleteTop5Recurrence(); //delete previous top 5 in top 5 recurrence table
+                //DeleteTop5Recurrence(); //delete previous top 5 in top 5 recurrence table
 
                 DapperPlusManager.Entity<PartsLossData_Class>().Table("PartsLossData_Molding");
                 List<PartsLossData_Class> PartsLossData = UploadPartsLossDatagrid.DataSource as List<PartsLossData_Class>;
                 if (PartsLossData != null)
                 {
-                    using (IDbConnection db = new SqlConnection("Server=apbiph1131;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
+                    using (IDbConnection db = new SqlConnection("Server=APBIPHBPSDB01;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
                     {
                         db.BulkInsert(PartsLossData);
 
@@ -945,13 +1056,13 @@ namespace MHMS
             else if (SectionDropdown.Text == "PCBA")
             {
                 DeletePartsLossPreviousUpload(); //delete all previous upload in part loss data table 
-                DeleteTop5Recurrence(); //delete previous top 5 in top 5 recurrence table
+                //DeleteTop5Recurrence(); //delete previous top 5 in top 5 recurrence table
 
                 DapperPlusManager.Entity<PartsLossData_Class>().Table("PartsLossData_PCBA");
                 List<PartsLossData_Class> PartsLossData = UploadPartsLossDatagrid.DataSource as List<PartsLossData_Class>;
                 if (PartsLossData != null)
                 {
-                    using (IDbConnection db = new SqlConnection("Server=apbiph1131;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
+                    using (IDbConnection db = new SqlConnection("Server=APBIPHBPSDB01;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
                     {
                         db.BulkInsert(PartsLossData);
 
@@ -968,13 +1079,13 @@ namespace MHMS
             else if (SectionDropdown.Text == "Printer")
             {
                 DeletePartsLossPreviousUpload(); //delete all previous upload in part loss data table 
-                DeleteTop5Recurrence(); //delete previous top 5 in top 5 recurrence table
+                //DeleteTop5Recurrence(); //delete previous top 5 in top 5 recurrence table
 
                 DapperPlusManager.Entity<PartsLossData_Class>().Table("PartsLossData_Printer");
                 List<PartsLossData_Class> PartsLossData = UploadPartsLossDatagrid.DataSource as List<PartsLossData_Class>;
                 if (PartsLossData != null)
                 {
-                    using (IDbConnection db = new SqlConnection("Server=apbiph1131;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
+                    using (IDbConnection db = new SqlConnection("Server=APBIPHBPSDB01;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
                     {
                         db.BulkInsert(PartsLossData);
 
@@ -991,13 +1102,13 @@ namespace MHMS
             else if (SectionDropdown.Text == "P-Touch")
             {
                 DeletePartsLossPreviousUpload(); //delete all previous upload in part loss data table 
-                DeleteTop5Recurrence(); //delete previous top 5 in top 5 recurrence table
+                //DeleteTop5Recurrence(); //delete previous top 5 in top 5 recurrence table
 
                 DapperPlusManager.Entity<PartsLossData_Class>().Table("PartsLossData_PTouch");
                 List<PartsLossData_Class> PartsLossData = UploadPartsLossDatagrid.DataSource as List<PartsLossData_Class>;
                 if (PartsLossData != null)
                 {
-                    using (IDbConnection db = new SqlConnection("Server=apbiph1131;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
+                    using (IDbConnection db = new SqlConnection("Server=APBIPHBPSDB01;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
                     {
                         db.BulkInsert(PartsLossData);
 
@@ -1014,13 +1125,13 @@ namespace MHMS
             else if (SectionDropdown.Text == "Tape Cassette")
             {
                 DeletePartsLossPreviousUpload(); //delete all previous upload in part loss data table 
-                DeleteTop5Recurrence(); //delete previous top 5 in top 5 recurrence table
+                //DeleteTop5Recurrence(); //delete previous top 5 in top 5 recurrence table
 
                 DapperPlusManager.Entity<PartsLossData_Class>().Table("PartsLossData_TapeCassette");
                 List<PartsLossData_Class> PartsLossData = UploadPartsLossDatagrid.DataSource as List<PartsLossData_Class>;
                 if (PartsLossData != null)
                 {
-                    using (IDbConnection db = new SqlConnection("Server=apbiph1131;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
+                    using (IDbConnection db = new SqlConnection("Server=APBIPHBPSDB01;Database=MH_Management_System;User Id=MH_User;Password=P@ssw0rd;"))
                     {
                         db.BulkInsert(PartsLossData);
 
@@ -1050,6 +1161,8 @@ namespace MHMS
             SqlCommand DeletePartsLoss = new SqlCommand("SP_DeletePartsLossPreviousUpload", con);
             DeletePartsLoss.CommandType = CommandType.StoredProcedure;
             DeletePartsLoss.Parameters.AddWithValue("Section", SectionDropdown.Text);
+            DeletePartsLoss.Parameters.AddWithValue("Month", MonthDropdwn.Text);
+            DeletePartsLoss.Parameters.AddWithValue("FiscalYear", FiscalYearDropdown.Text);
             DeletePartsLoss.ExecuteNonQuery();
             con.Close();
         }
@@ -1067,6 +1180,8 @@ namespace MHMS
             SqlCommand DeletePartsLoss = new SqlCommand("SP_DeletePartsLossReportPreviousUpload", con);
             DeletePartsLoss.CommandType = CommandType.StoredProcedure;
             DeletePartsLoss.Parameters.AddWithValue("Section", SectionDropdown.Text);
+            DeletePartsLoss.Parameters.AddWithValue("Month", MonthDropdwn.Text);
+            DeletePartsLoss.Parameters.AddWithValue("FiscalYear", FiscalYearDropdown.Text);
             DeletePartsLoss.ExecuteNonQuery();
             con.Close();
         }
@@ -1104,12 +1219,14 @@ namespace MHMS
             DeleteTop5Recurrence.ExecuteNonQuery();
             con.Close();
         }
+
         //====================================================================================================================>>>>>>>>>>>
 
         private void SelectGMMSAndSAPLastUpdated()
         {
             // -> SQL query to select User Account
-            SqlConnection con = new SqlConnection(MHMS_Conn);
+            SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn);
+
             if (con.State == ConnectionState.Closed)
             {
                 con.Open();
@@ -1117,7 +1234,7 @@ namespace MHMS
 
             SectionLabel.Text = Dashboard.SectionText.Replace("BIPH-", "");
 
-            if (SectionLabel.Text == "Tape Cassette")
+            if (SectionDropdown.Text == "Tape Cassette")
             {
                 SqlCommand SelectTapeCassetteLastUpdated = new SqlCommand("SP_SelectGMMSAndSAPLastUpdated", con);
                 SelectTapeCassetteLastUpdated.CommandType = CommandType.StoredProcedure;
@@ -1134,7 +1251,7 @@ namespace MHMS
                 }
 
             }
-            else if (SectionLabel.Text == "Ink Cartridge")
+            else if (SectionDropdown.Text == "Ink Cartridge")
             {
                 SqlCommand SelectInkCartridgeLastUpdated = new SqlCommand("SP_SelectGMMSAndSAPLastUpdated", con);
                 SelectInkCartridgeLastUpdated.CommandType = CommandType.StoredProcedure;
@@ -1152,16 +1269,16 @@ namespace MHMS
 
                 DefectLastUpdateDateLabel.Visible = false;
             }
-            else if (SectionLabel.Text == "Production Engineering")
+            else if (SectionDropdown.Text == "BPS")
             {
-                SqlCommand SelectProductionEngineeringLastUpdated = new SqlCommand("SP_SelectGMMSAndSAPLastUpdated", con);
-                SelectProductionEngineeringLastUpdated.CommandType = CommandType.StoredProcedure;
-                SelectProductionEngineeringLastUpdated.Parameters.AddWithValue("@Procedure", "SelectProductionEngineeringLastUpdated");
-                SqlDataAdapter da = new SqlDataAdapter(SelectProductionEngineeringLastUpdated);
+                SqlCommand SelectBPSLastUpdated = new SqlCommand("SP_SelectGMMSAndSAPLastUpdated", con);
+                SelectBPSLastUpdated.CommandType = CommandType.StoredProcedure;
+                SelectBPSLastUpdated.Parameters.AddWithValue("@Procedure", "SelectBPSLastUpdated");
+                SqlDataAdapter da = new SqlDataAdapter(SelectBPSLastUpdated);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
 
-                SqlDataReader reader = SelectProductionEngineeringLastUpdated.ExecuteReader();
+                SqlDataReader reader = SelectBPSLastUpdated.ExecuteReader();
 
                 while (reader.Read())
                 {
@@ -1171,7 +1288,7 @@ namespace MHMS
                 DefectLastUpdateDateLabel.Visible = false;
 
             }
-            else if (SectionLabel.Text == "Ink Head")
+            else if (SectionDropdown.Text == "Ink Head")
             {
                 SqlCommand SelectInkHeadLastUpdated = new SqlCommand("SP_SelectGMMSAndSAPLastUpdated", con);
                 SelectInkHeadLastUpdated.CommandType = CommandType.StoredProcedure;
@@ -1190,26 +1307,26 @@ namespace MHMS
                 DefectLastUpdateDateLabel.Visible = false;
 
             }
-            else if (SectionLabel.Text == "Molding Production")
+            else if (SectionDropdown.Text == "Molding Production")
             {
-                SqlCommand SelectMoldingLastUpdated = new SqlCommand("SP_SelectGMMSAndSAPLastUpdated", con);
-                SelectMoldingLastUpdated.CommandType = CommandType.StoredProcedure;
-                SelectMoldingLastUpdated.Parameters.AddWithValue("@Procedure", "SelectMoldingLastUpdated");
-                SqlDataAdapter da = new SqlDataAdapter(SelectMoldingLastUpdated);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
+                //SqlCommand SelectMoldingLastUpdated = new SqlCommand("SP_SelectGMMSAndSAPLastUpdated", con);
+                //SelectMoldingLastUpdated.CommandType = CommandType.StoredProcedure;
+                //SelectMoldingLastUpdated.Parameters.AddWithValue("@Procedure", "SelectMoldingLastUpdated");
+                //SqlDataAdapter da = new SqlDataAdapter(SelectMoldingLastUpdated);
+                //DataTable dt = new DataTable();
+                //da.Fill(dt);
 
 
-                SqlDataReader reader = SelectMoldingLastUpdated.ExecuteReader();
+                //SqlDataReader reader = SelectMoldingLastUpdated.ExecuteReader();
 
-                while (reader.Read())
-                {
-                    GMMSAndSAPLastUpdateLabel.Text = "GMMS / SAP: " + reader["UploadDate"].ToString();
-                }
+                //while (reader.Read())
+                //{
+                //    GMMSAndSAPLastUpdateLabel.Text = "GMMS / SAP: " + reader["UploadDate"].ToString();
+                //}
 
-                DefectLastUpdateDateLabel.Visible = false;
+                //DefectLastUpdateDateLabel.Visible = false;
             }
-            else if (SectionLabel.Text == "PCBA")
+            else if (SectionDropdown.Text == "PCBA")
             {
                 SqlCommand SelectPCBALastUpdated = new SqlCommand("SP_SelectGMMSAndSAPLastUpdated", con);
                 SelectPCBALastUpdated.CommandType = CommandType.StoredProcedure;
@@ -1228,7 +1345,7 @@ namespace MHMS
 
                 DefectLastUpdateDateLabel.Visible = false;
             }
-            else if (SectionLabel.Text == "Printer")
+            else if (SectionDropdown.Text == "Printer")
             {
                 SqlCommand SelectPrinterLastUpdated = new SqlCommand("SP_SelectGMMSAndSAPLastUpdated", con);
                 SelectPrinterLastUpdated.CommandType = CommandType.StoredProcedure;
@@ -1246,7 +1363,7 @@ namespace MHMS
 
                 DefectLastUpdateDateLabel.Visible = false;
             }
-            else if (SectionLabel.Text == "P-Touch")
+            else if (SectionDropdown.Text == "P-Touch")
             {
                 SqlCommand SelectPTouchLastUpdated = new SqlCommand("SP_SelectGMMSAndSAPLastUpdated", con);
                 SelectPTouchLastUpdated.CommandType = CommandType.StoredProcedure;
@@ -1271,6 +1388,11 @@ namespace MHMS
         private void IDFTemplateButton_Click(object sender, EventArgs e)
         {
             Process.Start(@"\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\Other Template\Tape Cassette IDF Monitoring Template.xlsx");
+        }
+
+        private void SectionDropdown_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SelectGMMSAndSAPLastUpdated();
         }
 
         //=====================================================================================================================>>>>>>>>>>>

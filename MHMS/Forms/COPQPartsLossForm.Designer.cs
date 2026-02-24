@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(COPQPartsLossForm));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -66,19 +67,15 @@
             this.panel12 = new System.Windows.Forms.Panel();
             this.SearchBox = new System.Windows.Forms.TextBox();
             this.panel13 = new System.Windows.Forms.Panel();
-            this.label5 = new System.Windows.Forms.Label();
+            this.SearchButton = new System.Windows.Forms.Button();
             this.panel15 = new System.Windows.Forms.Panel();
             this.panel18 = new System.Windows.Forms.Panel();
             this.TotalAdjustedAmount = new System.Windows.Forms.Label();
             this.TotalLabel = new System.Windows.Forms.Label();
-            this.ProgressLabel = new System.Windows.Forms.Label();
             this.panel17 = new System.Windows.Forms.Panel();
             this.ExportButton = new System.Windows.Forms.Button();
-            this.DataProgressBar = new System.Windows.Forms.ProgressBar();
             this.PartsLossDataGridView = new System.Windows.Forms.DataGridView();
-            this.ProgressbarTimer = new System.Windows.Forms.Timer(this.components);
             this.DailyEmailTimer = new System.Windows.Forms.Timer(this.components);
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.RefreshDatagridTimer = new System.Windows.Forms.Timer(this.components);
             this.panel1.SuspendLayout();
             this.panel8.SuspendLayout();
@@ -173,7 +170,7 @@
             this.SectionDropdown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.SectionDropdown.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.SectionDropdown.FormattingEnabled = true;
-            this.SectionDropdown.Location = new System.Drawing.Point(82, 5);
+            this.SectionDropdown.Location = new System.Drawing.Point(81, 4);
             this.SectionDropdown.Name = "SectionDropdown";
             this.SectionDropdown.Size = new System.Drawing.Size(232, 25);
             this.SectionDropdown.TabIndex = 2;
@@ -214,11 +211,12 @@
             // 
             // MonthlyBudgetButton
             // 
-            this.MonthlyBudgetButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(82)))), ((int)(((byte)(209)))), ((int)(((byte)(241)))));
+            this.MonthlyBudgetButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(72)))), ((int)(((byte)(141)))), ((int)(((byte)(218)))));
             this.MonthlyBudgetButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.MonthlyBudgetButton.FlatAppearance.BorderSize = 0;
             this.MonthlyBudgetButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.MonthlyBudgetButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MonthlyBudgetButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(35)))), ((int)(((byte)(53)))));
+            this.MonthlyBudgetButton.ForeColor = System.Drawing.Color.White;
             this.MonthlyBudgetButton.Location = new System.Drawing.Point(6, 45);
             this.MonthlyBudgetButton.Name = "MonthlyBudgetButton";
             this.MonthlyBudgetButton.Size = new System.Drawing.Size(173, 35);
@@ -229,31 +227,35 @@
             // 
             // UpdateDataButton
             // 
-            this.UpdateDataButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(218)))), ((int)(((byte)(189)))), ((int)(((byte)(31)))));
+            this.UpdateDataButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(69)))), ((int)(((byte)(180)))));
             this.UpdateDataButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.UpdateDataButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.UpdateDataButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UpdateDataButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(35)))), ((int)(((byte)(53)))));
+            this.UpdateDataButton.ForeColor = System.Drawing.Color.White;
+            this.UpdateDataButton.Image = global::MHMS.Properties.Resources.edit_property_24;
+            this.UpdateDataButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.UpdateDataButton.Location = new System.Drawing.Point(6, 0);
             this.UpdateDataButton.Name = "UpdateDataButton";
             this.UpdateDataButton.Size = new System.Drawing.Size(174, 35);
             this.UpdateDataButton.TabIndex = 15;
-            this.UpdateDataButton.Text = "UPDATE DATA";
+            this.UpdateDataButton.Text = "   UPDATE DATA";
             this.UpdateDataButton.UseVisualStyleBackColor = false;
             this.UpdateDataButton.Click += new System.EventHandler(this.UpdateDataButton_Click);
             // 
             // GenerateButton
             // 
-            this.GenerateButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(217)))), ((int)(((byte)(167)))));
+            this.GenerateButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(69)))), ((int)(((byte)(180)))));
             this.GenerateButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.GenerateButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.GenerateButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.GenerateButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(35)))), ((int)(((byte)(53)))));
+            this.GenerateButton.ForeColor = System.Drawing.Color.White;
+            this.GenerateButton.Image = global::MHMS.Properties.Resources.available_updates_24;
+            this.GenerateButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.GenerateButton.Location = new System.Drawing.Point(650, 1);
             this.GenerateButton.Name = "GenerateButton";
-            this.GenerateButton.Size = new System.Drawing.Size(173, 35);
+            this.GenerateButton.Size = new System.Drawing.Size(152, 35);
             this.GenerateButton.TabIndex = 16;
-            this.GenerateButton.Text = "GENERATE";
+            this.GenerateButton.Text = "   GENERATE";
             this.GenerateButton.UseVisualStyleBackColor = false;
             this.GenerateButton.Click += new System.EventHandler(this.GenerateButton_Click);
             // 
@@ -320,9 +322,11 @@
             this.ViewGraphButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ViewGraphButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ViewGraphButton.ForeColor = System.Drawing.Color.White;
+            this.ViewGraphButton.Image = global::MHMS.Properties.Resources.presentation2;
+            this.ViewGraphButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.ViewGraphButton.Location = new System.Drawing.Point(202, 8);
             this.ViewGraphButton.Name = "ViewGraphButton";
-            this.ViewGraphButton.Size = new System.Drawing.Size(136, 39);
+            this.ViewGraphButton.Size = new System.Drawing.Size(171, 39);
             this.ViewGraphButton.TabIndex = 17;
             this.ViewGraphButton.Text = "VIEW GRAPH";
             this.ViewGraphButton.UseVisualStyleBackColor = false;
@@ -374,17 +378,18 @@
             // 
             // ShowTopDefectButton
             // 
-            this.ShowTopDefectButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(223)))), ((int)(((byte)(212)))), ((int)(((byte)(34)))));
+            this.ShowTopDefectButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(69)))), ((int)(((byte)(180)))));
             this.ShowTopDefectButton.FlatAppearance.BorderSize = 0;
             this.ShowTopDefectButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ShowTopDefectButton.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ShowTopDefectButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(35)))), ((int)(((byte)(53)))));
+            this.ShowTopDefectButton.ForeColor = System.Drawing.Color.White;
             this.ShowTopDefectButton.Location = new System.Drawing.Point(202, 6);
             this.ShowTopDefectButton.Name = "ShowTopDefectButton";
-            this.ShowTopDefectButton.Size = new System.Drawing.Size(137, 35);
+            this.ShowTopDefectButton.Size = new System.Drawing.Size(136, 35);
             this.ShowTopDefectButton.TabIndex = 23;
-            this.ShowTopDefectButton.Text = "Show Top 5 Defect";
+            this.ShowTopDefectButton.Text = "View Top 5 Defect";
             this.ShowTopDefectButton.UseVisualStyleBackColor = false;
+            this.ShowTopDefectButton.Visible = false;
             this.ShowTopDefectButton.Click += new System.EventHandler(this.ShowTopDefectButton_Click);
             // 
             // panel19
@@ -478,18 +483,18 @@
             this.panel12.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel12.Controls.Add(this.SearchBox);
             this.panel12.Controls.Add(this.panel13);
-            this.panel12.Location = new System.Drawing.Point(53, 6);
+            this.panel12.Location = new System.Drawing.Point(18, 6);
             this.panel12.Name = "panel12";
-            this.panel12.Size = new System.Drawing.Size(319, 35);
+            this.panel12.Size = new System.Drawing.Size(354, 35);
             this.panel12.TabIndex = 18;
             // 
             // SearchBox
             // 
             this.SearchBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.SearchBox.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SearchBox.Location = new System.Drawing.Point(77, 7);
+            this.SearchBox.Location = new System.Drawing.Point(95, 7);
             this.SearchBox.Name = "SearchBox";
-            this.SearchBox.Size = new System.Drawing.Size(236, 18);
+            this.SearchBox.Size = new System.Drawing.Size(254, 18);
             this.SearchBox.TabIndex = 1;
             this.SearchBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.SearchBox_KeyPress);
             // 
@@ -497,29 +502,35 @@
             // 
             this.panel13.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(35)))), ((int)(((byte)(53)))));
             this.panel13.CausesValidation = false;
-            this.panel13.Controls.Add(this.label5);
+            this.panel13.Controls.Add(this.SearchButton);
             this.panel13.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel13.Location = new System.Drawing.Point(0, 0);
             this.panel13.Name = "panel13";
-            this.panel13.Size = new System.Drawing.Size(72, 33);
+            this.panel13.Size = new System.Drawing.Size(89, 33);
             this.panel13.TabIndex = 0;
             // 
-            // label5
+            // SearchButton
             // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label5.Location = new System.Drawing.Point(11, 6);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(51, 19);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "Search";
+            this.SearchButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(35)))), ((int)(((byte)(53)))));
+            this.SearchButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SearchButton.FlatAppearance.BorderSize = 0;
+            this.SearchButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.SearchButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SearchButton.ForeColor = System.Drawing.Color.White;
+            this.SearchButton.Image = global::MHMS.Properties.Resources.search_2_24;
+            this.SearchButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.SearchButton.Location = new System.Drawing.Point(0, 0);
+            this.SearchButton.Name = "SearchButton";
+            this.SearchButton.Size = new System.Drawing.Size(89, 33);
+            this.SearchButton.TabIndex = 40;
+            this.SearchButton.Text = "       Search";
+            this.SearchButton.UseVisualStyleBackColor = false;
+            this.SearchButton.Click += new System.EventHandler(this.SearchButton_Click);
             // 
             // panel15
             // 
             this.panel15.Controls.Add(this.panel18);
             this.panel15.Controls.Add(this.panel17);
-            this.panel15.Controls.Add(this.DataProgressBar);
             this.panel15.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel15.Location = new System.Drawing.Point(10, 405);
             this.panel15.Name = "panel15";
@@ -530,11 +541,10 @@
             // 
             this.panel18.Controls.Add(this.TotalAdjustedAmount);
             this.panel18.Controls.Add(this.TotalLabel);
-            this.panel18.Controls.Add(this.ProgressLabel);
             this.panel18.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel18.Location = new System.Drawing.Point(0, 0);
             this.panel18.Name = "panel18";
-            this.panel18.Size = new System.Drawing.Size(651, 39);
+            this.panel18.Size = new System.Drawing.Size(651, 45);
             this.panel18.TabIndex = 27;
             // 
             // TotalAdjustedAmount
@@ -546,7 +556,7 @@
             this.TotalAdjustedAmount.Location = new System.Drawing.Point(131, 0);
             this.TotalAdjustedAmount.Name = "TotalAdjustedAmount";
             this.TotalAdjustedAmount.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
-            this.TotalAdjustedAmount.Size = new System.Drawing.Size(60, 37);
+            this.TotalAdjustedAmount.Size = new System.Drawing.Size(59, 37);
             this.TotalAdjustedAmount.TabIndex = 24;
             this.TotalAdjustedAmount.Text = "0.00";
             // 
@@ -563,16 +573,6 @@
             this.TotalLabel.TabIndex = 22;
             this.TotalLabel.Text = "Total Adjusted Amount:";
             // 
-            // ProgressLabel
-            // 
-            this.ProgressLabel.AutoSize = true;
-            this.ProgressLabel.Location = new System.Drawing.Point(580, 23);
-            this.ProgressLabel.Name = "ProgressLabel";
-            this.ProgressLabel.Size = new System.Drawing.Size(68, 13);
-            this.ProgressLabel.TabIndex = 25;
-            this.ProgressLabel.Text = "Progress: 0%";
-            this.ProgressLabel.Visible = false;
-            // 
             // panel17
             // 
             this.panel17.Controls.Add(this.ExportButton);
@@ -580,35 +580,26 @@
             this.panel17.Location = new System.Drawing.Point(1145, 0);
             this.panel17.Name = "panel17";
             this.panel17.Padding = new System.Windows.Forms.Padding(0, 3, 0, 3);
-            this.panel17.Size = new System.Drawing.Size(160, 39);
+            this.panel17.Size = new System.Drawing.Size(160, 45);
             this.panel17.TabIndex = 26;
             // 
             // ExportButton
             // 
-            this.ExportButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(168)))), ((int)(((byte)(101)))));
+            this.ExportButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(69)))), ((int)(((byte)(180)))));
             this.ExportButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ExportButton.FlatAppearance.BorderSize = 0;
             this.ExportButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ExportButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ExportButton.ForeColor = System.Drawing.Color.White;
+            this.ExportButton.Image = ((System.Drawing.Image)(resources.GetObject("ExportButton.Image")));
+            this.ExportButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.ExportButton.Location = new System.Drawing.Point(0, 3);
             this.ExportButton.Name = "ExportButton";
-            this.ExportButton.Size = new System.Drawing.Size(160, 33);
+            this.ExportButton.Size = new System.Drawing.Size(160, 39);
             this.ExportButton.TabIndex = 21;
             this.ExportButton.Text = "EXPORT";
             this.ExportButton.UseVisualStyleBackColor = false;
             this.ExportButton.Click += new System.EventHandler(this.ExportButton_Click);
-            // 
-            // DataProgressBar
-            // 
-            this.DataProgressBar.BackColor = System.Drawing.SystemColors.Window;
-            this.DataProgressBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.DataProgressBar.Location = new System.Drawing.Point(0, 39);
-            this.DataProgressBar.Name = "DataProgressBar";
-            this.DataProgressBar.Size = new System.Drawing.Size(1305, 6);
-            this.DataProgressBar.TabIndex = 24;
-            this.DataProgressBar.Value = 100;
-            this.DataProgressBar.Visible = false;
             // 
             // PartsLossDataGridView
             // 
@@ -653,11 +644,6 @@
             this.PartsLossDataGridView.TabIndex = 23;
             this.PartsLossDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.PartsLossDataGridView_CellFormatting);
             // 
-            // ProgressbarTimer
-            // 
-            this.ProgressbarTimer.Interval = 1500;
-            this.ProgressbarTimer.Tick += new System.EventHandler(this.ProgressbarTimer_Tick);
-            // 
             // DailyEmailTimer
             // 
             this.DailyEmailTimer.Enabled = true;
@@ -680,6 +666,7 @@
             this.Controls.Add(this.panel11);
             this.Controls.Add(this.panel10);
             this.Controls.Add(this.panel1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "COPQPartsLossForm";
             this.Padding = new System.Windows.Forms.Padding(10);
             this.Text = "COPQ Parts Loss";
@@ -706,7 +693,6 @@
             this.panel12.ResumeLayout(false);
             this.panel12.PerformLayout();
             this.panel13.ResumeLayout(false);
-            this.panel13.PerformLayout();
             this.panel15.ResumeLayout(false);
             this.panel18.ResumeLayout(false);
             this.panel18.PerformLayout();
@@ -740,7 +726,6 @@
         private System.Windows.Forms.Panel panel12;
         private System.Windows.Forms.TextBox SearchBox;
         private System.Windows.Forms.Panel panel13;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Panel panel14;
         private System.Windows.Forms.Button DefectButton;
         private System.Windows.Forms.Panel panel15;
@@ -749,21 +734,18 @@
         private System.Windows.Forms.Label TotalLabel;
         private System.Windows.Forms.Panel panel16;
         private System.Windows.Forms.Button MonthlyBudgetButton;
-        private System.Windows.Forms.Timer ProgressbarTimer;
-        private System.Windows.Forms.Label ProgressLabel;
         private System.Windows.Forms.Panel panel18;
         private System.Windows.Forms.Label TotalAdjustedAmount;
         private System.Windows.Forms.Panel panel17;
-        private System.Windows.Forms.ProgressBar DataProgressBar;
         private System.Windows.Forms.Timer DailyEmailTimer;
         private System.Windows.Forms.Panel panel19;
         private System.Windows.Forms.ComboBox ShowEntriesDropdown;
-        private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.Panel panel20;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button ShowTopDefectButton;
         private System.Windows.Forms.Timer RefreshDatagridTimer;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button SearchButton;
     }
 }

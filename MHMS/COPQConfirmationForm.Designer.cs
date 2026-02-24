@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(COPQConfirmationForm));
             this.TopPanel = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.ApproveButton = new System.Windows.Forms.Button();
@@ -76,7 +77,7 @@
             // 
             // ApproveButton
             // 
-            this.ApproveButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(168)))), ((int)(((byte)(101)))));
+            this.ApproveButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(55)))), ((int)(((byte)(111)))), ((int)(((byte)(238)))));
             this.ApproveButton.FlatAppearance.BorderSize = 0;
             this.ApproveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ApproveButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -132,6 +133,7 @@
             "Man-Hour (Linestop)",
             "Man-Hour (Add process)",
             "Man-Hour (Rework)",
+            "Man-Hour (Others)",
             "No COPQ Needed (Delay)",
             "Tendency Check"});
             this.MHLossTypeDropdown.Location = new System.Drawing.Point(105, 5);
@@ -252,6 +254,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "COPQConfirmationForm";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;

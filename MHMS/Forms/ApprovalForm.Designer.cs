@@ -29,11 +29,12 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ApprovalForm));
             this.panel3 = new System.Windows.Forms.Panel();
             this.CategoryDropdown = new System.Windows.Forms.ComboBox();
             this.panel4 = new System.Windows.Forms.Panel();
@@ -43,6 +44,8 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.GeneratePreviousQIForConfirmationBtn = new System.Windows.Forms.Button();
+            this.ApproveAllPendingBtn = new System.Windows.Forms.Button();
             this.ExcludeCheckBox = new System.Windows.Forms.CheckBox();
             this.GenerateButton = new System.Windows.Forms.Button();
             this.panel12 = new System.Windows.Forms.Panel();
@@ -59,13 +62,21 @@
             this.panel6 = new System.Windows.Forms.Panel();
             this.panel11 = new System.Windows.Forms.Panel();
             this.ApprovalCount = new System.Windows.Forms.Label();
-            this.ExportButton = new System.Windows.Forms.Button();
             this.panel7 = new System.Windows.Forms.Panel();
             this.SearchBox = new System.Windows.Forms.TextBox();
             this.panel8 = new System.Windows.Forms.Panel();
-            this.label3 = new System.Windows.Forms.Label();
+            this.SearchButton = new System.Windows.Forms.Button();
+            this.ExportButton = new System.Windows.Forms.Button();
             this.FrefreshDatagridTimer = new System.Windows.Forms.Timer(this.components);
             this.ApprovalDataGrid = new System.Windows.Forms.DataGridView();
+            this.panel14 = new System.Windows.Forms.Panel();
+            this.panel16 = new System.Windows.Forms.Panel();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.panel15 = new System.Windows.Forms.Panel();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -80,6 +91,9 @@
             this.panel7.SuspendLayout();
             this.panel8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ApprovalDataGrid)).BeginInit();
+            this.panel14.SuspendLayout();
+            this.panel16.SuspendLayout();
+            this.panel15.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel3
@@ -95,18 +109,18 @@
             // CategoryDropdown
             // 
             this.CategoryDropdown.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.CategoryDropdown.Enabled = false;
             this.CategoryDropdown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.CategoryDropdown.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CategoryDropdown.FormattingEnabled = true;
             this.CategoryDropdown.Items.AddRange(new object[] {
-            "COPQ",
-            "ST",
-            "WC/CC"});
+            "COPQ"});
             this.CategoryDropdown.Location = new System.Drawing.Point(81, 4);
             this.CategoryDropdown.Name = "CategoryDropdown";
             this.CategoryDropdown.Size = new System.Drawing.Size(96, 25);
             this.CategoryDropdown.TabIndex = 2;
             this.CategoryDropdown.Text = "COPQ";
+            this.CategoryDropdown.SelectedIndexChanged += new System.EventHandler(this.CategoryDropdown_SelectedIndexChanged);
             // 
             // panel4
             // 
@@ -136,7 +150,7 @@
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.StatusDropdown);
             this.panel1.Controls.Add(this.panel2);
-            this.panel1.Location = new System.Drawing.Point(618, 0);
+            this.panel1.Location = new System.Drawing.Point(691, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(191, 35);
             this.panel1.TabIndex = 10;
@@ -183,6 +197,8 @@
             // 
             // panel5
             // 
+            this.panel5.Controls.Add(this.GeneratePreviousQIForConfirmationBtn);
+            this.panel5.Controls.Add(this.ApproveAllPendingBtn);
             this.panel5.Controls.Add(this.ExcludeCheckBox);
             this.panel5.Controls.Add(this.GenerateButton);
             this.panel5.Controls.Add(this.panel12);
@@ -198,13 +214,46 @@
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(1179, 130);
             this.panel5.TabIndex = 11;
+            this.panel5.Paint += new System.Windows.Forms.PaintEventHandler(this.panel5_Paint);
+            // 
+            // GeneratePreviousQIForConfirmationBtn
+            // 
+            this.GeneratePreviousQIForConfirmationBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(190)))), ((int)(((byte)(118)))));
+            this.GeneratePreviousQIForConfirmationBtn.FlatAppearance.BorderSize = 0;
+            this.GeneratePreviousQIForConfirmationBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.GeneratePreviousQIForConfirmationBtn.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GeneratePreviousQIForConfirmationBtn.ForeColor = System.Drawing.Color.White;
+            this.GeneratePreviousQIForConfirmationBtn.Location = new System.Drawing.Point(238, 98);
+            this.GeneratePreviousQIForConfirmationBtn.Name = "GeneratePreviousQIForConfirmationBtn";
+            this.GeneratePreviousQIForConfirmationBtn.Size = new System.Drawing.Size(132, 26);
+            this.GeneratePreviousQIForConfirmationBtn.TabIndex = 40;
+            this.GeneratePreviousQIForConfirmationBtn.Text = "Generate Previous";
+            this.GeneratePreviousQIForConfirmationBtn.UseVisualStyleBackColor = false;
+            this.GeneratePreviousQIForConfirmationBtn.Visible = false;
+            this.GeneratePreviousQIForConfirmationBtn.Click += new System.EventHandler(this.GeneratePreviousQIForConfirmationBtn_Click);
+            // 
+            // ApproveAllPendingBtn
+            // 
+            this.ApproveAllPendingBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(190)))), ((int)(((byte)(118)))));
+            this.ApproveAllPendingBtn.FlatAppearance.BorderSize = 0;
+            this.ApproveAllPendingBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ApproveAllPendingBtn.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ApproveAllPendingBtn.ForeColor = System.Drawing.Color.White;
+            this.ApproveAllPendingBtn.Location = new System.Drawing.Point(311, 57);
+            this.ApproveAllPendingBtn.Name = "ApproveAllPendingBtn";
+            this.ApproveAllPendingBtn.Size = new System.Drawing.Size(160, 35);
+            this.ApproveAllPendingBtn.TabIndex = 39;
+            this.ApproveAllPendingBtn.Text = "APPROVE ALL PENDING";
+            this.ApproveAllPendingBtn.UseVisualStyleBackColor = false;
+            this.ApproveAllPendingBtn.Visible = false;
+            this.ApproveAllPendingBtn.Click += new System.EventHandler(this.ApproveAllPendingBtn_Click);
             // 
             // ExcludeCheckBox
             // 
             this.ExcludeCheckBox.AutoSize = true;
             this.ExcludeCheckBox.Checked = true;
             this.ExcludeCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ExcludeCheckBox.Location = new System.Drawing.Point(115, 110);
+            this.ExcludeCheckBox.Location = new System.Drawing.Point(120, 110);
             this.ExcludeCheckBox.Name = "ExcludeCheckBox";
             this.ExcludeCheckBox.Size = new System.Drawing.Size(107, 17);
             this.ExcludeCheckBox.TabIndex = 38;
@@ -215,16 +264,18 @@
             // 
             // GenerateButton
             // 
-            this.GenerateButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(217)))), ((int)(((byte)(167)))));
+            this.GenerateButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(69)))), ((int)(((byte)(180)))));
             this.GenerateButton.FlatAppearance.BorderSize = 0;
             this.GenerateButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.GenerateButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.GenerateButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(35)))), ((int)(((byte)(53)))));
-            this.GenerateButton.Location = new System.Drawing.Point(816, 0);
+            this.GenerateButton.ForeColor = System.Drawing.Color.White;
+            this.GenerateButton.Image = global::MHMS.Properties.Resources.available_updates_24;
+            this.GenerateButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.GenerateButton.Location = new System.Drawing.Point(889, 0);
             this.GenerateButton.Name = "GenerateButton";
             this.GenerateButton.Size = new System.Drawing.Size(107, 35);
             this.GenerateButton.TabIndex = 14;
-            this.GenerateButton.Text = "GENERATE";
+            this.GenerateButton.Text = "      GENERATE";
             this.GenerateButton.UseVisualStyleBackColor = false;
             this.GenerateButton.Click += new System.EventHandler(this.GenerateButton_Click);
             // 
@@ -235,7 +286,7 @@
             this.panel12.Controls.Add(this.RoleDropDown);
             this.panel12.Location = new System.Drawing.Point(381, 0);
             this.panel12.Name = "panel12";
-            this.panel12.Size = new System.Drawing.Size(231, 35);
+            this.panel12.Size = new System.Drawing.Size(304, 35);
             this.panel12.TabIndex = 37;
             // 
             // panel13
@@ -246,19 +297,18 @@
             this.panel13.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel13.Location = new System.Drawing.Point(0, 0);
             this.panel13.Name = "panel13";
-            this.panel13.Size = new System.Drawing.Size(47, 33);
+            this.panel13.Size = new System.Drawing.Size(109, 33);
             this.panel13.TabIndex = 0;
             // 
             // label4
             // 
-            this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label4.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.label4.Location = new System.Drawing.Point(0, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(47, 33);
+            this.label4.Size = new System.Drawing.Size(109, 33);
             this.label4.TabIndex = 0;
-            this.label4.Text = "Role";
+            this.label4.Text = "Approver Type";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // RoleDropDown
@@ -267,10 +317,11 @@
             this.RoleDropDown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.RoleDropDown.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.RoleDropDown.FormattingEnabled = true;
-            this.RoleDropDown.Location = new System.Drawing.Point(52, 4);
+            this.RoleDropDown.Location = new System.Drawing.Point(115, 4);
             this.RoleDropDown.Name = "RoleDropDown";
-            this.RoleDropDown.Size = new System.Drawing.Size(173, 25);
+            this.RoleDropDown.Size = new System.Drawing.Size(184, 25);
             this.RoleDropDown.TabIndex = 29;
+            this.RoleDropDown.SelectedIndexChanged += new System.EventHandler(this.RoleDropDown_SelectedIndexChanged);
             this.RoleDropDown.TextChanged += new System.EventHandler(this.RoleDropDown_TextChanged);
             // 
             // panel9
@@ -368,13 +419,13 @@
             // panel6
             // 
             this.panel6.Controls.Add(this.panel11);
-            this.panel6.Controls.Add(this.ExportButton);
             this.panel6.Controls.Add(this.panel7);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel6.Location = new System.Drawing.Point(844, 0);
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(335, 130);
             this.panel6.TabIndex = 15;
+            this.panel6.Paint += new System.Windows.Forms.PaintEventHandler(this.panel6_Paint);
             // 
             // panel11
             // 
@@ -397,38 +448,23 @@
             this.ApprovalCount.Text = "Approval Count:";
             this.ApprovalCount.Visible = false;
             // 
-            // ExportButton
-            // 
-            this.ExportButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(168)))), ((int)(((byte)(101)))));
-            this.ExportButton.FlatAppearance.BorderSize = 0;
-            this.ExportButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ExportButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ExportButton.ForeColor = System.Drawing.Color.White;
-            this.ExportButton.Location = new System.Drawing.Point(191, 0);
-            this.ExportButton.Name = "ExportButton";
-            this.ExportButton.Size = new System.Drawing.Size(144, 35);
-            this.ExportButton.TabIndex = 16;
-            this.ExportButton.Text = "EXPORT";
-            this.ExportButton.UseVisualStyleBackColor = false;
-            this.ExportButton.Click += new System.EventHandler(this.ExportButton_Click);
-            // 
             // panel7
             // 
             this.panel7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel7.Controls.Add(this.SearchBox);
             this.panel7.Controls.Add(this.panel8);
-            this.panel7.Location = new System.Drawing.Point(16, 57);
+            this.panel7.Location = new System.Drawing.Point(3, 57);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(319, 35);
+            this.panel7.Size = new System.Drawing.Size(332, 35);
             this.panel7.TabIndex = 5;
             // 
             // SearchBox
             // 
             this.SearchBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.SearchBox.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SearchBox.Location = new System.Drawing.Point(77, 7);
+            this.SearchBox.Location = new System.Drawing.Point(98, 7);
             this.SearchBox.Name = "SearchBox";
-            this.SearchBox.Size = new System.Drawing.Size(236, 18);
+            this.SearchBox.Size = new System.Drawing.Size(229, 18);
             this.SearchBox.TabIndex = 1;
             this.SearchBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.SearchBox_KeyPress);
             // 
@@ -436,23 +472,48 @@
             // 
             this.panel8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(35)))), ((int)(((byte)(53)))));
             this.panel8.CausesValidation = false;
-            this.panel8.Controls.Add(this.label3);
+            this.panel8.Controls.Add(this.SearchButton);
             this.panel8.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel8.Location = new System.Drawing.Point(0, 0);
             this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(72, 33);
+            this.panel8.Size = new System.Drawing.Size(92, 33);
             this.panel8.TabIndex = 0;
             // 
-            // label3
+            // SearchButton
             // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label3.Location = new System.Drawing.Point(11, 6);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(51, 19);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Search";
+            this.SearchButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(35)))), ((int)(((byte)(53)))));
+            this.SearchButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SearchButton.FlatAppearance.BorderSize = 0;
+            this.SearchButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.SearchButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SearchButton.ForeColor = System.Drawing.Color.White;
+            this.SearchButton.Image = global::MHMS.Properties.Resources.search_2_24;
+            this.SearchButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.SearchButton.Location = new System.Drawing.Point(0, 0);
+            this.SearchButton.Name = "SearchButton";
+            this.SearchButton.Size = new System.Drawing.Size(92, 33);
+            this.SearchButton.TabIndex = 39;
+            this.SearchButton.Text = "       Search";
+            this.SearchButton.UseVisualStyleBackColor = false;
+            this.SearchButton.Click += new System.EventHandler(this.SearchButton_Click);
+            this.SearchButton.MouseEnter += new System.EventHandler(this.SearchButton_MouseEnter);
+            // 
+            // ExportButton
+            // 
+            this.ExportButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(69)))), ((int)(((byte)(180)))));
+            this.ExportButton.FlatAppearance.BorderSize = 0;
+            this.ExportButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ExportButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ExportButton.ForeColor = System.Drawing.Color.White;
+            this.ExportButton.Image = global::MHMS.Properties.Resources.download_2_24__2_;
+            this.ExportButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ExportButton.Location = new System.Drawing.Point(29, 7);
+            this.ExportButton.Name = "ExportButton";
+            this.ExportButton.Size = new System.Drawing.Size(110, 35);
+            this.ExportButton.TabIndex = 16;
+            this.ExportButton.Text = "    EXPORT";
+            this.ExportButton.UseVisualStyleBackColor = false;
+            this.ExportButton.Click += new System.EventHandler(this.ExportButton_Click);
             // 
             // FrefreshDatagridTimer
             // 
@@ -462,61 +523,148 @@
             // ApprovalDataGrid
             // 
             this.ApprovalDataGrid.AllowUserToAddRows = false;
-            dataGridViewCellStyle6.BackColor = System.Drawing.Color.White;
-            this.ApprovalDataGrid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.White;
+            this.ApprovalDataGrid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.ApprovalDataGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.ApprovalDataGrid.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.ApprovalDataGrid.BackgroundColor = System.Drawing.SystemColors.Window;
             this.ApprovalDataGrid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ApprovalDataGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ApprovalDataGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.ApprovalDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.ActiveCaption;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ApprovalDataGrid.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.NullValue = null;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.ActiveCaption;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ApprovalDataGrid.DefaultCellStyle = dataGridViewCellStyle3;
             this.ApprovalDataGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ApprovalDataGrid.Location = new System.Drawing.Point(10, 140);
+            this.ApprovalDataGrid.Location = new System.Drawing.Point(0, 0);
             this.ApprovalDataGrid.Name = "ApprovalDataGrid";
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.ActiveCaption;
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ApprovalDataGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.ActiveCaption;
-            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ApprovalDataGrid.RowsDefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.ActiveCaption;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ApprovalDataGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.ActiveCaption;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ApprovalDataGrid.RowsDefaultCellStyle = dataGridViewCellStyle5;
             this.ApprovalDataGrid.RowTemplate.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.ApprovalDataGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.ApprovalDataGrid.Size = new System.Drawing.Size(1179, 339);
+            this.ApprovalDataGrid.Size = new System.Drawing.Size(1179, 295);
             this.ApprovalDataGrid.TabIndex = 25;
             this.ApprovalDataGrid.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.ApprovalDataGrid_CellFormatting);
             this.ApprovalDataGrid.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.ApprovalDataGrid_CellValueChanged);
+            this.ApprovalDataGrid.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.ApprovalDataGrid_DataBindingComplete);
+            // 
+            // panel14
+            // 
+            this.panel14.Controls.Add(this.panel16);
+            this.panel14.Controls.Add(this.label8);
+            this.panel14.Controls.Add(this.label7);
+            this.panel14.Controls.Add(this.label6);
+            this.panel14.Controls.Add(this.label5);
+            this.panel14.Controls.Add(this.label3);
+            this.panel14.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel14.Location = new System.Drawing.Point(10, 440);
+            this.panel14.Name = "panel14";
+            this.panel14.Size = new System.Drawing.Size(1179, 49);
+            this.panel14.TabIndex = 26;
+            // 
+            // panel16
+            // 
+            this.panel16.Controls.Add(this.ExportButton);
+            this.panel16.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel16.Location = new System.Drawing.Point(1036, 0);
+            this.panel16.Name = "panel16";
+            this.panel16.Size = new System.Drawing.Size(143, 49);
+            this.panel16.TabIndex = 45;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.Location = new System.Drawing.Point(335, 26);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(343, 15);
+            this.label8.TabIndex = 44;
+            this.label8.Text = "COPQ PIC → COPQ Process In-Charge → Supervisor → Manager";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(276, 26);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(61, 15);
+            this.label7.TabIndex = 43;
+            this.label7.Text = "Receiving:";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(4, 26);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(58, 15);
+            this.label6.TabIndex = 42;
+            this.label6.Text = "Applying:";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(60, 26);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(195, 15);
+            this.label5.TabIndex = 41;
+            this.label5.Text = "COPQ PIC → Supervisor → Manager";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(3, 3);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(134, 19);
+            this.label3.TabIndex = 40;
+            this.label3.Text = "Approval Workflow:";
+            // 
+            // panel15
+            // 
+            this.panel15.Controls.Add(this.ApprovalDataGrid);
+            this.panel15.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel15.Location = new System.Drawing.Point(10, 140);
+            this.panel15.Name = "panel15";
+            this.panel15.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
+            this.panel15.Size = new System.Drawing.Size(1179, 300);
+            this.panel15.TabIndex = 27;
             // 
             // ApprovalForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(1199, 489);
-            this.Controls.Add(this.ApprovalDataGrid);
+            this.ClientSize = new System.Drawing.Size(1199, 499);
+            this.Controls.Add(this.panel15);
+            this.Controls.Add(this.panel14);
             this.Controls.Add(this.panel5);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ApprovalForm";
             this.Padding = new System.Windows.Forms.Padding(10);
-            this.Text = "Approval Form";
+            this.Text = "COPQ Approval Form";
             this.Load += new System.EventHandler(this.ApprovalForm_Load);
             this.panel3.ResumeLayout(false);
             this.panel4.ResumeLayout(false);
@@ -535,8 +683,11 @@
             this.panel7.ResumeLayout(false);
             this.panel7.PerformLayout();
             this.panel8.ResumeLayout(false);
-            this.panel8.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ApprovalDataGrid)).EndInit();
+            this.panel14.ResumeLayout(false);
+            this.panel14.PerformLayout();
+            this.panel16.ResumeLayout(false);
+            this.panel15.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -557,7 +708,6 @@
         private System.Windows.Forms.Panel panel7;
         private System.Windows.Forms.TextBox SearchBox;
         private System.Windows.Forms.Panel panel8;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button ExportButton;
         private System.Windows.Forms.CheckBox SelectAllChkBox;
         private System.Windows.Forms.Timer FrefreshDatagridTimer;
@@ -573,7 +723,18 @@
         private System.Windows.Forms.Label TypeText;
         private System.Windows.Forms.DataGridView ApprovalDataGrid;
         private System.Windows.Forms.CheckBox ExcludeCheckBox;
+        private System.Windows.Forms.Button SearchButton;
+        private System.Windows.Forms.Button ApproveAllPendingBtn;
+        private System.Windows.Forms.Button GeneratePreviousQIForConfirmationBtn;
+        private System.Windows.Forms.Panel panel14;
+        private System.Windows.Forms.Panel panel15;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Panel panel11;
         private System.Windows.Forms.Label ApprovalCount;
+        private System.Windows.Forms.Panel panel16;
     }
 }

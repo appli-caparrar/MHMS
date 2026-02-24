@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UploadTemplateForm));
             this.TopPanel = new System.Windows.Forms.Panel();
             this.DateTimeLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -38,12 +39,12 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.ChooseFileButton = new System.Windows.Forms.Button();
             this.FilePath = new System.Windows.Forms.TextBox();
-            this.UploadUserButton = new System.Windows.Forms.Button();
             this.UploadedUserDataGrid = new System.Windows.Forms.DataGridView();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.RadioButtonHeaderYes = new System.Windows.Forms.RadioButton();
             this.label3 = new System.Windows.Forms.Label();
             this.BrowseButton = new System.Windows.Forms.Button();
+            this.UploadUserButton = new System.Windows.Forms.Button();
             this.TopPanel.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.UploadedUserDataGrid)).BeginInit();
@@ -123,21 +124,6 @@
             this.FilePath.Size = new System.Drawing.Size(573, 18);
             this.FilePath.TabIndex = 1;
             // 
-            // UploadUserButton
-            // 
-            this.UploadUserButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(217)))), ((int)(((byte)(167)))));
-            this.UploadUserButton.FlatAppearance.BorderSize = 0;
-            this.UploadUserButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.UploadUserButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UploadUserButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(35)))), ((int)(((byte)(53)))));
-            this.UploadUserButton.Location = new System.Drawing.Point(634, 377);
-            this.UploadUserButton.Name = "UploadUserButton";
-            this.UploadUserButton.Size = new System.Drawing.Size(128, 35);
-            this.UploadUserButton.TabIndex = 9;
-            this.UploadUserButton.Text = "UPLOAD";
-            this.UploadUserButton.UseVisualStyleBackColor = false;
-            this.UploadUserButton.Click += new System.EventHandler(this.UploadUserButton_Click);
-            // 
             // UploadedUserDataGrid
             // 
             this.UploadedUserDataGrid.AllowUserToAddRows = false;
@@ -203,6 +189,23 @@
             this.BrowseButton.UseVisualStyleBackColor = false;
             this.BrowseButton.Click += new System.EventHandler(this.BrowseButton_Click);
             // 
+            // UploadUserButton
+            // 
+            this.UploadUserButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(69)))), ((int)(((byte)(180)))));
+            this.UploadUserButton.FlatAppearance.BorderSize = 0;
+            this.UploadUserButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.UploadUserButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UploadUserButton.ForeColor = System.Drawing.Color.White;
+            this.UploadUserButton.Image = global::MHMS.Properties.Resources.upload_3_24;
+            this.UploadUserButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.UploadUserButton.Location = new System.Drawing.Point(634, 377);
+            this.UploadUserButton.Name = "UploadUserButton";
+            this.UploadUserButton.Size = new System.Drawing.Size(128, 35);
+            this.UploadUserButton.TabIndex = 9;
+            this.UploadUserButton.Text = "  UPLOAD";
+            this.UploadUserButton.UseVisualStyleBackColor = false;
+            this.UploadUserButton.Click += new System.EventHandler(this.UploadUserButton_Click);
+            // 
             // UploadTemplateForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -216,6 +219,7 @@
             this.Controls.Add(this.UploadUserButton);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.TopPanel);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "UploadTemplateForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProcessInchargeForm));
             this.TopPanel = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.ApproveButton = new System.Windows.Forms.Button();
@@ -69,7 +70,7 @@
             // 
             // ApproveButton
             // 
-            this.ApproveButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(168)))), ((int)(((byte)(101)))));
+            this.ApproveButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(55)))), ((int)(((byte)(111)))), ((int)(((byte)(238)))));
             this.ApproveButton.FlatAppearance.BorderSize = 0;
             this.ApproveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ApproveButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -78,7 +79,7 @@
             this.ApproveButton.Name = "ApproveButton";
             this.ApproveButton.Size = new System.Drawing.Size(74, 30);
             this.ApproveButton.TabIndex = 31;
-            this.ApproveButton.Text = "APPROVE";
+            this.ApproveButton.Text = "PROCEED";
             this.ApproveButton.UseVisualStyleBackColor = false;
             this.ApproveButton.Click += new System.EventHandler(this.ApproveButton_Click);
             // 
@@ -183,6 +184,7 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.TopPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "ProcessInchargeForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

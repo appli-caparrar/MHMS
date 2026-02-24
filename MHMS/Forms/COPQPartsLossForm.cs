@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MHMS.Connection;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
@@ -19,11 +20,11 @@ namespace MHMS.Forms
     public partial class COPQPartsLossForm : Form
     {
         //Connection String
-        static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS"].ConnectionString;
+        //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS_ACTUAL"].ConnectionString;
         //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS2"].ConnectionString;
 
         //SQL Connection
-        SqlConnection con = new SqlConnection(MHMS_Conn);
+        SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn);
 
         public COPQPartsLossForm()
         {
@@ -61,7 +62,7 @@ namespace MHMS.Forms
 
             LoadSection(); // Load section list from db to combobox
 
-            if (LoginForm.UserSection == "BPS" || LoginForm.UserSection == "Production Engineering")
+            if (LoginForm.UserSection == "BPS")
             {
                 SectionDropdown.Text = "";
             }
@@ -117,10 +118,6 @@ namespace MHMS.Forms
             }
 
             if (Dashboard.SectionText == "BIPH-BPS")
-            {
-                SelectPartsLossData(); // Load Parts loss data based on selected section -> this is for admin section user
-            }
-            else if (Dashboard.SectionText == "BIPH-Production Engineering")
             {
                 SelectPartsLossData(); // Load Parts loss data based on selected section -> this is for admin section user
 
@@ -283,15 +280,33 @@ namespace MHMS.Forms
                     con.Open();
                 }
 
-                // -> SQL query to select Section Approver setting
-                SqlCommand SelectDefectData = new SqlCommand("SP_LoadDefectData", con);
-                SelectDefectData.CommandType = CommandType.StoredProcedure;
-                SqlDataAdapter sda = new SqlDataAdapter(SelectDefectData);
-                DataTable dt = new DataTable();
-                sda.Fill(dt);
-                PartsLossDataGridView.DataSource = dt;
-                con.Close();
-
+                if (ShowEntriesDropdown.Text == "All")
+                {
+                    // -> SQL query to select Section Approver setting
+                    SqlCommand SelectDefectData = new SqlCommand("SP_LoadDefectData", con);
+                    SelectDefectData.CommandType = CommandType.StoredProcedure;
+                    SelectDefectData.Parameters.AddWithValue("@Procedure", "SelectAll");
+                    SelectDefectData.Parameters.AddWithValue("@Entries", "");
+                    SqlDataAdapter sda = new SqlDataAdapter(SelectDefectData);
+                    DataTable dt = new DataTable();
+                    sda.Fill(dt);
+                    PartsLossDataGridView.DataSource = dt;
+                    con.Close();
+                }
+                else
+                {
+                    // -> SQL query to select Section Approver setting
+                    SqlCommand SelectDefectData = new SqlCommand("SP_LoadDefectData", con);
+                    SelectDefectData.CommandType = CommandType.StoredProcedure;
+                    SelectDefectData.Parameters.AddWithValue("@Procedure", "SelectEntries");
+                    SelectDefectData.Parameters.AddWithValue("@Entries", ShowEntriesDropdown.Text);
+                    SqlDataAdapter sda = new SqlDataAdapter(SelectDefectData);
+                    DataTable dt = new DataTable();
+                    sda.Fill(dt);
+                    PartsLossDataGridView.DataSource = dt;
+                    con.Close();
+                }
+               
                 //Hide column ID in datagridview
                 PartsLossDataGridView.Columns["ID"].Visible = false;
 
@@ -327,14 +342,14 @@ namespace MHMS.Forms
 
         //===================================================================================================================================
 
-        // ---> Set the date always to first day of the current month
+        // ---> Set the datetime picker value to first day of the current month
         private void DateFrom()
         {
             DateTime now = DateTime.Now;
             FromDateTimePicker.Value = new DateTime(now.Year, now.Month, 1);
         }// <---- end
 
-        //===================================================================================================================================
+        //===============================================================================================================================
 
         private void DateTo()
         {
@@ -346,7 +361,9 @@ namespace MHMS.Forms
 
         private void ViewGraph_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Hi " + LoginForm.FirstName + ", The tableau graph visualization is currently under construction. Thank you!");
+          
+            OpenGraphForm openGraph = new OpenGraphForm();
+            openGraph.ShowDialog();
 
         }// <---- end
 
@@ -358,31 +375,17 @@ namespace MHMS.Forms
             UpdatePartsLossData2 UpdateData = new UpdatePartsLossData2();
             UpdateData.ShowDialog();
 
-            //if (Dashboard.SectionText == "BIPH-BPS")
-            //{
-            //    UpdateDataButton.Enabled = true;
-            //    UpdatePartsLossData UpdateData = new UpdatePartsLossData();
-            //    UpdateData.ShowDialog();
-            //    //UpdateDataButton.BackColor = Color.FromArgb(21, 35, 53);
-            //}
-            //else if (Dashboard.SectionText == "BIPH-Production Engineering")
-            //{
-            //    UpdateDataButton.Enabled = true;
-            //    UpdatePartsLossData UpdateData = new UpdatePartsLossData();
-            //    UpdateData.ShowDialog();
-            //    //UpdateDataButton.BackColor = Color.FromArgb(21, 35, 53);
-            //}
-            //else
-            //{
-            //    //UpdateDataButton.Enabled = false;
-            //    MessageBox.Show("You are not authorized to update data!", "Warning");
-            //}
-        } // <---- end
+        } 
 
         //===================================================================================================================================
 
+        bool DefectBtnClicked;
+        bool PartLossBtnClicked;
         private void DefectButton_Click(object sender, EventArgs e)
         {
+            DefectBtnClicked = true;
+            PartLossBtnClicked = false;
+
             DefectButton.BackColor = Color.FromArgb(69, 185, 175);
             DefectButton.ForeColor = Color.FromArgb(21, 35, 53);
 
@@ -404,6 +407,9 @@ namespace MHMS.Forms
 
         private void PartsLossButton_Click(object sender, EventArgs e)
         {
+            DefectBtnClicked = false;
+            PartLossBtnClicked = true;
+
             PartsLossButton.BackColor = Color.FromArgb(69, 185, 175);
             PartsLossButton.ForeColor = Color.FromArgb(21, 35, 53);
 
@@ -413,7 +419,7 @@ namespace MHMS.Forms
             //Set section dropdown text to tape cassette
             SectionDropdown.Text = "Tape Cassette";
 
-            SelectPartsLossData(); // load data from db
+            SelectPartsLossDataBaseOnDropdownEntries();
         } // <---- end
 
         //===================================================================================================================================
@@ -541,12 +547,12 @@ namespace MHMS.Forms
                     GetTotalAdjustedAmount();
                     FormatHeaderText();
                 }
-                else if (SectionDropdown.Text == "Production Engineering")
+                else if (SectionDropdown.Text == "BPS")
                 {
                     // -> SQL query to select Production Engineering parts loss data
                     SqlCommand SelectPartsLossData = new SqlCommand("SP_SelectPartsLossData", con);
                     SelectPartsLossData.CommandType = CommandType.StoredProcedure;
-                    SelectPartsLossData.Parameters.AddWithValue("@Procedure", "SelectProductionEngineeringPartsLossData");
+                    SelectPartsLossData.Parameters.AddWithValue("@Procedure", "SelectBPSPartsLossData");
                     SelectPartsLossData.Parameters.AddWithValue("@Entries", ShowEntriesDropdown.Text);
                     SqlDataAdapter sda = new SqlDataAdapter(SelectPartsLossData);
                     DataTable dt = new DataTable();
@@ -574,7 +580,7 @@ namespace MHMS.Forms
                     FormatHeaderText();
                 }
             }
-            else if (Dashboard.SectionText == "BIPH-Production Engineering")
+            else if (Dashboard.SectionText == "BIPH-BPS")
             {
                 if (SectionDropdown.Text == "Ink Cartridge")
                 {
@@ -672,12 +678,12 @@ namespace MHMS.Forms
                     GetTotalAdjustedAmount();
                     FormatHeaderText();
                 }
-                else if (SectionDropdown.Text == "Production Engineering")
+                else if (SectionDropdown.Text == "BPS")
                 {
                     // -> SQL query to select Production Engineering parts loss data
                     SqlCommand SelectPartsLossData = new SqlCommand("SP_SelectPartsLossData", con);
                     SelectPartsLossData.CommandType = CommandType.StoredProcedure;
-                    SelectPartsLossData.Parameters.AddWithValue("@Procedure", "SelectProductionEngineeringPartsLossData");
+                    SelectPartsLossData.Parameters.AddWithValue("@Procedure", "SelectBPSPartsLossData");
                     SelectPartsLossData.Parameters.AddWithValue("@Entries", ShowEntriesDropdown.Text);
                     SqlDataAdapter sda = new SqlDataAdapter(SelectPartsLossData);
                     DataTable dt = new DataTable();
@@ -849,7 +855,7 @@ namespace MHMS.Forms
                 con.Close();
 
             }
-            else if (SectionDropdown.Text == "Production Engineering")
+            else if (SectionDropdown.Text == "BPS")
             {
                 // Check Connection status -> Open connection if the connection is closed
                 if (con.State == ConnectionState.Closed)
@@ -860,7 +866,7 @@ namespace MHMS.Forms
                 // -> SQL query to select Ink cartridge gmms data by date selected 
                 SqlCommand SelectPartsLossDataByDate = new SqlCommand("SP_SelectPartsLossDataByDate", con);
                 SelectPartsLossDataByDate.CommandType = CommandType.StoredProcedure;
-                SelectPartsLossDataByDate.Parameters.AddWithValue("@Procedure", "SelectProductionEngineeringPartsLossDataByDate");
+                SelectPartsLossDataByDate.Parameters.AddWithValue("@Procedure", "SelectBPSPartsLossDataByDate");
                 SelectPartsLossDataByDate.Parameters.AddWithValue("@Entries", ShowEntriesDropdown.Text);
                 SelectPartsLossDataByDate.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
                 SelectPartsLossDataByDate.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
@@ -1012,34 +1018,34 @@ namespace MHMS.Forms
             }
             else if (SectionDropdown.Text == "Molding Production")
             {
-                // -> SQL query to select Total Adjusted Amount
-                SqlCommand MoldingTotalAdjustedAmount = new SqlCommand("SP_SelectTotalAdjustedAmount", con);
-                MoldingTotalAdjustedAmount.CommandType = CommandType.StoredProcedure;
-                MoldingTotalAdjustedAmount.Parameters.AddWithValue("@Procedure", "MoldingTotalAdjustedAmount");
-                MoldingTotalAdjustedAmount.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
-                MoldingTotalAdjustedAmount.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
-                SqlDataAdapter da = new SqlDataAdapter(MoldingTotalAdjustedAmount);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
+                //// -> SQL query to select Total Adjusted Amount
+                //SqlCommand MoldingTotalAdjustedAmount = new SqlCommand("SP_SelectTotalAdjustedAmount", con);
+                //MoldingTotalAdjustedAmount.CommandType = CommandType.StoredProcedure;
+                //MoldingTotalAdjustedAmount.Parameters.AddWithValue("@Procedure", "MoldingTotalAdjustedAmount");
+                //MoldingTotalAdjustedAmount.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
+                //MoldingTotalAdjustedAmount.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
+                //SqlDataAdapter da = new SqlDataAdapter(MoldingTotalAdjustedAmount);
+                //DataTable dt = new DataTable();
+                //da.Fill(dt);
 
-                if (dt.Rows.Count > 0)
-                {
-                    SqlDataReader reader = MoldingTotalAdjustedAmount.ExecuteReader();
-                    if (reader.Read())
-                    {
-                        if (reader["TotalAmount"].ToString() == "" || reader["TotalAmount"].ToString() == null)
-                        {
-                            //no action
-                        }
-                        else
-                        {
-                            TotalAdjAmount = Convert.ToDecimal(reader["TotalAmount"].ToString());
-                        }
-                    }
-                }
-                con.Close();
+                //if (dt.Rows.Count > 0)
+                //{
+                //    SqlDataReader reader = MoldingTotalAdjustedAmount.ExecuteReader();
+                //    if (reader.Read())
+                //    {
+                //        if (reader["TotalAmount"].ToString() == "" || reader["TotalAmount"].ToString() == null)
+                //        {
+                //            //no action
+                //        }
+                //        else
+                //        {
+                //            TotalAdjAmount = Convert.ToDecimal(reader["TotalAmount"].ToString());
+                //        }
+                //    }
+                //}
+                //con.Close();
 
-                TotalAdjustedAmount.Text = Math.Round(TotalAdjAmount, 4, MidpointRounding.ToEven).ToString();
+                //TotalAdjustedAmount.Text = Math.Round(TotalAdjAmount, 4, MidpointRounding.ToEven).ToString();
             }
             else if (SectionDropdown.Text == "PCBA")
             {
@@ -1103,21 +1109,21 @@ namespace MHMS.Forms
 
                 TotalAdjustedAmount.Text = Math.Round(TotalAdjAmount, 4, MidpointRounding.ToEven).ToString();
             }
-            else if (SectionDropdown.Text == "Production Engineering")
+            else if (SectionDropdown.Text == "BPS")
             {
                 // -> SQL query to select Total Adjusted Amount
-                SqlCommand ProductionEngineeringTotalAdjustedAmount = new SqlCommand("SP_SelectTotalAdjustedAmount", con);
-                ProductionEngineeringTotalAdjustedAmount.CommandType = CommandType.StoredProcedure;
-                ProductionEngineeringTotalAdjustedAmount.Parameters.AddWithValue("@Procedure", "ProductionEngineeringTotalAdjustedAmount");
-                ProductionEngineeringTotalAdjustedAmount.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
-                ProductionEngineeringTotalAdjustedAmount.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
-                SqlDataAdapter da = new SqlDataAdapter(ProductionEngineeringTotalAdjustedAmount);
+                SqlCommand BPSTotalAdjustedAmount = new SqlCommand("SP_SelectTotalAdjustedAmount", con);
+                BPSTotalAdjustedAmount.CommandType = CommandType.StoredProcedure;
+                BPSTotalAdjustedAmount.Parameters.AddWithValue("@Procedure", "BPSTotalAdjustedAmount");
+                BPSTotalAdjustedAmount.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
+                BPSTotalAdjustedAmount.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
+                SqlDataAdapter da = new SqlDataAdapter(BPSTotalAdjustedAmount);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
 
                 if (dt.Rows.Count > 0)
                 {
-                    SqlDataReader reader = ProductionEngineeringTotalAdjustedAmount.ExecuteReader();
+                    SqlDataReader reader = BPSTotalAdjustedAmount.ExecuteReader();
                     if (reader.Read())
                     {
                         if (reader["TotalAmount"].ToString() == "" || reader["TotalAmount"].ToString() == null)
@@ -1204,13 +1210,6 @@ namespace MHMS.Forms
         decimal TotalAdjAmount;
         private void GetTotalAdjustedAmount()
         {
-            //foreach (DataGridViewRow row in PartsLossDataGridView.Rows)
-            //{
-            //    {
-            //        TotalAmount += Convert.ToDecimal(row.Cells["Adjusted Amount"].Value);
-            //    }
-            //}
-
          
             //Check Connection status->Open connection if the connection is closed
             if (con.State == ConnectionState.Closed)
@@ -1246,10 +1245,6 @@ namespace MHMS.Forms
             {
                 GetTotalAdjustedAmountBySection();
             }
-            else if (Dashboard.SectionText == "BIPH-Production Engineering")
-            {
-                GetTotalAdjustedAmountBySection();
-            }
             else if (Dashboard.SectionText == "BIPH-P-Touch")
             {
                 GetTotalAdjustedAmountBySection();
@@ -1266,10 +1261,6 @@ namespace MHMS.Forms
 
         //===================================================================================================================================
 
-        private void ProgressbarTimer_Tick(object sender, EventArgs e)
-        {
-            DataProgressBar.Visible = false;
-        }
 
         //===================================================================================================================================
         private void copyAlltoClipboardsss()
@@ -1402,6 +1393,12 @@ namespace MHMS.Forms
                 sda.Fill(dt);
                 PartsLossDataGridView.DataSource = dt;
                 con.Close();
+                
+                if (dt.Rows.Count < 1)
+                {
+                    MessageBox.Show("No data found!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+                    
             }
             else if (SectionDropdown.Text == "Tape Cassette")
             {
@@ -1415,6 +1412,11 @@ namespace MHMS.Forms
                 sda.Fill(dt);
                 PartsLossDataGridView.DataSource = dt;
                 con.Close();
+
+                if (dt.Rows.Count < 1)
+                {
+                    MessageBox.Show("No data found!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
             }
             else if (SectionDropdown.Text == "Ink Head")
             {
@@ -1428,6 +1430,11 @@ namespace MHMS.Forms
                 sda.Fill(dt);
                 PartsLossDataGridView.DataSource = dt;
                 con.Close();
+
+                if (dt.Rows.Count < 1)
+                {
+                    MessageBox.Show("No data found!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
             }
             else if (SectionDropdown.Text == "Molding Production")
             {
@@ -1441,6 +1448,11 @@ namespace MHMS.Forms
                 sda.Fill(dt);
                 PartsLossDataGridView.DataSource = dt;
                 con.Close();
+
+                if (dt.Rows.Count < 1)
+                {
+                    MessageBox.Show("No data found!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
             }
             else if (SectionDropdown.Text == "PCBA")
             {
@@ -1454,6 +1466,11 @@ namespace MHMS.Forms
                 sda.Fill(dt);
                 PartsLossDataGridView.DataSource = dt;
                 con.Close();
+
+                if (dt.Rows.Count < 1)
+                {
+                    MessageBox.Show("No data found!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
             }
             else if (SectionDropdown.Text == "Printer")
             {
@@ -1467,6 +1484,11 @@ namespace MHMS.Forms
                 sda.Fill(dt);
                 PartsLossDataGridView.DataSource = dt;
                 con.Close();
+
+                if (dt.Rows.Count < 1)
+                {
+                    MessageBox.Show("No data found!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
             }
             else if (SectionDropdown.Text == "P-Touch")
             {
@@ -1480,19 +1502,29 @@ namespace MHMS.Forms
                 sda.Fill(dt);
                 PartsLossDataGridView.DataSource = dt;
                 con.Close();
+
+                if (dt.Rows.Count < 1)
+                {
+                    MessageBox.Show("No data found!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
             }
-            else if (SectionDropdown.Text == "Production Engineering")
+            else if (SectionDropdown.Text == "BPS")
             {
                 // -> SQL query to search PE Parts loss data
                 SqlCommand SearchTapeCassettePartLossData = new SqlCommand("SP_SearchPartLossData", con);
                 SearchTapeCassettePartLossData.CommandType = CommandType.StoredProcedure;
-                SearchTapeCassettePartLossData.Parameters.AddWithValue("@Procedure", "SearchProductionEngineeringPartLossData");
+                SearchTapeCassettePartLossData.Parameters.AddWithValue("@Procedure", "SearchBPSPartLossData");
                 SearchTapeCassettePartLossData.Parameters.AddWithValue("@Search", SearchBox.Text);
                 SqlDataAdapter sda = new SqlDataAdapter(SearchTapeCassettePartLossData);
                 DataTable dt = new DataTable();
                 sda.Fill(dt);
                 PartsLossDataGridView.DataSource = dt;
                 con.Close();
+
+                if (dt.Rows.Count < 1)
+                {
+                    MessageBox.Show("No data found!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
             }
         }
 
@@ -1646,43 +1678,43 @@ namespace MHMS.Forms
             }
             else if (SectionDropdown.Text == "Molding Production")
             {
-                if (ShowEntriesDropdown.Text == "All")
-                {
-                    // -> SQL query to select parts loss data setting
-                    SqlCommand SelectInkCartridgePartsLossData = new SqlCommand("SP_SelectPartsLossDataBaseOnDropdownEntries", con);
-                    SelectInkCartridgePartsLossData.CommandType = CommandType.StoredProcedure;
-                    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@Section", "Molding");
-                    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@Procedure", "SelectAll");
-                    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
-                    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
-                    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@Value", "");
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectInkCartridgePartsLossData);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    PartsLossDataGridView.DataSource = dt;
-                    con.Close();
+                //if (ShowEntriesDropdown.Text == "All")
+                //{
+                //    // -> SQL query to select parts loss data setting
+                //    SqlCommand SelectInkCartridgePartsLossData = new SqlCommand("SP_SelectPartsLossDataBaseOnDropdownEntries", con);
+                //    SelectInkCartridgePartsLossData.CommandType = CommandType.StoredProcedure;
+                //    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@Section", "Molding");
+                //    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@Procedure", "SelectAll");
+                //    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
+                //    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
+                //    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@Value", "");
+                //    SqlDataAdapter sda = new SqlDataAdapter(SelectInkCartridgePartsLossData);
+                //    DataTable dt = new DataTable();
+                //    sda.Fill(dt);
+                //    PartsLossDataGridView.DataSource = dt;
+                //    con.Close();
 
-                    GetTotalAdjustedAmount();
+                //    GetTotalAdjustedAmount();
 
-                }
-                else
-                {
-                    // -> SQL query to select parts loss data setting
-                    SqlCommand SelectInkCartridgePartsLossData = new SqlCommand("SP_SelectPartsLossDataBaseOnDropdownEntries", con);
-                    SelectInkCartridgePartsLossData.CommandType = CommandType.StoredProcedure;
-                    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@Section", "Molding");
-                    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@Procedure", "SelectBasedOnEntriesValue");
-                    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
-                    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
-                    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@Value", ShowEntriesDropdown.Text);
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectInkCartridgePartsLossData);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    PartsLossDataGridView.DataSource = dt;
-                    con.Close();
+                //}
+                //else
+                //{
+                //    // -> SQL query to select parts loss data setting
+                //    SqlCommand SelectInkCartridgePartsLossData = new SqlCommand("SP_SelectPartsLossDataBaseOnDropdownEntries", con);
+                //    SelectInkCartridgePartsLossData.CommandType = CommandType.StoredProcedure;
+                //    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@Section", "Molding");
+                //    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@Procedure", "SelectBasedOnEntriesValue");
+                //    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
+                //    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
+                //    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@Value", ShowEntriesDropdown.Text);
+                //    SqlDataAdapter sda = new SqlDataAdapter(SelectInkCartridgePartsLossData);
+                //    DataTable dt = new DataTable();
+                //    sda.Fill(dt);
+                //    PartsLossDataGridView.DataSource = dt;
+                //    con.Close();
 
-                    GetTotalAdjustedAmount();
-                }
+                //    GetTotalAdjustedAmount();
+                //}
             }
             else if (SectionDropdown.Text == "PCBA")
             {
@@ -1764,14 +1796,14 @@ namespace MHMS.Forms
                     GetTotalAdjustedAmount();
                 }
             }
-            else if (SectionDropdown.Text == "Production Engineering")
+            else if (SectionDropdown.Text == "BPS")
             {
                 if (ShowEntriesDropdown.Text == "All")
                 {
                     // -> SQL query to select parts loss data setting
                     SqlCommand SelectInkCartridgePartsLossData = new SqlCommand("SP_SelectPartsLossDataBaseOnDropdownEntries", con);
                     SelectInkCartridgePartsLossData.CommandType = CommandType.StoredProcedure;
-                    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@Section", "ProductionEngineering");
+                    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@Section", "BPS");
                     SelectInkCartridgePartsLossData.Parameters.AddWithValue("@Procedure", "SelectAll");
                     SelectInkCartridgePartsLossData.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
                     SelectInkCartridgePartsLossData.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
@@ -1790,7 +1822,7 @@ namespace MHMS.Forms
                     // -> SQL query to select parts loss data setting
                     SqlCommand SelectInkCartridgePartsLossData = new SqlCommand("SP_SelectPartsLossDataBaseOnDropdownEntries", con);
                     SelectInkCartridgePartsLossData.CommandType = CommandType.StoredProcedure;
-                    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@Section", "ProductionEngineering");
+                    SelectInkCartridgePartsLossData.Parameters.AddWithValue("@Section", "BPS");
                     SelectInkCartridgePartsLossData.Parameters.AddWithValue("@Procedure", "SelectBasedOnEntriesValue");
                     SelectInkCartridgePartsLossData.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
                     SelectInkCartridgePartsLossData.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
@@ -1848,10 +1880,7 @@ namespace MHMS.Forms
 
         //===================================================================================================================================
 
-        private void DropdownValue_TextChanged(object sender, EventArgs e)
-        {
-            
-        }
+   
 
         //===================================================================================================================================
 
@@ -1868,32 +1897,33 @@ namespace MHMS.Forms
 
         private void ShowTopDefectButton_Click(object sender, EventArgs e)
         {
-            if (Dashboard.SectionText == "BIPH-Tape Cassette")
-            {
-                //Disable Section Dropdown
-                DisableSectionDropdown();
+            Process.Start(@"https://bi.datalake.brother.co.jp/#/site/biph/views/Top5DefectRecurrence/Top5DefectRecurrence?:iid=6");
+            //if (Dashboard.SectionText == "BIPH-Tape Cassette")
+            //{
+            //    //Disable Section Dropdown
+            //    DisableSectionDropdown();
 
-                // Check Connection status -> Open connection if the connection is closed
-                if (con.State == ConnectionState.Closed)
-                {
-                    con.Open();
-                }
+            //    // Check Connection status -> Open connection if the connection is closed
+            //    if (con.State == ConnectionState.Closed)
+            //    {
+            //        con.Open();
+            //    }
 
-                SqlCommand SelectDefectData = new SqlCommand("SP_SelectTop5DefectRecurrence", con);
-                SelectDefectData.CommandType = CommandType.StoredProcedure;
-                SqlDataAdapter sda = new SqlDataAdapter(SelectDefectData);
-                DataTable dt = new DataTable();
-                sda.Fill(dt);
-                PartsLossDataGridView.DataSource = dt;
-                con.Close();
+            //    SqlCommand SelectDefectData = new SqlCommand("SP_SelectTop5DefectRecurrence", con);
+            //    SelectDefectData.CommandType = CommandType.StoredProcedure;
+            //    SqlDataAdapter sda = new SqlDataAdapter(SelectDefectData);
+            //    DataTable dt = new DataTable();
+            //    sda.Fill(dt);
+            //    PartsLossDataGridView.DataSource = dt;
+            //    con.Close();
 
-                PartsLossDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                PartsLossDataGridView.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            //    PartsLossDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            //    PartsLossDataGridView.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
-                ////Hide column ID in datagridview
-                //PartsLossDataGridView.Columns["ID"].Visible = false;
+            //    ////Hide column ID in datagridview
+            //    //PartsLossDataGridView.Columns["ID"].Visible = false;
 
-            }
+            //}
         }
 
 
@@ -1913,8 +1943,31 @@ namespace MHMS.Forms
 
         private void ShowEntriesDropdown_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SelectPartsLossDataBaseOnDropdownEntries();
 
+            if (Dashboard.SectionText.Replace("BIPH-", "") == "Tape Cassette")
+            {
+                if (DefectBtnClicked == true)
+                {
+                    PartLossBtnClicked = false;
+
+                    //Load all defect data to datagrid
+                    LoadDefectData();
+                }
+                else if (PartLossBtnClicked == true)
+                {
+                    DefectBtnClicked = false;
+                    SelectPartsLossDataBaseOnDropdownEntries();
+                }
+                else
+                {
+                    SelectPartsLossDataBaseOnDropdownEntries();
+                }
+            }
+            else
+            {
+                SelectPartsLossDataBaseOnDropdownEntries();
+            }
+            
             ShowEntriesDropdown.ForeColor = Color.FromArgb(21, 35, 53);
         }
 
@@ -1922,6 +1975,13 @@ namespace MHMS.Forms
         {
             //SelectPartsLossData(); // load data from db
         }
+
+        private void SearchButton_Click(object sender, EventArgs e)
+        {
+            SearchPartsLossData();
+        }
+
+
 
 
         //=============================================================================================================================>>>>>>>>>>>

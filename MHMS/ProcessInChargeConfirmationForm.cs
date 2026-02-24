@@ -1,4 +1,5 @@
-﻿using MHMS.Forms;
+﻿using MHMS.Connection;
+using MHMS.Forms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,11 +17,11 @@ namespace MHMS
     public partial class ProcessInChargeConfirmationForm : Form
     {
         // Connection string
-        static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS"].ConnectionString;
+        //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS_ACTUAL"].ConnectionString;
         //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS2"].ConnectionString;
 
         // SQL Connection
-        SqlConnection con = new SqlConnection(MHMS_Conn);
+        SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn);
 
         public ProcessInChargeConfirmationForm()
         {
@@ -32,7 +33,7 @@ namespace MHMS
             LineStopDetail.Text = ApprovalForm.LineStopDetail;
         }
 
-        private void ApproveButton_Click(object sender, EventArgs e)
+        private async void ApproveButton_Click(object sender, EventArgs e)
         {
             if (CauseTextBox.Text == "")
             {
@@ -46,7 +47,7 @@ namespace MHMS
             {
                 try
                 {
-                    UpdateApprovalStatus();
+                    await UpdateApprovalStatus();
                 }
                     catch (Exception ex)
                 {
@@ -55,57 +56,136 @@ namespace MHMS
             }
         }
 
-        private void UpdateApprovalStatus()
+        private async Task UpdateApprovalStatus()
         {
-            // -> SQL query to insert user account
-            if (con.State == ConnectionState.Closed)
+            try
             {
-                con.Open();
+               
+                await con.OpenAsync();
+
+                if (LoginForm.ProcessInCharge == "✔️")
+                {
+                    using (SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateApprovalStatus", con))
+                    {
+                        UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
+                        UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "ApprovedBySectionCOPQProcessInCharge");
+                        UpdateApprovalStatus.Parameters.AddWithValue("@DistinctionCode", ApprovalForm.DistinctionCode);
+                        UpdateApprovalStatus.Parameters.AddWithValue("@Reason", "");
+                        UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", "");
+                        UpdateApprovalStatus.Parameters.AddWithValue("@Type", ApprovalForm.ApprovalType);
+                        UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "For Approval by SPV");
+                        UpdateApprovalStatus.Parameters.AddWithValue("@CurrentApprover", "Pending Approval");
+                        UpdateApprovalStatus.Parameters.AddWithValue("@ApproverName",
+                            "Approved by " + LoginForm.FirstName + " " + LoginForm.LastName + " " + DateTime.Now.ToString("MM/dd/yyyy hh:mm"));
+
+                        await UpdateApprovalStatus.ExecuteNonQueryAsync();
+                    }
+
+                    await UpdateCauseAndCountemeasure();
+
+                    MessageBox.Show("Approved Successfully!", "DONE", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
-
-
-            if (LoginForm.ProcessInCharge == "✔️")
+            catch (Exception ex)
             {
-                SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateApprovalStatus", con);
-                UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
-                UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "ApprovedBySectionCOPQProcessInCharge");
-                UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetail.Text);
-                UpdateApprovalStatus.Parameters.AddWithValue("@Reason", ""); 
-                UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", "");
-                UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
-                UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
-                UpdateApprovalStatus.Parameters.AddWithValue("@Type", ApprovalForm.ApprovalType);
-                UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "For Approval by SPV");
-                UpdateApprovalStatus.ExecuteNonQuery();
-                con.Close();
-
-                UpdateCauseAndCountemeasure();
-
-                MessageBox.Show("Approved Successfully!", "DONE", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Error: " + ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            //ApprovalForm.ApproveButtonIsClicked = true;
-            this.Close();
+            finally
+            {
+              
+                 con.Close();
+               
+            }
         }
 
-        private void UpdateCauseAndCountemeasure()
-        {
-            // -> SQL query to insert user account
-            if (con.State == ConnectionState.Closed)
-            {
-                con.Open();
-            }
 
-            SqlCommand UpdateCauseAndCountemeasure = new SqlCommand("SP_UpdateCauseAndCountemeasure", con);
-            UpdateCauseAndCountemeasure.CommandType = CommandType.StoredProcedure;
-            UpdateCauseAndCountemeasure.Parameters.AddWithValue("@LineStopDetail", LineStopDetail.Text);
-            UpdateCauseAndCountemeasure.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
-            UpdateCauseAndCountemeasure.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
-            UpdateCauseAndCountemeasure.Parameters.AddWithValue("@Cause", CauseTextBox.Text);
-            UpdateCauseAndCountemeasure.Parameters.AddWithValue("@Countermeasure", CountermeasureTextBox.Text);
-            UpdateCauseAndCountemeasure.ExecuteNonQuery();
-            con.Close();
+        public async Task UpdateCauseAndCountemeasure()
+        {
+            await con.OpenAsync();
+
+            // Use try-catch-finally to ensure proper resource management
+            try
+            {
+                // Create a SqlCommand object to execute the stored procedure
+                using (SqlCommand updateCommand = new SqlCommand("SP_UpdateCauseAndCountemeasure", con))
+                {
+                    updateCommand.CommandType = CommandType.StoredProcedure;
+
+                    // Add parameters explicitly with their data types
+                    updateCommand.Parameters.Add("@DistinctionCode", SqlDbType.VarChar).Value = ApprovalForm.DistinctionCode;
+                    updateCommand.Parameters.Add("@Cause", SqlDbType.VarChar).Value = CauseTextBox.Text;
+                    updateCommand.Parameters.Add("@Countermeasure", SqlDbType.VarChar).Value = CountermeasureTextBox.Text;
+
+                    // Execute the command asynchronously
+                    await updateCommand.ExecuteNonQueryAsync();
+                }
+
+                // Call to insert the submission date asynchronously
+                await InsertCountermeasureSubmissionDateAsync(ApprovalForm.DistinctionCode, DateTime.Now);
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions here
+                MessageBox.Show($"Error: {ex.Message}");
+            }
+            finally
+            {
+                // Close the connection after the operation is complete
+                con.Close(); // Close the connection asynchronously
+            }
         }
 
+        public async Task InsertCountermeasureSubmissionDateAsync(string distinctionCode, DateTime submissionDate)
+        {
+            await con.OpenAsync();  // Open the connection asynchronously
+
+            try
+            {
+                // SQL query to insert DistinctionCode and Date into ActualSubmissionOfCountermeasure
+                string query = "INSERT INTO ActualSubmissionOfCountermeasure (DistinctionCode, Date) VALUES (@DistinctionCode, @Date)";
+
+                // Create a SQL command and add parameters
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    // Add parameters to avoid SQL injection
+                    cmd.Parameters.AddWithValue("@DistinctionCode", distinctionCode);
+                    cmd.Parameters.AddWithValue("@Date", submissionDate);
+
+                    // Execute the command asynchronously
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle any potential exceptions here
+                MessageBox.Show("Error: " + ex.Message);
+            }
+            finally
+            {
+                // Close the connection after the operation is complete
+                con.Close();  // Close the connection asynchronously
+            }
+        }
+
+
+
+
+        private void AttachedFileButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenFileDialog AttachFile = new OpenFileDialog();
+                AttachFile.Filter = "Select Valid Document(*.pdf; *.doc; *.xlsx; *.html; *.jpg)|*.pdf; *.docx; *.xlsx; *.html; *.jpg";
+
+                if (AttachFile.ShowDialog() == DialogResult.OK)
+                {
+                    FileName.Text = AttachFile.FileName;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+        }
     }
 }

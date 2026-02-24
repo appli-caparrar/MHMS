@@ -6,12 +6,13 @@ using System.Windows.Forms;
 using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Configuration;
+using MHMS.Connection;
 
 namespace MHMS
 {
     public partial class UploadTemplateForm : Form
     {
-        static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS"].ConnectionString;
+        //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS_ACTUAL"].ConnectionString;
         //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS2"].ConnectionString;
 
 
@@ -116,7 +117,7 @@ namespace MHMS
                             //intRow = intRow + 1;
 
                             // -> SQL query to insert Section to Approver setting
-                            SqlConnection con = new SqlConnection(MHMS_Conn);
+                            SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn);
 
                             if (con.State == ConnectionState.Closed)
                             {
@@ -156,18 +157,6 @@ namespace MHMS
                 {
                     MessageBox.Show(ex.Message);
                 }
-
-                //DialogResult dialogResult = MessageBox.Show("Successfully Uploaded!", "NOTIFICATION");
-
-                //if (dialogResult == DialogResult.OK)
-                //{
-                //    // -> SQL query to delete null data in user account table
-                //    SqlCommand DeleteNullValue = new SqlCommand("Delete from UserAccount where ADID = @ADID", con);
-                //    DeleteNullValue.CommandType = CommandType.Text;
-                //    DeleteNullValue.Parameters.AddWithValue("@ADID", "");
-                //    DeleteNullValue.ExecuteNonQuery();
-                //    con.Close();
-                //}
             }
         }
 

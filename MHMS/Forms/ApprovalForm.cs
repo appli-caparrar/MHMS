@@ -1,33 +1,41 @@
-﻿using System;
+﻿using MHMS.Class;
+using MHMS.Connection;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+ 
 namespace MHMS.Forms
 {
     public partial class ApprovalForm : Form
     {
 
         //Connection String
-        static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS"].ConnectionString;
+        //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS_ACTUAL"].ConnectionString;
         //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS2"].ConnectionString;
 
         //SQL Connection
-        SqlConnection con = new SqlConnection(MHMS_Conn);
+        SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn);
+
+        private LoadingForm loadingForm;
 
         public ApprovalForm()
         {
             InitializeComponent();
+            loadingForm = new LoadingForm(); // Create loading form instance
         }
 
-        private void AddRole()
+       
+
+        private void LoadApproverTypeList()
         {
             if (LoginForm.COPQPIC == "✔️" && LoginForm.ProcessInCharge == "✔️" && LoginForm.SectionSPV == "✔️")
             {
@@ -35,14 +43,14 @@ namespace MHMS.Forms
                 RoleDropDown.Items.Add("COPQ Process In-Charge");
                 RoleDropDown.Items.Add("SPV");
 
-                //
+                
                 RoleDropDown.Text = "COPQ PIC";
             }
             else if (LoginForm.COPQPIC == "✔️" && LoginForm.ProcessInCharge == "✔️")
             {
                 RoleDropDown.Items.Add("COPQ PIC");
                 RoleDropDown.Items.Add("COPQ Process In-Charge");
-                //
+               
                 RoleDropDown.Text = "COPQ PIC";
             }
             else if (LoginForm.COPQPIC == "✔️" && LoginForm.SectionSPV == "✔️")
@@ -50,7 +58,6 @@ namespace MHMS.Forms
                 RoleDropDown.Items.Add("COPQ PIC");
                 RoleDropDown.Items.Add("SPV");
 
-                //
                 RoleDropDown.Text = "COPQ PIC";
             }
             else if (LoginForm.ProcessInCharge == "✔️" && LoginForm.SectionSPV == "✔️")
@@ -58,31 +65,31 @@ namespace MHMS.Forms
                 RoleDropDown.Items.Add("COPQ Process In-Charge");
                 RoleDropDown.Items.Add("SPV");
 
-                //
+                
                 RoleDropDown.Text = "COPQ Process In-Charge";
             }
             else if (LoginForm.COPQPIC == "✔️")
             {
                 RoleDropDown.Items.Add("COPQ PIC");
-                //
+                
                 RoleDropDown.Text = "COPQ PIC";
             }
             else if (LoginForm.ProcessInCharge == "✔️")
             {
                 RoleDropDown.Items.Add("COPQ Process In-Charge");
-                //
+                
                 RoleDropDown.Text = "COPQ Process In-Charge";
             }
             else if (LoginForm.SectionSPV == "✔️")
             {
                 RoleDropDown.Items.Add("SPV");
-                //
+                
                 RoleDropDown.Text = "SPV";
             }
-            else if (LoginForm.SectionMGR == "✔️")
+            else if (LoginForm.SectionMGR == "✔️" || SectionMenuForm.SectionMGR == "✔️")
             {
                 RoleDropDown.Items.Add("MGR");
-                //
+                
                 RoleDropDown.Text = "MGR";
             }
         }
@@ -91,9 +98,37 @@ namespace MHMS.Forms
         string FullName;
         private void ApprovalForm_Load(object sender, EventArgs e)
         {
+            //if (LoginForm.SectionMGR == "✔️" || SectionMenuForm.SectionMGR == "✔️")
+            //{
+            //    MessageBox.Show("TESSSTTTTT");
+            //}
+               
+            //System.Globalization.CultureInfo ci = new System.Globalization.CultureInfo("en-PH");
+            //System.Threading.Thread.CurrentThread.CurrentCulture = ci;
+
+            //Temporary
+            if (Dashboard.SectionText.Replace("BIPH-", "") == "Quality Innovation")
+            {
+                GeneratePreviousQIForConfirmationBtn.Visible = true;
+            }
+            else
+            {
+                GeneratePreviousQIForConfirmationBtn.Visible = false;
+            }
+
+           
+            if (Dashboard.SectionText.Replace("BIPH-", "") == "BPS" && Dashboard.AccountType == "ADMIN")
+            {
+                ApproveAllPendingBtn.Visible = true;
+            }
+            else
+            {
+                ApproveAllPendingBtn.Visible = false;
+            }
+
             FullName = LoginForm.FirstName + " " + LoginForm.LastName;
 
-            AddRole(); //add items in combobox role
+            LoadApproverTypeList(); //add items in combobox role
 
             //Set backcolor and fore color to column header
             ApprovalDataGrid.EnableHeadersVisualStyles = true;
@@ -103,10 +138,6 @@ namespace MHMS.Forms
             //Hide row header
             ApprovalDataGrid.RowHeadersVisible = false;
 
-            //This is admin function to show radio button for filtering request for approval
-            ShowRadioButtonForAdmin();
-
-           
             //Add checked box column
             AddCheckedBoxColumn();
 
@@ -180,10 +211,12 @@ namespace MHMS.Forms
 
             SqlCommand SelectApprovalCount = new SqlCommand("SP_SelectApprovalCount", con);
             SelectApprovalCount.CommandType = CommandType.StoredProcedure;
-            SelectApprovalCount.Parameters.AddWithValue("@Section", LoginForm.UserSection);
+            SelectApprovalCount.Parameters.AddWithValue("@Section", Dashboard.SectionText.Replace("BIPH-", ""));
             SelectApprovalCount.Parameters.AddWithValue("@Role", RoleDropDown.Text);
             SelectApprovalCount.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
             SelectApprovalCount.Parameters.AddWithValue("@Status", StatusDropdown.Text);
+            SelectApprovalCount.Parameters.AddWithValue("@AssignedSection", LoginForm.EESection);
+            SelectApprovalCount.Parameters.AddWithValue("@ProcessInCharge", LoginForm.FirstName + " " + LoginForm.LastName);
             SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalCount);
             DataTable dataTable = new DataTable();
             sda.Fill(dataTable);
@@ -191,10 +224,10 @@ namespace MHMS.Forms
             if (dataTable.Rows.Count > 0)
             {
                 SqlDataReader reader = SelectApprovalCount.ExecuteReader();
+
                 while (reader.Read())
                 {
                     ApprovalCount.Text = reader["ApprovalCount"].ToString() + " For Approval";
-                   
                 }
             }
 
@@ -203,45 +236,30 @@ namespace MHMS.Forms
 
         //===================================================================================================================>>>>>>>>>>>>
 
-        private void ShowRadioButtonForAdmin()
-        {
-            if (LoginForm.UserSection == "Production Engineering" || SectionMenuForm.UserSection == "Production Engineering")
-            {
-                /*This is for future update if nedeed -- uncomment the code below once it's needed*/
-
-                //MySectionRadioBtn.Visible = true;
-                //AllSectionRadioBtn.Visible = true;
-            }
-            else
-            {
-                //MySectionRadioBtn.Visible = false;
-                //AllSectionRadioBtn.Visible = false;
-            }
-        }
 
         //====================================================================================================================>>>>>>>>>>>>
 
         private void FormatHeaderText()
         {
-            ApprovalDataGrid.Columns["ReferenceNo"].HeaderText = "Reference No.";
-            ApprovalDataGrid.Columns["DateEncountered"].HeaderText = "Date Encountered";
-            ApprovalDataGrid.Columns["MHLossType"].HeaderText = "MH Loss Type";
-            ApprovalDataGrid.Columns["Section"].HeaderText = "Section";
-            ApprovalDataGrid.Columns["CostCenter"].HeaderText = "Cost Center";
-            ApprovalDataGrid.Columns["ResponsibleSection"].HeaderText = "Responsible Section";
-            ApprovalDataGrid.Columns["LineStopDetail"].HeaderText = "Rease (Line Stop Detail)";
-            ApprovalDataGrid.Columns["StopTime"].HeaderText = "Stop Time";
-            ApprovalDataGrid.Columns["DirectMP"].HeaderText = "Direct MP";
-            ApprovalDataGrid.Columns["SemiDirectMP"].HeaderText = "Semi-Direct MP";
-            ApprovalDataGrid.Columns["LossManhour"].HeaderText = "Loss Manhour";
-            ApprovalDataGrid.Columns["Reason"].HeaderText = "Reason";
-            ApprovalDataGrid.Columns["COPQAmount(USD)"].HeaderText = "COPQ Amount";
-            ApprovalDataGrid.Columns["Cause"].HeaderText = "Cause";
-            ApprovalDataGrid.Columns["ReasonOfRejection"].HeaderText = "Reason of Rejection";
-            ApprovalDataGrid.Columns["Countermeasure"].HeaderText = "Countermeasure (if accepted) / Reason (if rejected)";
-            ApprovalDataGrid.Columns["ApplyingApprovalStatus"].HeaderText = "Applying Approval Status";
-            ApprovalDataGrid.Columns["ReceivingApprovalStatus"].HeaderText = "Receiving Approval Status";
-            ApprovalDataGrid.Columns["QIConfirmation"].HeaderText = "QI Confirmation";
+            //ApprovalDataGrid.Columns["ReferenceNo"].HeaderText = "Reference No.";
+            //ApprovalDataGrid.Columns["DateEncountered"].HeaderText = "Date Encountered";
+            //ApprovalDataGrid.Columns["MHLossType"].HeaderText = "MH Loss Type";
+            //ApprovalDataGrid.Columns["Section"].HeaderText = "Section";
+            //ApprovalDataGrid.Columns["CostCenter"].HeaderText = "Cost Center";
+            //ApprovalDataGrid.Columns["ResponsibleSection"].HeaderText = "Responsible Section";
+            //ApprovalDataGrid.Columns["LineStopDetail"].HeaderText = "Rease (Line Stop Detail)";
+            //ApprovalDataGrid.Columns["StopTime"].HeaderText = "Stop Time";
+            //ApprovalDataGrid.Columns["DirectMP"].HeaderText = "Direct MP";
+            //ApprovalDataGrid.Columns["SemiDirectMP"].HeaderText = "Semi-Direct MP";
+            //ApprovalDataGrid.Columns["LossManhour"].HeaderText = "Loss Manhour";
+            //ApprovalDataGrid.Columns["Reason"].HeaderText = "Reason";
+            //ApprovalDataGrid.Columns["COPQAmount(USD)"].HeaderText = "COPQ Amount";
+            //ApprovalDataGrid.Columns["Cause"].HeaderText = "Cause";
+            //ApprovalDataGrid.Columns["ReasonOfRejection"].HeaderText = "Reason of Rejection";
+            //ApprovalDataGrid.Columns["Countermeasure"].HeaderText = "Countermeasure (if accepted) / Reason (if rejected)";
+            //ApprovalDataGrid.Columns["ApplyingApprovalStatus"].HeaderText = "Applying Approval Status";
+            //ApprovalDataGrid.Columns["ReceivingApprovalStatus"].HeaderText = "Receiving Approval Status";
+            //ApprovalDataGrid.Columns["QIConfirmation"].HeaderText = "QI Confirmation";
         }
 
         //====================================================================================================================>>>>>>>>>>>>
@@ -313,7 +331,7 @@ namespace MHMS.Forms
                 }
 
             }
-            else if (Dashboard.SectionText == "BIPH-Production Engineering")
+            else if (Dashboard.SectionText == "BPS")
             {
                 if (LoginForm.COPQPIC == "✔️" || SectionMenuForm.COPQPIC == "✔️")
                 {
@@ -1334,7 +1352,7 @@ namespace MHMS.Forms
 
                 }
             }
-            else if (Dashboard.SectionText == "BIPH-Production Engineering")
+            else if (Dashboard.SectionText == "BIPH-BPS")
             {
                 if (LoginForm.COPQPIC == "✔️" || SectionMenuForm.COPQPIC == "✔️")
                 {
@@ -2699,11 +2717,17 @@ namespace MHMS.Forms
                     SearchMHLossData.Parameters.AddWithValue("@Role", "");
                     SearchMHLossData.Parameters.AddWithValue("@Status", StatusDropdown.Text);
                     SearchMHLossData.Parameters.AddWithValue("@ExcludeEE", "true");
+                    SearchMHLossData.Parameters.AddWithValue("@AssignedSection", "");
                     SqlDataAdapter sda = new SqlDataAdapter(SearchMHLossData);
                     DataTable dt = new DataTable();
                     sda.Fill(dt);
                     ApprovalDataGrid.DataSource = dt;
                     con.Close();
+
+                    if (dt.Rows.Count < 1)
+                    {
+                        MessageBox.Show("No data found!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    }
                 }
                 else
                 {
@@ -2715,15 +2739,21 @@ namespace MHMS.Forms
                     SearchMHLossData.Parameters.AddWithValue("@Role", "");
                     SearchMHLossData.Parameters.AddWithValue("@Status", StatusDropdown.Text);
                     SearchMHLossData.Parameters.AddWithValue("@ExcludeEE", "");
+                    SearchMHLossData.Parameters.AddWithValue("@AssignedSection", "");
                     SqlDataAdapter sda = new SqlDataAdapter(SearchMHLossData);
                     DataTable dt = new DataTable();
                     sda.Fill(dt);
                     ApprovalDataGrid.DataSource = dt;
                     con.Close();
+
+                    if (dt.Rows.Count < 1)
+                    {
+                        MessageBox.Show("No data found!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    }
                 }
-                
 
                 //ExcludeEEData();
+
             }
             else
             {
@@ -2735,14 +2765,18 @@ namespace MHMS.Forms
                 SearchMHLossData.Parameters.AddWithValue("@Role", RoleDropDown.Text);
                 SearchMHLossData.Parameters.AddWithValue("@Status", StatusDropdown.Text);
                 SearchMHLossData.Parameters.AddWithValue("@ExcludeEE", "");
+                SearchMHLossData.Parameters.AddWithValue("@AssignedSection", LoginForm.EESection);
                 SqlDataAdapter sda = new SqlDataAdapter(SearchMHLossData);
                 DataTable dt = new DataTable();
-                sda.Fill(dt);
+                sda.Fill(dt);                                                                                                                                                                                                                                    
                 ApprovalDataGrid.DataSource = dt;
                 con.Close();
+
+                if (dt.Rows.Count < 1)
+                {
+                    MessageBox.Show("No data found!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
             }
-           
-           
 
             /*FormatHeaderText();*/ // Format header text
         }
@@ -2756,6 +2790,7 @@ namespace MHMS.Forms
             //    Clipboard.SetDataObject(dataObj);
             ApprovalDataGrid.SelectAll();
 
+
             //Copy to clipboard
             ApprovalDataGrid.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
             DataObject dataObj = ApprovalDataGrid.GetClipboardContent();
@@ -2765,96 +2800,63 @@ namespace MHMS.Forms
 
         private void ExportButton_Click(object sender, EventArgs e)
         {
-            string pathsss = @"C:\Users\" + System.Security.Principal.WindowsIdentity.GetCurrent().Name.Replace("AP\\", "") + @"\Desktop\COPQ_Exported_Data";
-            System.IO.Directory.CreateDirectory(pathsss);
+            if (ApprovalDataGrid.DataSource == null)
+            {
+                MessageBox.Show("No data found, Please generate the data before clicking export button!",
+                                "MHMS Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
 
-            copyAlltoClipboardsss();
-            Microsoft.Office.Interop.Excel.Application xlexcel;
-            Microsoft.Office.Interop.Excel.Workbook xlWorkBook;
-            Microsoft.Office.Interop.Excel.Worksheet xlWorkSheet;
-            object misValue = System.Reflection.Missing.Value;
-            xlexcel = new Microsoft.Office.Interop.Excel.Application();
-            xlexcel.Visible = true;
-            xlWorkBook = xlexcel.Workbooks.Add(misValue);
-            xlWorkSheet = (Microsoft.Office.Interop.Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
+            // Change button text to "Exporting..."
+            var btn = sender as Button;
+            btn.Text = "     Exporting...";
+            btn.Enabled = false; // disable to prevent double-click
+            btn.BackColor = Color.Gray;     // background white
+            btn.ForeColor = Color.Black;
+            btn.Refresh();       // force UI update
 
-            Microsoft.Office.Interop.Excel.Range CR = (Microsoft.Office.Interop.Excel.Range)xlWorkSheet.Cells[1, 1];
-            // xlWorkSheet.Cells[3, "XL"].Cells.NumberFormat = "@";
-            CR.Select();
-            xlWorkSheet.Cells.NumberFormat = "@";
-            //string DateNowVal = DateTime.Now.ToString("yyyyMMdd_hhmmss");
-            //string folderPath = "C:\\Users\\manalojo\\Desktop\\Export\\";
-            //    xlWorkBook.SaveAs(folderPath + "ViewExport_ " + DateNowVal + ".xlsx", Microsoft.Office.Interop.Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
-            //false, false, Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlNoChange,
-            //Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+            try
+            {
+                var xlexcel = new Microsoft.Office.Interop.Excel.Application();
+                var xlWorkBook = xlexcel.Workbooks.Add();
+                var xlWorkSheet = (Microsoft.Office.Interop.Excel.Worksheet)xlWorkBook.Sheets[1];
 
-            xlWorkSheet.PasteSpecial(CR, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, true);
-            xlWorkSheet.Columns.AutoFit();
+                // Write column headers
+                for (int i = 0; i < ApprovalDataGrid.Columns.Count; i++)
+                {
+                    xlWorkSheet.Cells[1, i + 1] = ApprovalDataGrid.Columns[i].HeaderText;
+                }
 
+                // Write rows
+                for (int i = 0; i < ApprovalDataGrid.Rows.Count; i++)
+                {
+                    for (int j = 0; j < ApprovalDataGrid.Columns.Count; j++)
+                    {
+                        xlWorkSheet.Cells[i + 2, j + 1] = ApprovalDataGrid.Rows[i].Cells[j].Value?.ToString();
+                    }
+                }
 
-            MessageBox.Show("Exported successfully", "DONE", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                xlWorkSheet.Columns.AutoFit();
+                xlexcel.Visible = true;
 
-            //try
-            //{
-            //    Microsoft.Office.Interop.Excel._Application app = new Microsoft.Office.Interop.Excel.Application();
-            //    Microsoft.Office.Interop.Excel._Workbook workbook = app.Workbooks.Add(System.Reflection.Missing.Value);
-            //    Microsoft.Office.Interop.Excel._Worksheet worksheet = null;
-            //    app.Visible = true;
-            //    worksheet = workbook.Sheets["Sheet1"];
-            //    worksheet = workbook.ActiveSheet;
-            //    worksheet.Name = "Approval Data";
-
-            //    try
-            //    {
-            //        for (int i = 0; i < ApprovalDataGrid.Columns.Count; i++)
-            //        {
-            //            worksheet.Cells[1, i + 1] = ApprovalDataGrid.Columns[i].HeaderText;
-            //        }
-
-            //        for (int i = 0; i < ApprovalDataGrid.Rows.Count; i++)
-            //        {
-            //            for (int j = 0; j < ApprovalDataGrid.Columns.Count; j++)
-            //            {
-            //                if (ApprovalDataGrid.Rows[i].Cells[j].Value != null)
-            //                {
-            //                    worksheet.Cells[i + 2, j + 1] = ApprovalDataGrid.Rows[i].Cells[j].Value.ToString();
-            //                }
-            //                else
-            //                {
-            //                    worksheet.Cells[i + 2, j + 1] = "";
-            //                }
-            //            }
-            //        }
-
-            //        //Getting the location and file name of the excel to save from user. 
-            //        SaveFileDialog saveDialog = new SaveFileDialog();
-            //        saveDialog.Filter = "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*";
-            //        saveDialog.FilterIndex = 2;
-
-            //        if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            //        {
-            //            workbook.SaveAs(saveDialog.FileName);
-            //            MessageBox.Show("Export Successful", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            //        }
-            //    }
-            //    catch (System.Exception ex)
-            //    {
-            //        MessageBox.Show(ex.Message);
-            //    }
-
-            //    finally
-            //    {
-            //        app.Quit();
-            //        workbook = null;
-            //        worksheet = null;
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.Message.ToString());
-            //}
-
+                MessageBox.Show("Exported successfully", "DONE", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Export failed: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                // Restore button
+                btn.Text = "Export";
+                btn.Enabled = true;
+                btn.BackColor = Color.FromArgb(47, 69, 180);   // keep white if you always want white
+                btn.ForeColor = Color.White;
+            }
         }
+
+
+
 
         //====================================================================================================================>>>>>>>>>>
 
@@ -2862,7 +2864,7 @@ namespace MHMS.Forms
         public static string SelectedLineStopDetail;
         public static string ApprovalType;
 
-        private void RejectButton_Click(object sender, EventArgs e)
+        private async void RejectButton_Click(object sender, EventArgs e)
         {
 
             List<DataGridViewRow> selectedRows = (from row in ApprovalDataGrid.Rows.Cast<DataGridViewRow>()
@@ -2873,10 +2875,10 @@ namespace MHMS.Forms
             {
                 MessageBox.Show("Please select the item you want to reject!", "Reminders!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
-            else if (selectedRows.Count > 1)
-            {
-                MessageBox.Show("Cannot process multiple selected data, Please select one item to reject request!", "Reminders!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
+            //else if (selectedRows.Count > 1)
+            //{
+            //    MessageBox.Show("Cannot process multiple selected data, Please select one item to reject request!", "Reminders!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            //}
             else
             {
                 foreach (DataGridViewRow row in ApprovalDataGrid.Rows)
@@ -2889,8 +2891,9 @@ namespace MHMS.Forms
                         PartCode = row.Cells["Part Code"].Value.ToString();
                         SelectedLineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
                         ApprovalType = TypeofApprovalDropdown.Text;
+                        DistinctionCode = row.Cells["DistinctionCode"].Value.ToString();
 
-                        if (MessageBox.Show("Are you sure do you want to reject item with line stop details of " + "'" + SelectedLineStopDetail + "'?", "Reminders", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+                        if (MessageBox.Show("Are you sure you want to reject item with line stop details of " + "'" + SelectedLineStopDetail + "'?", "MHMS Information", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
                         {
                             RejectionForm rejectionForm = new RejectionForm();
                             rejectionForm.ShowDialog();
@@ -2898,80 +2901,10 @@ namespace MHMS.Forms
                     }
                 }
 
-                GenerateMHData();
+                await GenerateMHData();
             }
 
-            //RejectionForm rejectionForm = new RejectionForm();
-            //rejectionForm.ShowDialog();
-
-            //if (LoginForm.COPQPIC == "✔️")
-            //{
-            //    foreach (DataGridViewRow row in ApprovalDataGrid.Rows)
-            //    {
-            //        if ((Convert.ToBoolean(row.Cells[0].Value) == true))
-            //        {
-            //            SelectedRowReferenceNo = row.Cells["Reference No."].Value.ToString();
-
-            //            if (MessageBox.Show("Are you sure do you want to reject item with reference no. of " + ApprovalForm.SelectedRowReferenceNo, "Status", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
-            //            {
-            //                RejectionForm rejectionForm = new RejectionForm();
-            //                rejectionForm.ShowDialog();
-            //            }
-            //        }
-            //    }
-            //}
-
-
-            //if (LoginForm.SectionSPV == "✔️")
-            //{
-            //    foreach (DataGridViewRow row in ApprovalDataGrid.Rows)
-            //    {
-            //        if ((Convert.ToBoolean(row.Cells[0].Value) == true))
-            //        {
-            //            SelectedRowReferenceNo = row.Cells["Reference No."].Value.ToString();
-
-            //            if (MessageBox.Show("Are you sure do you want to reject item with reference no. of " + ApprovalForm.SelectedRowReferenceNo, "Status", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
-            //            {
-            //                RejectionForm rejectionForm = new RejectionForm();
-            //                rejectionForm.ShowDialog();
-            //            }
-            //        }
-            //    }
-            //}
-
-
-            //if (LoginForm.SectionMGR == "✔️")
-            //{
-            //    foreach (DataGridViewRow row in ApprovalDataGrid.Rows)
-            //    {
-            //        if ((Convert.ToBoolean(row.Cells[0].Value) == true))
-            //        {
-            //            SelectedRowReferenceNo = row.Cells["Reference No."].Value.ToString();
-
-            //            if (MessageBox.Show("Are you sure do you want to reject item with reference no. of " + ApprovalForm.SelectedRowReferenceNo, "Status", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
-            //            {
-            //                RejectionForm rejectionForm = new RejectionForm();
-            //                rejectionForm.ShowDialog();
-            //            }
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    //if (COPQPICRadioButton.Checked)
-            //    //{
-            //    //    MessageBox.Show("You are not authorized.");
-            //    //}
-            //    //else if (COPQPICRadioButton.Checked)
-            //    //{
-            //    //    MessageBox.Show("You are not authorized.");
-            //    //}
-            //    //else if (MGRRadioButton.Checked)
-            //    //{
-            //    //    MessageBox.Show("You are not authorized.");
-            //    //}
-
-            //}
+           
         }
 
         //===================================================================================================================>>>>>>>>>>>>
@@ -2983,11 +2916,21 @@ namespace MHMS.Forms
                 column.SortMode = DataGridViewColumnSortMode.NotSortable;
             }
 
-            if (ApprovalDataGrid.Rows[e.RowIndex].Cells["Reason of Rejection"].Value.ToString() != "")
+            //set color red to  rejected status
+            if (ApprovalDataGrid.Rows[e.RowIndex].Cells["Over All Status"].Value.ToString() == "Rejected")
             {
                 DataGridViewRow row = ApprovalDataGrid.Rows[e.RowIndex];
                 row.DefaultCellStyle.BackColor = Color.FromArgb(255, 142, 150);
             }
+
+            //set color yellow to cancelled status
+            if (ApprovalDataGrid.Rows[e.RowIndex].Cells["Over All Status"].Value.ToString() == "Cancelled")
+            {
+                DataGridViewRow row = ApprovalDataGrid.Rows[e.RowIndex];
+                row.DefaultCellStyle.BackColor = Color.FromArgb(241, 225, 119);
+            }
+
+
         }
 
         //===================================================================================================================>>>>>>>>>>>>
@@ -2996,25 +2939,25 @@ namespace MHMS.Forms
         public static bool ContinueButtonIsClicked = false;
         public static bool ApproveButtonIsClicked = false;
         public static bool AcceptButtonIsClicked = false;
-        private void FrefreshDatagridTimer_Tick(object sender, EventArgs e)
+        private async void FrefreshDatagridTimer_Tick(object sender, EventArgs e)
         {
             if (ContinueButtonIsClicked == true)
             {
-                GenerateMHData();
+                await GenerateMHData();
 
                 ContinueButtonIsClicked = false;
             }
 
             if (ApproveButtonIsClicked == true)
             {
-                GenerateMHData();
+                await GenerateMHData();
 
                 ApproveButtonIsClicked = false;
             }
 
             if (AcceptButtonIsClicked == true)
             {
-                GenerateMHData();
+                await GenerateMHData();
 
                 AcceptButtonIsClicked = false;
             }
@@ -3022,379 +2965,300 @@ namespace MHMS.Forms
 
         //=================================================================================================================>>>>>>>>>>>>
 
-        private void GenerateMHData()
+        private async Task GenerateMHData()
         {
-            if (CategoryDropdown.Text == "COPQ")
+            await con.OpenAsync();
+
+            try
             {
-                if (StatusDropdown.Text == "For Approval")
+                if (CategoryDropdown.Text == "COPQ")
                 {
-                    // Check Connection status -> Open connection if the connection is closed
-                    if (con.State == ConnectionState.Closed)
+                    if (StatusDropdown.Text == "For Approval")
                     {
-                        con.Open();
+                        SelectAllChkBox.Visible = true; //Show select all checkbox
+                        ExcludeCheckBox.Location = new Point(120, 110); //Set location to new point
+
+                        if (RoleDropDown.Text == "COPQ Process In-Charge")
+                        {
+                            //Select all process in-charge user
+                            SqlCommand SelectProcessInchargeUser = new SqlCommand("SP_SelectProcessInchargeUsers", con);
+                            SelectProcessInchargeUser.CommandType = CommandType.StoredProcedure;
+                            SelectProcessInchargeUser.Parameters.AddWithValue("@UserSection", Dashboard.SectionText.Replace("BIPH-", ""));
+                            SqlDataAdapter da = new SqlDataAdapter(SelectProcessInchargeUser);
+                            DataTable dt = new DataTable();
+                            da.Fill(dt);
+
+                            //if process in-charge count is greater than 1 select the full name of user 
+                            if (dt.Rows.Count > 1)
+                            {
+                                //show all data where the receiving status is for approval by copq process in-charge and fullname is equal to user login
+
+                                SqlCommand SelectApprovalData = new SqlCommand("SP_SelectCOPQProcessInChargeData", con);
+                                SelectApprovalData.CommandType = CommandType.StoredProcedure;
+                                SelectApprovalData.Parameters.AddWithValue("@Status", "For Approval");
+                                SelectApprovalData.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
+                                SelectApprovalData.Parameters.AddWithValue("@Role", RoleDropDown.Text);
+                                SelectApprovalData.Parameters.AddWithValue("@Section", Dashboard.SectionText.Replace("BIPH-", ""));
+                                SelectApprovalData.Parameters.AddWithValue("@FullName", FullName);
+                                SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
+                                DataTable dataTable = new DataTable();
+                                sda.Fill(dataTable);
+                                ApprovalDataGrid.DataSource = dataTable;
+                                //con.Close();
+
+                                if (IsGenerateBtnClick == true)
+                                {
+                                    if (dataTable.Rows.Count < 1)
+                                    {
+                                        MessageBox.Show("No data has been generated!", "MHMS Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    }
+
+                                    IsGenerateBtnClick = false;
+                                }
+
+                            }
+                            else if (dt.Rows.Count == 1)
+                            {
+
+                                //if process in-charge count is equal to 1
+                                //show all data where the receiving status is for approval by copq process in-charge
+                                SqlCommand SelectApprovalData = new SqlCommand("SP_SelectFilteredMHData", con);
+                                SelectApprovalData.CommandType = CommandType.StoredProcedure;
+                                SelectApprovalData.Parameters.AddWithValue("@Status", "For Approval");
+                                SelectApprovalData.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
+                                SelectApprovalData.Parameters.AddWithValue("@Role", RoleDropDown.Text);
+                                SelectApprovalData.Parameters.AddWithValue("@Section", Dashboard.SectionText.Replace("BIPH-", ""));
+                                SelectApprovalData.Parameters.AddWithValue("@AssignedSection", "");
+                                SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
+                                DataTable dataTable = new DataTable();
+                                sda.Fill(dataTable);
+                                ApprovalDataGrid.DataSource = dataTable;
+                                //con.Close();
+
+                                if (IsGenerateBtnClick == true)
+                                {
+                                    if (dataTable.Rows.Count < 1)
+                                    {
+                                        MessageBox.Show("No data has been generated!", "MHMS Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    }
+
+                                    IsGenerateBtnClick = false;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (Dashboard.SectionText.Replace("BIPH-", "") == "Equipment Engineering")
+                            {
+                                //-> SQL query to select approval data based on status
+                                SqlCommand SelectApprovalData = new SqlCommand("SP_SelectFilteredMHData", con);
+                                SelectApprovalData.CommandType = CommandType.StoredProcedure;
+                                SelectApprovalData.Parameters.AddWithValue("@Status", "For Approval");
+                                SelectApprovalData.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
+                                SelectApprovalData.Parameters.AddWithValue("@Role", RoleDropDown.Text);
+                                SelectApprovalData.Parameters.AddWithValue("@Section", Dashboard.SectionText.Replace("BIPH-", ""));
+                                SelectApprovalData.Parameters.AddWithValue("@AssignedSection", Dashboard.EEAssignedSection);
+                                SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
+                                DataTable dataTable = new DataTable();
+                                sda.Fill(dataTable);
+                                ApprovalDataGrid.DataSource = dataTable;
+                                //con.Close();
+
+                                if (IsGenerateBtnClick == true)
+                                {
+                                    if (dataTable.Rows.Count < 1)
+                                    {
+                                        MessageBox.Show("No data has been generated!", "MHMS Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    }
+
+                                    IsGenerateBtnClick = false;
+                                }
+                            }
+                            else
+                            {
+                                //-> SQL query to select approval data based on status
+                                SqlCommand SelectApprovalData = new SqlCommand("SP_SelectFilteredMHData", con);
+                                SelectApprovalData.CommandType = CommandType.StoredProcedure;
+                                SelectApprovalData.Parameters.AddWithValue("@Status", "For Approval");
+                                SelectApprovalData.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
+                                SelectApprovalData.Parameters.AddWithValue("@Role", RoleDropDown.Text);
+                                SelectApprovalData.Parameters.AddWithValue("@Section", Dashboard.SectionText.Replace("BIPH-", ""));
+                                SelectApprovalData.Parameters.AddWithValue("@AssignedSection", "");
+                                SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
+                                DataTable dataTable = new DataTable();
+                                sda.Fill(dataTable);
+                                ApprovalDataGrid.DataSource = dataTable;
+                                //con.Close();
+
+                                if (IsGenerateBtnClick == true)
+                                {
+                                    if (dataTable.Rows.Count < 1)
+                                    {
+                                        MessageBox.Show("No data has been generated!", "MHMS Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    }
+
+                                    IsGenerateBtnClick = false;
+                                }
+                            }
+                        }
+
+
+                        ApprovalDataGrid.Columns["Select"].Visible = true; //Show select checkbox column
+
+                        SelectApprovalCount();
+
                     }
-
-                    if (RoleDropDown.Text == "COPQ Process In-Charge")
+                    else if (StatusDropdown.Text == "Approved")
                     {
-                        // -> SQL query to select process in-charge pic
-                        if (con.State == ConnectionState.Closed)
-                        {
-                            con.Open();
-                        }
+                        SelectAllChkBox.Visible = false; //Hide this checkbox when status selected was "Approved"
+                        ExcludeCheckBox.Location = new Point(0, 110);
 
-                        //Select all process in-charge user
-                        SqlCommand SelectProcessInchargeUser = new SqlCommand("SP_SelectProcessInchargeUsers", con);
-                        SelectProcessInchargeUser.CommandType = CommandType.StoredProcedure;
-                        SelectProcessInchargeUser.Parameters.AddWithValue("@UserSection", Dashboard.SectionText.Replace("BIPH-", ""));
-                        SqlDataAdapter da = new SqlDataAdapter(SelectProcessInchargeUser);
-                        DataTable dt = new DataTable();
-                        da.Fill(dt);
 
-                        //if process in-charge count is greater than 1 select the full name of user 
-                        if (dt.Rows.Count > 1)
-                        {
-                            //show all data where the receiving status is for approval by copq process in-charge and fullname is equal to user login
-                            // -> SQL query to select approval data based on status
-                            SqlCommand SelectApprovalData = new SqlCommand("SP_SelectCOPQProcessInChargeData", con);
-                            SelectApprovalData.CommandType = CommandType.StoredProcedure;
-                            SelectApprovalData.Parameters.AddWithValue("@Status", "For Approval");
-                            SelectApprovalData.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-                            SelectApprovalData.Parameters.AddWithValue("@Role", RoleDropDown.Text);
-                            SelectApprovalData.Parameters.AddWithValue("@Section", Dashboard.SectionText.Replace("BIPH-", ""));
-                            SelectApprovalData.Parameters.AddWithValue("@FullName", FullName);
-                            SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
-                            DataTable dataTable = new DataTable();
-                            sda.Fill(dataTable);
-                            ApprovalDataGrid.DataSource = dataTable;
-                            con.Close();
-                        }
-                        else if (dt.Rows.Count == 1)
-                        {
-                            //if process in-charge count is equal to 1
-                            //show all data where the receiving status is for approval by copq process in-charge
-                            // ->SQL query to select approval data based on status
-                            SqlCommand SelectApprovalData = new SqlCommand("SP_SelectFilteredMHData", con);
-                            SelectApprovalData.CommandType = CommandType.StoredProcedure;
-                            SelectApprovalData.Parameters.AddWithValue("@Status", "For Approval");
-                            SelectApprovalData.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-                            SelectApprovalData.Parameters.AddWithValue("@Role", RoleDropDown.Text);
-                            SelectApprovalData.Parameters.AddWithValue("@Section", Dashboard.SectionText.Replace("BIPH-", ""));
-                            SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
-                            DataTable dataTable = new DataTable();
-                            sda.Fill(dataTable);
-                            ApprovalDataGrid.DataSource = dataTable;
-                            con.Close();
-                        }
-                    }
-                    else
-                    {
-                         //-> SQL query to select approval data based on status
+                        // -> SQL query to select approval data based on status
                         SqlCommand SelectApprovalData = new SqlCommand("SP_SelectFilteredMHData", con);
                         SelectApprovalData.CommandType = CommandType.StoredProcedure;
-                        SelectApprovalData.Parameters.AddWithValue("@Status", "For Approval");
+                        SelectApprovalData.Parameters.AddWithValue("@Status", "Approved");
                         SelectApprovalData.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-                        SelectApprovalData.Parameters.AddWithValue("@Role", RoleDropDown.Text);
+                        SelectApprovalData.Parameters.AddWithValue("@Role", ""); //this an empty parameter to prevent error 
                         SelectApprovalData.Parameters.AddWithValue("@Section", Dashboard.SectionText.Replace("BIPH-", ""));
+                        SelectApprovalData.Parameters.AddWithValue("@AssignedSection", "");
                         SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
-                        DataTable dataTable = new DataTable();
-                        sda.Fill(dataTable);
-                        ApprovalDataGrid.DataSource = dataTable;
-                        con.Close();
+                        DataTable dt = new DataTable();
+                        sda.Fill(dt);
+                        ApprovalDataGrid.DataSource = dt;
+                        //con.Close();
+
+
+                        ApprovalDataGrid.Columns["Select"].Visible = false; //Hide check box
+
+                        ApprovalCount.Visible = false; // hide for approval count
 
                     }
-
-                    ApprovalDataGrid.Columns["Select"].Visible = true;
-
-                    SelectApprovalCount();
-
-                }
-                else if (StatusDropdown.Text == "Approved")
-                {
-                    // Check Connection status -> Open connection if the connection is closed
-                    if (con.State == ConnectionState.Closed)
+                    else if (StatusDropdown.Text == "Rejected")
                     {
-                        con.Open();
+                        SelectAllChkBox.Visible = false; //Hide this checkbox when status selected was "Approved"
+                        ExcludeCheckBox.Location = new Point(0, 110);
+
+                        // -> SQL query to select approval data based on status
+                        SqlCommand SelectApprovalData = new SqlCommand("SP_SelectFilteredMHData", con);
+                        SelectApprovalData.CommandType = CommandType.StoredProcedure;
+                        SelectApprovalData.Parameters.AddWithValue("@Status", "Rejected");
+                        SelectApprovalData.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
+                        SelectApprovalData.Parameters.AddWithValue("@Role", ""); //this an empty parameter to prevent error 
+                        SelectApprovalData.Parameters.AddWithValue("@Section", Dashboard.SectionText.Replace("BIPH-", ""));
+                        SelectApprovalData.Parameters.AddWithValue("@AssignedSection", "");
+                        SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
+                        DataTable dt = new DataTable();
+                        sda.Fill(dt);
+                        ApprovalDataGrid.DataSource = dt;
+                        //con.Close();
+
+
+                        ApprovalDataGrid.Columns["Select"].Visible = false;//Hide check box
+
+                        ApprovalCount.Visible = false; // hide for approval count
                     }
-
-                    // -> SQL query to select approval data based on status
-                    SqlCommand SelectApprovalData = new SqlCommand("SP_SelectFilteredMHData", con);
-                    SelectApprovalData.CommandType = CommandType.StoredProcedure;
-                    SelectApprovalData.Parameters.AddWithValue("@Status", "Approved");
-                    SelectApprovalData.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-                    SelectApprovalData.Parameters.AddWithValue("@Role", ""); //no need
-                    SelectApprovalData.Parameters.AddWithValue("@Section", Dashboard.SectionText.Replace("BIPH-", ""));
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    ApprovalDataGrid.DataSource = dt;
-                    con.Close();
-
-                    //Hide check box
-                    ApprovalDataGrid.Columns["Select"].Visible = false;
-
-                    ApprovalCount.Visible = false; // hide for approval count
-                }
-                else if (StatusDropdown.Text == "Rejected")
-                {
-                    // Check Connection status -> Open connection if the connection is closed
-                    if (con.State == ConnectionState.Closed)
+                    else if (StatusDropdown.Text == "Cancelled")
                     {
-                        con.Open();
+                        SelectAllChkBox.Visible = false; //Hide this checkbox when status selected was "Approved"
+                        ExcludeCheckBox.Location = new Point(0, 110);
+
+                        // -> SQL query to select approval data based on status
+                        SqlCommand SelectApprovalData = new SqlCommand("SP_SelectFilteredMHData", con);
+                        SelectApprovalData.CommandType = CommandType.StoredProcedure;
+                        SelectApprovalData.Parameters.AddWithValue("@Status", "Cancelled");
+                        SelectApprovalData.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
+                        SelectApprovalData.Parameters.AddWithValue("@Role", ""); //this an empty parameter to prevent error 
+                        SelectApprovalData.Parameters.AddWithValue("@Section", Dashboard.SectionText.Replace("BIPH-", ""));
+                        SelectApprovalData.Parameters.AddWithValue("@AssignedSection", "");
+                        SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
+                        DataTable dt = new DataTable();
+                        sda.Fill(dt);
+                        ApprovalDataGrid.DataSource = dt;
+                        //con.Close();
+
+                        ApprovalDataGrid.Columns["Select"].Visible = false; //Hide check box
+
+                        ApprovalCount.Visible = false; // hide for approval count
+
                     }
-
-                    // -> SQL query to select approval data based on status
-                    SqlCommand SelectApprovalData = new SqlCommand("SP_SelectFilteredMHData", con);
-                    SelectApprovalData.CommandType = CommandType.StoredProcedure;
-                    SelectApprovalData.Parameters.AddWithValue("@Status", "Rejected");
-                    SelectApprovalData.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-                    SelectApprovalData.Parameters.AddWithValue("@Role", ""); //no need
-                    SelectApprovalData.Parameters.AddWithValue("@Section", Dashboard.SectionText.Replace("BIPH-", ""));
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    ApprovalDataGrid.DataSource = dt;
-                    con.Close();
-
-                    //Hide check box
-                    ApprovalDataGrid.Columns["Select"].Visible = false;
-
-                    ApprovalCount.Visible = false; // hide for approval count
-                }
-                else if (StatusDropdown.Text == "Cancelled")
-                {
-                    // Check Connection status -> Open connection if the connection is closed
-                    if (con.State == ConnectionState.Closed)
+                    else if (TypeofApprovalDropdown.Text == "QI Confirmation")
                     {
-                        con.Open();
+
+                        //con.Open();
+                        //SqlCommand SelectApprovalData = new SqlCommand("SP_SelectFilteredMHData", con);
+                        //SelectApprovalData.CommandType = CommandType.StoredProcedure;
+                        //SelectApprovalData.Parameters.AddWithValue("@Status", StatusDropdown.Text);
+                        //SelectApprovalData.Parameters.AddWithValue("@Type", "QI Confirmation");
+                        //SelectApprovalData.Parameters.AddWithValue("@Role", "");
+                        //SelectApprovalData.Parameters.AddWithValue("@Section", Dashboard.SectionText.Replace("BIPH-", ""));
+                        //SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
+                        //DataTable dt = new DataTable();
+                        //sda.Fill(dt);
+                        //ApprovalDataGrid.DataSource = dt;
+                        //con.Close();
+
+                        SelectAllChkBox.Visible = true; //Show select all checkbox
+                        ExcludeCheckBox.Location = new Point(120, 110); //Set location to new point
+                        ApprovalDataGrid.Columns["Select"].Visible = true; //Show checkbox colum
+
+                        ExcludeEEData();
+                        ApprovalCount.Visible = false; // hide for approval count
                     }
-
-                    // -> SQL query to select approval data based on status
-                    SqlCommand SelectApprovalData = new SqlCommand("SP_SelectFilteredMHData", con);
-                    SelectApprovalData.CommandType = CommandType.StoredProcedure;
-                    SelectApprovalData.Parameters.AddWithValue("@Status", "Cancelled");
-                    SelectApprovalData.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-                    SelectApprovalData.Parameters.AddWithValue("@Role", ""); //no need
-                    SelectApprovalData.Parameters.AddWithValue("@Section", Dashboard.SectionText.Replace("BIPH-", ""));
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    ApprovalDataGrid.DataSource = dt;
-                    con.Close();
-
-                    //Hide check box
-                    ApprovalDataGrid.Columns["Select"].Visible = false;
-                    ApprovalCount.Visible = false; // hide for approval count
-                }
-                else if (TypeofApprovalDropdown.Text == "QI Confirmation")
-                {
-                    // Check Connection status -> Open connection if the connection is closed
-                    //if (con.State == ConnectionState.Closed)
-                    //{
-                    //    con.Open();
-                    //}
-                    
-                
-                    //SqlCommand SelectApprovalData = new SqlCommand("SP_SelectFilteredMHData", con);
-                    //SelectApprovalData.CommandType = CommandType.StoredProcedure;
-                    //SelectApprovalData.Parameters.AddWithValue("@Status", StatusDropdown.Text);
-                    //SelectApprovalData.Parameters.AddWithValue("@Type", "QI Confirmation");
-                    //SelectApprovalData.Parameters.AddWithValue("@Role", "");
-                    //SelectApprovalData.Parameters.AddWithValue("@Section", Dashboard.SectionText.Replace("BIPH-", ""));
-                    //SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
-                    //DataTable dt = new DataTable();
-                    //sda.Fill(dt);
-                    //ApprovalDataGrid.DataSource = dt;
-                    //con.Close();
-
-                    ExcludeEEData();
-                    ApprovalCount.Visible = false; // hide for approval count
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally 
+            { 
+                con.Close();
+            }
+            
         }
 
-        private void GenerateButton_Click(object sender, EventArgs e)
+        public static bool IsGenerateBtnClick = false;
+
+        private async void GenerateButton_Click(object sender, EventArgs e)
         {
-            GenerateMHData();
+            IsGenerateBtnClick = true;
 
-            //if (CategoryDropdown.Text == "COPQ")
-            //{
-            //    if (StatusDropdown.Text == "For Approval")
-            //    {
-            //        if (LoginForm.COPQPIC == "✔️")
-            //        {
-            //            // Check Connection status -> Open connection if the connection is closed
-            //            if (con.State == ConnectionState.Closed)
-            //            {
-            //                con.Open();
-            //            }
+            LoadingForm LoadingForm = new LoadingForm();
+            LoadingForm.Show();
 
-            //            // -> SQL query to select approval data based on status
-            //            SqlCommand SelectApprovalData = new SqlCommand("SP_SelectApprovalDataBasedOnStatus", con);
-            //            SelectApprovalData.CommandType = CommandType.StoredProcedure;
-            //            SelectApprovalData.Parameters.AddWithValue("@Procedure", "SelectForApproval");
-            //            SelectApprovalData.Parameters.AddWithValue("@Section", LoginForm.UserSection);
-            //            SelectApprovalData.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-            //            SelectApprovalData.Parameters.AddWithValue("@ApproverType", "COPQPIC");
-            //            SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
-            //            DataTable dt = new DataTable();
-            //            sda.Fill(dt);
-            //            ApprovalDataGrid.DataSource = dt;
-            //            con.Close();
+            // Disable the button or other controls if needed to prevent user interaction
+            GenerateButton.Enabled = false;
 
-            //            EnabledRadioButtonForApprover();
-            //        }
-            //        else if (LoginForm.ProcessInCharge == "✔️")
-            //        {
-            //            // Check Connection status -> Open connection if the connection is closed
-            //            if (con.State == ConnectionState.Closed)
-            //            {
-            //                con.Open();
-            //            }
+            try
+            {
+                await Task.Delay(4000);
 
-            //            // -> SQL query to select approval data based on status
-            //            SqlCommand SelectApprovalData = new SqlCommand("SP_SelectApprovalDataBasedOnStatus", con);
-            //            SelectApprovalData.CommandType = CommandType.StoredProcedure;
-            //            SelectApprovalData.Parameters.AddWithValue("@Procedure", "SelectForApproval");
-            //            SelectApprovalData.Parameters.AddWithValue("@Section", LoginForm.UserSection);
-            //            SelectApprovalData.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-            //            SelectApprovalData.Parameters.AddWithValue("@ApproverType", "COPQProcessIncharge");
-            //            SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
-            //            DataTable dt = new DataTable();
-            //            sda.Fill(dt);
-            //            ApprovalDataGrid.DataSource = dt;
-            //            con.Close();
+                // Call your async method to load data
+                await GenerateMHData();
 
-            //            EnabledRadioButtonForApprover();
-            //        }
-            //        else if (LoginForm.SectionSPV == "✔️")
-            //        {
+                if (ApprovalDataGrid.DataSource != null)
+                {
+                    ApprovalDataGrid.Columns["DistinctionCode"].Visible = false;
+                }
 
-            //            // Check Connection status -> Open connection if the connection is closed
-            //            if (con.State == ConnectionState.Closed)
-            //            {
-            //                con.Open();
-            //            }
+            }
+            catch (Exception ex)
+            {
+                // Handle any errors that occur during the async operation
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                // Hide the loading image when the operation is complete
+                LoadingForm.Close();
 
-            //            // -> SQL query to select approval data based on status
-            //            SqlCommand SelectApprovalData = new SqlCommand("SP_SelectApprovalDataBasedOnStatus", con);
-            //            SelectApprovalData.CommandType = CommandType.StoredProcedure;
-            //            SelectApprovalData.Parameters.AddWithValue("@Procedure", "SelectForApproval");
-            //            SelectApprovalData.Parameters.AddWithValue("@Section", LoginForm.UserSection);
-            //            SelectApprovalData.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-            //            SelectApprovalData.Parameters.AddWithValue("@ApproverType", "SPV");
-            //            SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
-            //            DataTable dt = new DataTable();
-            //            sda.Fill(dt);
-            //            ApprovalDataGrid.DataSource = dt;
-            //            con.Close();
+                // Re-enable the button or controls
+                GenerateButton.Enabled = true;
+            }
 
-            //            EnabledRadioButtonForApprover();
-
-            //        }
-            //        else if (LoginForm.SectionMGR == "✔️")
-            //        {
-            //            // Check Connection status -> Open connection if the connection is closed
-            //            if (con.State == ConnectionState.Closed)
-            //            {
-            //                con.Open();
-            //            }
-
-            //            // -> SQL query to select approval data based on status
-            //            SqlCommand SelectApprovalData = new SqlCommand("SP_SelectApprovalDataBasedOnStatus", con);
-            //            SelectApprovalData.CommandType = CommandType.StoredProcedure;
-            //            SelectApprovalData.Parameters.AddWithValue("@Procedure", "SelectForApproval");
-            //            SelectApprovalData.Parameters.AddWithValue("@Section", LoginForm.UserSection);
-            //            SelectApprovalData.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-            //            SelectApprovalData.Parameters.AddWithValue("@ApproverType", "MGR");
-            //            SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
-            //            DataTable dt = new DataTable();
-            //            sda.Fill(dt);
-            //            ApprovalDataGrid.DataSource = dt;
-            //            con.Close();
-
-            //            EnabledRadioButtonForApprover();
-            //        }
-
-            //    }
-            //    else if (StatusDropdown.Text == "Approved")
-            //    {
-
-            //        // Check Connection status -> Open connection if the connection is closed
-            //        if (con.State == ConnectionState.Closed)
-            //        {
-            //            con.Open();
-            //        }
-
-            //        // -> SQL query to select approval data based on status
-            //        SqlCommand SelectApprovalData = new SqlCommand("SP_SelectApprovalDataBasedOnStatus", con);
-            //        SelectApprovalData.CommandType = CommandType.StoredProcedure;
-            //        SelectApprovalData.Parameters.AddWithValue("@Procedure", "SelectApproved");
-            //        SelectApprovalData.Parameters.AddWithValue("@Section", LoginForm.UserSection);
-            //        SelectApprovalData.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-            //        SelectApprovalData.Parameters.AddWithValue("@ApproverType", "");
-            //        SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
-            //        DataTable dt = new DataTable();
-            //        sda.Fill(dt);
-            //        ApprovalDataGrid.DataSource = dt;
-            //        con.Close();
-
-            //        EnabledRadioButtonForApprover();
-
-            //    }
-            //    else if (StatusDropdown.Text == "Rejected")
-            //    {
-            //        // Check Connection status -> Open connection if the connection is closed
-            //        if (con.State == ConnectionState.Closed)
-            //        {
-            //            con.Open();
-            //        }
-
-            //        // -> SQL query to select approval data based on status
-            //        SqlCommand SelectApprovalData = new SqlCommand("SP_SelectApprovalDataBasedOnStatus", con);
-            //        SelectApprovalData.CommandType = CommandType.StoredProcedure;
-            //        SelectApprovalData.Parameters.AddWithValue("@Procedure", "SelectRejected");
-            //        SelectApprovalData.Parameters.AddWithValue("@Section", LoginForm.UserSection);
-            //        SelectApprovalData.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-            //        SelectApprovalData.Parameters.AddWithValue("@ApproverType", "");
-            //        SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
-            //        DataTable dt = new DataTable();
-            //        sda.Fill(dt);
-            //        ApprovalDataGrid.DataSource = dt;
-            //        con.Close();
-
-            //        EnabledRadioButtonForApprover();
-            //    }
-            //    else if (StatusDropdown.Text == "Cancelled")
-            //    {
-            //        // Check Connection status -> Open connection if the connection is closed
-            //        if (con.State == ConnectionState.Closed)
-            //        {
-            //            con.Open();
-            //        }
-
-            //        // -> SQL query to select approval data based on status
-            //        SqlCommand SelectApprovalData = new SqlCommand("SP_SelectApprovalDataBasedOnStatus", con);
-            //        SelectApprovalData.CommandType = CommandType.StoredProcedure;
-            //        SelectApprovalData.Parameters.AddWithValue("@Procedure", "SelectCancelled");
-            //        SelectApprovalData.Parameters.AddWithValue("@Section", LoginForm.UserSection);
-            //        SelectApprovalData.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-            //        SelectApprovalData.Parameters.AddWithValue("@ApproverType", "");
-            //        SqlDataAdapter sda = new SqlDataAdapter(SelectApprovalData);
-            //        DataTable dt = new DataTable();
-            //        sda.Fill(dt);
-            //        ApprovalDataGrid.DataSource = dt;
-            //        con.Close();
-
-            //        EnabledRadioButtonForApprover();
-            //    }
-            //}
-        }
-
-        //====================================================================================================================>>>>>>>>>>>>
-
-        private void FilterApprovalStatus()
-        {
-
+            
+            
         }
 
         //====================================================================================================================>>>>>>>>>>>>
@@ -3424,6 +3288,8 @@ namespace MHMS.Forms
         public static string PartCode;
         public static string COPQAmount;
         public static string DateEncountered;
+        public static string DistinctionCode;
+        public static string ResponsibleSection;
 
         private void ApprovalDataGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
@@ -3444,7 +3310,10 @@ namespace MHMS.Forms
             }
         }
 
-        private void AcceptButton_Click(object sender, EventArgs e)
+        public static string SelectedProcessIncharge;
+        public static string SelectedApprovalType;
+
+        private async void AcceptButton_Click(object sender, EventArgs e)
         {
             List<DataGridViewRow> selectedRows = (from row in ApprovalDataGrid.Rows.Cast<DataGridViewRow>()
                                                   where Convert.ToBoolean(row.Cells["Select"].Value) == true
@@ -3458,165 +3327,43 @@ namespace MHMS.Forms
             {
                 if (TypeofApprovalDropdown.Text == "Applying")
                 {
-                    if (con.State == ConnectionState.Closed)
+                    try
                     {
-                        con.Open();
-                    }
-
-                    if (LoginForm.COPQPIC == "✔️" || SectionMenuForm.COPQPIC == "✔️")
-                    {
-                        if (RoleDropDown.Text == "COPQ PIC")
+                        using (SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn))
                         {
-                            foreach (DataGridViewRow row in ApprovalDataGrid.Rows)
-                            {
-                                DateEncountered = row.Cells["Date Encountered"].Value.ToString();
-                                LineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
-                                PartCode = row.Cells["Part Code"].Value.ToString();
-                                ApprovalType = TypeofApprovalDropdown.Text;
+                            await con.OpenAsync();
 
-                                if ((Convert.ToBoolean(row.Cells[0].Value) == true))
-                                {
-                                    COPQConfirmationForm copqConfirmationForm = new COPQConfirmationForm();
-                                    copqConfirmationForm.ShowDialog();
-                                }
-                            }
 
-                            GenerateMHData();
-                            SelectAllChkBox.Checked = false;
-                            //LoadApplyingApprovalData();
-                        }
-                    }
-                    else if (LoginForm.SectionSPV == "✔️" || SectionMenuForm.SectionSPV == "✔️")
-                    {
-                        if (RoleDropDown.Text == "SPV")
-                        {
-                            foreach (DataGridViewRow row in ApprovalDataGrid.Rows)
-                            {
-                                if ((Convert.ToBoolean(row.Cells[0].Value) == true))
-                                {
-                                    DateEncountered = row.Cells["Date Encountered"].Value.ToString();
-                                    LineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
-                                    SelectedLineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
-                                    PartCode = row.Cells["Part Code"].Value.ToString();
-                                    ApprovalType = TypeofApprovalDropdown.Text;
-
-                                    // -> SQL query to update approval status
-                                    if (con.State == ConnectionState.Closed)
-                                    {
-                                        con.Open();
-                                    }
-
-                                    SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateApprovalStatus", con);
-                                    UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "ApprovedBySectionSPV");
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetail);
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@Reason", "");
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", "");
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", PartCode);
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", DateEncountered);
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "For Approval by MGR");
-                                    UpdateApprovalStatus.ExecuteNonQuery();
-                                    con.Close();
-
-                                }
-                            }
-
-                            //AcceptButtonIsClicked = true;
-                            MessageBox.Show("Approved Successfully!", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                            GenerateMHData();
-                            SelectAllChkBox.Checked = false;
-                            //LoadApplyingApprovalData();
-                        }
-                    }
-                    else if (LoginForm.SectionMGR == "✔️" || SectionMenuForm.SectionMGR == "✔️")
-                    {
-                        if (RoleDropDown.Text == "MGR")
-                        {
-                            foreach (DataGridViewRow row in ApprovalDataGrid.Rows)
-                            {
-                                if ((Convert.ToBoolean(row.Cells[0].Value) == true))
-                                {
-                                    DateEncountered = row.Cells["Date Encountered"].Value.ToString();
-                                    LineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
-                                    SelectedLineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
-                                    PartCode = row.Cells["Part Code"].Value.ToString();
-                                    ApprovalType = TypeofApprovalDropdown.Text;
-
-                                    // -> SQL query to update approval status
-                                    if (con.State == ConnectionState.Closed)
-                                    {
-                                        con.Open();
-                                    }
-
-                                    SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateApprovalStatus", con);
-                                    UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "ApprovedBySectionMGR");
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetail);
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@Reason", "");
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", "");
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", PartCode);
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", DateEncountered);
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "Approved");
-                                    UpdateApprovalStatus.ExecuteNonQuery();
-                                    con.Close();
-                                }
-                            }
-
-                            //AcceptButtonIsClicked = true;
-                            MessageBox.Show("Approved Successfully!", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                            GenerateMHData();
-                            SelectAllChkBox.Checked = false;
-                            //LoadApplyingApprovalData();
-                        }
-                    }
-                }
-
-                if (TypeofApprovalDropdown.Text == "Receiving")
-                {
-                    if (LoginForm.COPQPIC == "✔️" || SectionMenuForm.COPQPIC == "✔️")
-                    {
-                        if (RoleDropDown.Text == "COPQ PIC")
-                        {
-                            // -> SQL query to select process in-charge pic
-                            if (con.State == ConnectionState.Closed)
-                            {
-                                con.Open();
-                            }
-
-                            SqlCommand SelectProcessInchargeUser = new SqlCommand("SP_SelectProcessInchargeUsers", con);
-                            SelectProcessInchargeUser.CommandType = CommandType.StoredProcedure;
-                            SelectProcessInchargeUser.Parameters.AddWithValue("@UserSection", Dashboard.SectionText.Replace("BIPH-", ""));
-                            SqlDataAdapter da = new SqlDataAdapter(SelectProcessInchargeUser);
-                            DataTable dt = new DataTable();
-                            da.Fill(dt);
-
-                            if (dt.Rows.Count > 1)
+                            if (RoleDropDown.Text == "COPQ PIC")
                             {
                                 foreach (DataGridViewRow row in ApprovalDataGrid.Rows)
                                 {
+                                    DateEncountered = row.Cells["Date Encountered"].Value.ToString();
+                                    LineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
+                                    PartCode = row.Cells["Part Code"].Value.ToString();
+                                    ApprovalType = TypeofApprovalDropdown.Text;
+                                    DistinctionCode = row.Cells["DistinctionCode"].Value.ToString();
 
                                     if ((Convert.ToBoolean(row.Cells[0].Value) == true))
                                     {
-                                        DateEncountered = row.Cells["Date Encountered"].Value.ToString();
-                                        LineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
-                                        PartCode = row.Cells["Part Code"].Value.ToString();
-                                        ApprovalType = TypeofApprovalDropdown.Text;
-
-                                        //Show Process in-charge form
-                                        ProcessInchargeForm processInChanrge = new ProcessInchargeForm();
-                                        processInChanrge.ShowDialog();
+                                        COPQConfirmationForm copqConfirmationForm = new COPQConfirmationForm();
+                                        copqConfirmationForm.ShowDialog();
                                     }
                                 }
 
-                                GenerateMHData();
+                                MessageBox.Show("Approved Successfully!", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                                await GenerateMHData();
+
                                 SelectAllChkBox.Checked = false;
+                                //LoadApplyingApprovalData();
+
+                                //Send email to Applying section SPV
+                                COPQ_SendEmailToApprover COPQ_SendEmail = new COPQ_SendEmailToApprover(); //class instance
+                                await COPQ_SendEmail.SendEmailToSPV(Dashboard.SectionText.Replace("BIPH-", ""));
                             }
 
-                            if (dt.Rows.Count == 1)
+                            if (RoleDropDown.Text == "SPV")
                             {
                                 foreach (DataGridViewRow row in ApprovalDataGrid.Rows)
                                 {
@@ -3627,228 +3374,484 @@ namespace MHMS.Forms
                                         SelectedLineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
                                         PartCode = row.Cells["Part Code"].Value.ToString();
                                         ApprovalType = TypeofApprovalDropdown.Text;
-
-                                        // -> SQL query to update approval status
-                                        if (con.State == ConnectionState.Closed)
-                                        {
-                                            con.Open();
-                                        }
+                                        DistinctionCode = row.Cells["DistinctionCode"].Value.ToString();
 
                                         SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateApprovalStatus", con);
                                         UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
-                                        UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "ApprovedBySectionCOPQPIC");
-                                        UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetail);
+                                        UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "ApprovedBySectionSPV");
+                                        UpdateApprovalStatus.Parameters.AddWithValue("@DistinctionCode", DistinctionCode);
                                         UpdateApprovalStatus.Parameters.AddWithValue("@Reason", "");
                                         UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", "");
-                                        UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", PartCode);
-                                        UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", DateEncountered);
                                         UpdateApprovalStatus.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-                                        UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "For Approval by COPQ Process In-Charge");
-                                        UpdateApprovalStatus.ExecuteNonQuery();
-                                        con.Close();
+                                        UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "For Approval by MGR");
+                                        UpdateApprovalStatus.Parameters.AddWithValue("@CurrentApprover", "Pending Approval");
+                                        UpdateApprovalStatus.Parameters.AddWithValue("@ApproverName", "Approved by " + LoginForm.FirstName + " " + LoginForm.LastName + " " + DateTime.Now.ToString("MM/dd/yyyy hh:mm"));
+                                        await UpdateApprovalStatus.ExecuteNonQueryAsync();
                                     }
                                 }
 
-                                //AcceptButtonIsClicked = true;
-                                MessageBox.Show("Approved Successfully", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                MessageBox.Show("Approved Successfully!", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                                await GenerateMHData();
+                                SelectAllChkBox.Checked = false;
+                                //LoadApplyingApprovalData();
+
+                                //Send email to MGR
+                                COPQ_SendEmailToApprover COPQ_SendEmail = new COPQ_SendEmailToApprover(); //class instance
+                                await COPQ_SendEmail.SendEmailToApplyingMGR(Dashboard.SectionText.Replace("BIPH-", ""));
+                            }
+
+                            if (RoleDropDown.Text == "MGR")
+                            {
+                                foreach (DataGridViewRow row in ApprovalDataGrid.Rows)
+                                {
+                                    if ((Convert.ToBoolean(row.Cells[0].Value) == true))
+                                    {
+                                        DateEncountered = row.Cells["Date Encountered"].Value.ToString();
+                                        LineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
+                                        SelectedLineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
+                                        PartCode = row.Cells["Part Code"].Value.ToString();
+                                        ApprovalType = TypeofApprovalDropdown.Text;
+                                        DistinctionCode = row.Cells["DistinctionCode"].Value.ToString();
+                                        ResponsibleSection = row.Cells["Responsible Section"].Value.ToString();
+
+                                        SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateApprovalStatus", con);
+                                        UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
+                                        UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "ApprovedBySectionMGR");
+                                        UpdateApprovalStatus.Parameters.AddWithValue("@DistinctionCode", ApprovalForm.DistinctionCode);
+                                        //UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetail);
+                                        UpdateApprovalStatus.Parameters.AddWithValue("@Reason", "");
+                                        UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", "");
+                                        //UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", PartCode);
+                                        //UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", DateEncountered);
+                                        UpdateApprovalStatus.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
+                                        UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "Approved");
+                                        UpdateApprovalStatus.Parameters.AddWithValue("@CurrentApprover", "Pending Approval");
+                                        UpdateApprovalStatus.Parameters.AddWithValue("@ApproverName", "Approved by " + LoginForm.FirstName + " " + LoginForm.LastName + " " + DateTime.Now.ToString("MM/dd/yyyy hh:mm"));
+                                        await UpdateApprovalStatus.ExecuteNonQueryAsync();
+                                    }
+                                }
+
+
+                                MessageBox.Show("Approved Successfully!", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+
+                                COPQ_ApproveByMGR approveByMGR = new COPQ_ApproveByMGR();//instance
+                                await approveByMGR.ApproveByApplyingMGR(ApprovalDataGrid);
+
+                                await GenerateMHData();
+                                SelectAllChkBox.Checked = false;
+                                //LoadApplyingApprovalData();
+
+                                //Send email to Receiving section COPQ PIC
+                                COPQ_SendEmailToApprover COPQ_SendEmail = new COPQ_SendEmailToApprover(); //class instance
+                                await COPQ_SendEmail.SendEmailToReceivingCOPQPIC(ResponsibleSection);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error: {ex.Message}");
+                    }
+                    finally
+                    {
+                        con.Close();  // Ensure the connection is closed
+                    }
+
+                }
+
+                if (TypeofApprovalDropdown.Text == "Receiving")
+                {
+                    try
+                    {
+                        using (SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn))
+                        {
+                            await con.OpenAsync();
+
+                            if (RoleDropDown.Text == "COPQ PIC")
+                            {
+                                // Asynchronous query using ExecuteReaderAsync
+                                SqlCommand SelectProcessInchargeUser = new SqlCommand("SP_SelectProcessInchargeUsers", con);
+                                SelectProcessInchargeUser.CommandType = CommandType.StoredProcedure;
+                                SelectProcessInchargeUser.Parameters.AddWithValue("@UserSection", Dashboard.SectionText.Replace("BIPH-", ""));
+
+                                SqlDataReader reader = await SelectProcessInchargeUser.ExecuteReaderAsync();
+
+                                // Assuming the data returned will be loaded into a DataTable
+                                DataTable dt = new DataTable();
+                                dt.Load(reader); // Load the data asynchronously into the DataTable
+
+                                reader.Close(); // Close the reader when done
+
+                                if (dt.Rows.Count > 1)
+                                {
+                                    // Show the Process In-charge form if more than one record found
+                                    ProcessInchargeForm processInChanrge = new ProcessInchargeForm();
+                                    processInChanrge.ShowDialog();
+
+                                    // After form submission
+                                    SelectedProcessIncharge = ProcessInchargeForm.ProcessInCharge;
+                                    SelectedApprovalType = TypeofApprovalDropdown.Text;
+
+                                    if (!string.IsNullOrEmpty(SelectedProcessIncharge))
+                                    {
+
+                                        foreach (DataGridViewRow row in ApprovalDataGrid.Rows)
+                                        {
+                                            if (Convert.ToBoolean(row.Cells[0].Value) == true)
+                                            {
+                                                DateEncountered = row.Cells["Date Encountered"].Value.ToString();
+                                                LineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
+                                                PartCode = row.Cells["Part Code"].Value.ToString();
+                                                ApprovalType = TypeofApprovalDropdown.Text;
+                                                DistinctionCode = row.Cells["DistinctionCode"].Value.ToString();
+                                                ResponsibleSection = row.Cells["Responsible Section"].Value.ToString();
+
+                                                COPQ_ApproveReceivingCOPQPIC approveByReceivingCOPQPIC = new COPQ_ApproveReceivingCOPQPIC();
+                                                await approveByReceivingCOPQPIC.ApproveByReceivingCOPQPIC(SelectedProcessIncharge);
+
+                                            }
+                                        }
+                                    }
+
+                                    // Generate the MH Data asynchronously
+                                    await GenerateMHData();
+                                    SelectAllChkBox.Checked = false;
+
+                                    //Send email to Receiving section Process In - charge
+                                    COPQ_SendEmailToApprover COPQ_SendEmail = new COPQ_SendEmailToApprover(); //class instance
+                                    await COPQ_SendEmail.SendEmailToReceivingCOPQProcessInCharge(ResponsibleSection);
+
+                                }
+
+                                if (dt.Rows.Count == 1)
+                                {
+                                    // Only one result, handle directly
+                                    SelectedApprovalType = TypeofApprovalDropdown.Text;
+
+                                    foreach (DataGridViewRow row in ApprovalDataGrid.Rows)
+                                    {
+                                        if (Convert.ToBoolean(row.Cells[0].Value) == true)
+                                        {
+                                            DateEncountered = row.Cells["Date Encountered"].Value.ToString();
+                                            LineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
+                                            PartCode = row.Cells["Part Code"].Value.ToString();
+                                            ApprovalType = TypeofApprovalDropdown.Text;
+                                            DistinctionCode = row.Cells["DistinctionCode"].Value.ToString();
+                                            ResponsibleSection = row.Cells["Responsible Section"].Value.ToString();
+
+                                            COPQ_ApproveReceivingCOPQPIC approveByReceivingCOPQPIC = new COPQ_ApproveReceivingCOPQPIC();
+                                            await approveByReceivingCOPQPIC.ApproveByReceivingCOPQPIC("Pending Approval");
+                                        }
+                                    }
+
+                                    // Generate MH Data after approval
+                                    await GenerateMHData();
+                                    SelectAllChkBox.Checked = false;
+
+
+                                    //Send email to Receiving section Process In - charge
+                                    COPQ_SendEmailToApprover COPQ_SendEmail = new COPQ_SendEmailToApprover(); //class instance
+                                    await COPQ_SendEmail.SendEmailToReceivingCOPQProcessInCharge(ResponsibleSection);
+                                }
+                            }
+
+
+                            if (RoleDropDown.Text == "COPQ Process In-Charge")
+                            {
+                                SelectedApprovalType = TypeofApprovalDropdown.Text;
+
+                                foreach (DataGridViewRow row in ApprovalDataGrid.Rows)
+                                {
+                                    if ((Convert.ToBoolean(row.Cells[0].Value) == true))
+                                    {
+                                        DateEncountered = row.Cells["Date Encountered"].Value.ToString();
+                                        LineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
+                                        SelectedLineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
+                                        PartCode = row.Cells["Part Code"].Value.ToString();
+                                        ApprovalType = TypeofApprovalDropdown.Text;
+                                        COPQAmount = row.Cells["COPQ Amount"].Value.ToString();
+                                        DistinctionCode = row.Cells["DistinctionCode"].Value.ToString();
+
+                                        ResponsibleSection = row.Cells["Responsible Section"].Value.ToString();
+
+                                        Decimal LineStop = Convert.ToDecimal(row.Cells["COPQ Amount"].Value);
+
+                                        try
+                                        {
+                                            if (Convert.ToDecimal(ApprovalForm.COPQAmount) >= 100 || LineStop >= 90)
+                                            {
+                                                ProcessInChargeConfirmationForm processInChargeConfirmationForm = new ProcessInChargeConfirmationForm();
+                                                processInChargeConfirmationForm.ShowDialog();
+                                            }
+                                            else
+                                            {
+                                                // Prepare the SQL command for the stored procedure
+                                                SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateApprovalStatus", con)
+                                                {
+                                                    CommandType = CommandType.StoredProcedure
+                                                };
+
+                                                UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "ApprovedBySectionCOPQProcessInCharge");
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@DistinctionCode", DistinctionCode);
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@Reason", "");
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", "");
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@Type", ApprovalType);
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "For Approval by SPV");
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@ApproverName", "");
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@CurrentApprover", "Pending Approval");
+                                                // Execute the command asynchronously
+                                                await UpdateApprovalStatus.ExecuteNonQueryAsync();
+                                            }
+
+
+                                            //AcceptButtonIsClicked = true;
+
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            // Handle any errors during the process
+                                            MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                        }
+                                        finally
+                                        {
+                                            if (Convert.ToDecimal(ApprovalForm.COPQAmount) < 100)
+                                            {
+                                                MessageBox.Show("Approved Successfully", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                            }
+                                        }
+                                    }
+                                }
 
                                 //LoadReceivingApprovalData();
-                                GenerateMHData();
+                                await GenerateMHData();
                                 SelectAllChkBox.Checked = false;
+
+
+                                //Send email to Receiving section SPV
+                                COPQ_SendEmailToApprover COPQ_SendEmail = new COPQ_SendEmailToApprover(); //class instance
+                                await COPQ_SendEmail.SendEmailToReceivingSPV(ResponsibleSection);
+
                             }
-                        }
-                    }
 
-                    if (LoginForm.ProcessInCharge == "✔️" || SectionMenuForm.ProcessInCharge == "✔️")
-                    {
-                        if (RoleDropDown.Text == "COPQ Process In-Charge")
-                        {
-                            foreach (DataGridViewRow row in ApprovalDataGrid.Rows)
+
+                            if (RoleDropDown.Text == "SPV")
                             {
-                                if ((Convert.ToBoolean(row.Cells[0].Value) == true))
+                                try
                                 {
-                                    DateEncountered = row.Cells["Date Encountered"].Value.ToString();
-                                    LineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
-                                    SelectedLineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
-                                    PartCode = row.Cells["Part Code"].Value.ToString();
-                                    ApprovalType = TypeofApprovalDropdown.Text;
-                                    COPQAmount = row.Cells["COPQ Amount"].Value.ToString();
-
-                                    // -> SQL query to update approval status
-                                    if (con.State == ConnectionState.Closed)
+                                    foreach (DataGridViewRow row in ApprovalDataGrid.Rows)
                                     {
-                                        con.Open();
+                                        if ((Convert.ToBoolean(row.Cells[0].Value) == true))
+                                        {
+                                            DateEncountered = row.Cells["Date Encountered"].Value.ToString();
+                                            LineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
+                                            SelectedLineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
+                                            PartCode = row.Cells["Part Code"].Value.ToString();
+                                            ApprovalType = TypeofApprovalDropdown.Text;
+                                            DistinctionCode = row.Cells["DistinctionCode"].Value.ToString();
+                                            ResponsibleSection = row.Cells["Responsible Section"].Value.ToString();
+
+
+                                            if (Dashboard.SectionText.Replace("BIPH-", "") == "Equipment Engineering")
+                                            {
+                                                SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateApprovalStatus", con);
+                                                UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "ApprovedBy_EESPV");
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@DistinctionCode", DistinctionCode);
+                                                //UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetail);    
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@Reason", "");
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", "");
+                                                //UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", PartCode);
+                                                //UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", DateEncountered);
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@Type", ApprovalType);
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "Approved");
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@CurrentApprover", "Automatic System Approved" + " " + DateTime.Now.ToString("MM/dd/yyyy hh:mm"));
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@ApproverName", "Approved by " + LoginForm.FirstName + " " + LoginForm.LastName + " " + DateTime.Now.ToString("MM/dd/yyyy hh:mm"));
+                                                await UpdateApprovalStatus.ExecuteNonQueryAsync();
+                                            }
+                                            else
+                                            {
+                                                SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateApprovalStatus", con);
+                                                UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "ApprovedBySectionSPV");
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@DistinctionCode", DistinctionCode);
+                                                //UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetail);
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@Reason", "");
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", "");
+                                                //UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", PartCode);
+                                                //UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", DateEncountered);
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@Type", ApprovalType);
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "For Approval by MGR");
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@CurrentApprover", "Pending Approval");
+                                                UpdateApprovalStatus.Parameters.AddWithValue("@ApproverName", "Approved by " + LoginForm.FirstName + " " + LoginForm.LastName + " " + DateTime.Now.ToString("MM/dd/yyyy hh:mm"));
+                                                await UpdateApprovalStatus.ExecuteNonQueryAsync();
+
+                                            }
+                                        }
                                     }
 
-                                    if (Convert.ToDecimal(COPQAmount) >= 100)
-                                    {
-                                        ProcessInChargeConfirmationForm processInChargeConfirmationForm = new ProcessInChargeConfirmationForm();
-                                        processInChargeConfirmationForm.ShowDialog();
+                                    //AcceptButtonIsClicked = true;
+                                    MessageBox.Show("Approved Successfully!", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
+                                }
+                                catch (Exception ex)
+                                {
+                                    // Handle any errors during the process
+                                    MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
 
-                                    }
-                                    else
-                                    {
-                                        SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateApprovalStatus", con);
-                                        UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
-                                        UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "ApprovedBySectionCOPQProcessInCharge");
-                                        UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetail);
-                                        UpdateApprovalStatus.Parameters.AddWithValue("@Reason", "");
-                                        UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", "");
-                                        UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", PartCode);
-                                        UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", DateEncountered);
-                                        UpdateApprovalStatus.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-                                        UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "For Approval by SPV");
-                                        UpdateApprovalStatus.ExecuteNonQuery();
-                                        con.Close();
+                                await GenerateMHData();
 
-                                    }
+                                SelectAllChkBox.Checked = false;
+
+                                if (Dashboard.SectionText.Replace("BIPH-", "") != "Equipment Engineering")
+                                {
+                                
+                                    COPQ_SendEmailToApprover COPQ_SendEmail = new COPQ_SendEmailToApprover(); //class instance
+                                    await COPQ_SendEmail.SendEmailToReceivingMGR(ResponsibleSection);
                                 }
                             }
 
-                            //AcceptButtonIsClicked = true;
-                            MessageBox.Show("Approved Successfully", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                            //LoadReceivingApprovalData();
-                            GenerateMHData();
-                            SelectAllChkBox.Checked = false;
-                        }
-                    }
-
-                    if (LoginForm.SectionSPV == "✔️" || SectionMenuForm.SectionSPV == "✔️")
-                    {
-                        if (RoleDropDown.Text == "SPV")
-                        {
-                            foreach (DataGridViewRow row in ApprovalDataGrid.Rows)
+                            if (RoleDropDown.Text == "MGR")
                             {
-                                if ((Convert.ToBoolean(row.Cells[0].Value) == true))
+                                try
                                 {
-                                    DateEncountered = row.Cells["Date Encountered"].Value.ToString();
-                                    LineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
-                                    SelectedLineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
-                                    PartCode = row.Cells["Part Code"].Value.ToString();
-                                    ApprovalType = TypeofApprovalDropdown.Text;
-
-                                    // -> SQL query to update approval status
-                                    if (con.State == ConnectionState.Closed)
+                                    foreach (DataGridViewRow row in selectedRows)
                                     {
-                                        con.Open();
+                                        if ((Convert.ToBoolean(row.Cells[0].Value) == true))
+                                        {
+                                            DateEncountered = row.Cells["Date Encountered"].Value.ToString();
+                                            LineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
+                                            SelectedLineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
+                                            PartCode = row.Cells["Part Code"].Value.ToString();
+                                            ApprovalType = TypeofApprovalDropdown.Text;
+                                            DistinctionCode = row.Cells["DistinctionCode"].Value.ToString();
+
+
+                                            SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateApprovalStatus", con);
+                                            UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
+                                            UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "ApprovedBySectionMGR");
+                                            UpdateApprovalStatus.Parameters.AddWithValue("@DistinctionCode", DistinctionCode);
+                                            //UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetail);
+                                            UpdateApprovalStatus.Parameters.AddWithValue("@Reason", "");
+                                            UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", "");
+                                            //UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", PartCode);
+                                            //UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", DateEncountered);
+                                            UpdateApprovalStatus.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
+                                            UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "Approved");
+                                            UpdateApprovalStatus.Parameters.AddWithValue("@CurrentApprover", "");
+                                            UpdateApprovalStatus.Parameters.AddWithValue("@ApproverName", "Approved by " + LoginForm.FirstName + " " + LoginForm.LastName + " " + DateTime.Now.ToString("MM/dd/yyyy hh:mm"));
+                                            await UpdateApprovalStatus.ExecuteNonQueryAsync();
+
+                                        }
                                     }
 
-                                    SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateApprovalStatus", con);
-                                    UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "ApprovedBySectionSPV");
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetail);
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@Reason", "");
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", "");
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", PartCode);
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", DateEncountered);
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "For Approval by MGR");
-                                    UpdateApprovalStatus.ExecuteNonQuery();
-                                    con.Close();
-
-
                                 }
-                            }
-
-                            //AcceptButtonIsClicked = true;
-                            MessageBox.Show("Approved Successfully!", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            //LoadReceivingApprovalData();
-                            GenerateMHData();
-                            SelectAllChkBox.Checked = false;
-                        }
-                    }
-
-                    if (LoginForm.SectionMGR == "✔️" || SectionMenuForm.SectionMGR == "✔️")
-                    {
-                        if (RoleDropDown.Text == "MGR")
-                        {
-                            foreach (DataGridViewRow row in selectedRows)
-                            {
-                                if ((Convert.ToBoolean(row.Cells[0].Value) == true))
+                                catch (Exception ex)
                                 {
-                                    DateEncountered = row.Cells["Date Encountered"].Value.ToString();
-                                    LineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
-                                    SelectedLineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
-                                    PartCode = row.Cells["Part Code"].Value.ToString();
-                                    ApprovalType = TypeofApprovalDropdown.Text;
-
-                                    // -> SQL query to update approval status
-                                    if (con.State == ConnectionState.Closed)
-                                    {
-                                        con.Open();
-                                    }
-
-                                    SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateApprovalStatus", con);
-                                    UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "ApprovedBySectionMGR");
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetail);
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@Reason", "");
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", "");
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", PartCode);
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", DateEncountered);
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-                                    UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "Approved");
-                                    UpdateApprovalStatus.ExecuteNonQuery();
-                                    con.Close();
-
+                                    // Handle any errors during the process
+                                    MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 }
-                            }
 
-                            //AcceptButtonIsClicked = true;
-                            MessageBox.Show("Approved Successfully!", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            //LoadReceivingApprovalData();
-                            GenerateMHData();
-                            SelectAllChkBox.Checked = false;
+
+                                COPQ_ApproveByMGR approveByMGR = new COPQ_ApproveByMGR();//instance
+                                await approveByMGR.ApproveByReceivingMGR(ApprovalDataGrid);
+
+                                await GenerateMHData();
+                                SelectAllChkBox.Checked = false;
+
+                            }
                         }
+                        
                     }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error: {ex.Message}");
+                    }
+                    finally
+                    {
+                        con.Close();  // Ensure the connection is closed
+                    }
+
+                    
                 }
-                else if (TypeofApprovalDropdown.Text == "QI Confirmation")
+
+                if (TypeofApprovalDropdown.Text == "QI Confirmation")
                 {
-                    //Update QI Confirmation to Confirmed by Username, Date of approval
-                    foreach (DataGridViewRow row in selectedRows)
+                    using (SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn))
                     {
-                        if ((Convert.ToBoolean(row.Cells[0].Value) == true))
+                        await con.OpenAsync();
+
+                        //Update QI Confirmation to Confirmed by Username, Date of approval
+                        foreach (DataGridViewRow row in selectedRows)
                         {
-                            DateEncountered = row.Cells["Date Encountered"].Value.ToString();
-                            LineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
-                            SelectedLineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
-                            PartCode = row.Cells["Part Code"].Value.ToString();
-                            ApprovalType = TypeofApprovalDropdown.Text;
-
-                            // -> SQL query to update approval status
-                            if (con.State == ConnectionState.Closed)
+                            if ((Convert.ToBoolean(row.Cells[0].Value) == true))
                             {
-                                con.Open();
+                                DateEncountered = row.Cells["Date Encountered"].Value.ToString();
+                                LineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
+                                SelectedLineStopDetail = row.Cells["Line Stop Detail"].Value.ToString();
+                                PartCode = row.Cells["Part Code"].Value.ToString();
+                                ApprovalType = TypeofApprovalDropdown.Text;
+                                DistinctionCode = row.Cells["DistinctionCode"].Value.ToString();
+
+
+                                try
+                                {
+                                    SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateQIConfirmationStatus", con);
+                                    UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
+                                    UpdateApprovalStatus.Parameters.AddWithValue("@DistinctionCode", DistinctionCode);
+                                    //UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetail);
+                                    //UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", PartCode);
+                                    //UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", DateEncountered);
+                                    UpdateApprovalStatus.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
+                                    UpdateApprovalStatus.Parameters.AddWithValue("@ConfirmedBy", "Confirmed by: " + LoginForm.FirstName + " " + LoginForm.LastName + ", " + DateTime.Now.ToString());
+                                    UpdateApprovalStatus.ExecuteNonQuery();
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show($"Error: {ex.Message}");
+                                }
+                                finally
+                                {
+                                    con.Close();  // Ensure the connection is closed
+                                }
+
                             }
-
-                            SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateQIConfirmationStatus", con);
-                            UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
-                            UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetail);
-                            UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", PartCode);
-                            UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", DateEncountered);
-                            UpdateApprovalStatus.Parameters.AddWithValue("@Type", TypeofApprovalDropdown.Text);
-                            UpdateApprovalStatus.Parameters.AddWithValue("@ConfirmedBy", "Confirmed by: " + LoginForm.FirstName + " " + LoginForm.LastName + ", " + DateTime.Now.ToString());
-                            UpdateApprovalStatus.ExecuteNonQuery();
-                            con.Close();
-
                         }
+
+                        //AcceptButtonIsClicked = true;
+                        MessageBox.Show("Confirmed Successfully!", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        //LoadReceivingApprovalData();
+                        ExcludeEEData();
+
+                        //GenerateMHData();
+                        SelectAllChkBox.Checked = false;
                     }
-
-                    //AcceptButtonIsClicked = true;
-                    MessageBox.Show("Confirmed Successfully!", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    //LoadReceivingApprovalData();
-                    ExcludeEEData();
-
-                    //GenerateMHData();
-                    SelectAllChkBox.Checked = false;
-                   
                 }
             }
         }
 
+        private void UpdateProcessInChargeName()
+        {
+            // -> SQL query to insert user account
+            if (con.State == ConnectionState.Closed)
+            {
+                con.Open();
+            }
+
+            SqlCommand UpdateApprovalStatus = new SqlCommand("SP_ProcessInChargeName", con);
+            UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
+            UpdateApprovalStatus.Parameters.AddWithValue("@ProcessInChargeName", ProcessInchargeForm.ProcessInCharge);
+            UpdateApprovalStatus.Parameters.AddWithValue("@DistinctionCode", DistinctionCode);
+            //UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetailTextBox.Text);
+            //UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
+            //UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
+            UpdateApprovalStatus.ExecuteNonQuery();
+            con.Close();
+        }
 
         private void ExcludeEEData()
         {
@@ -3878,6 +3881,8 @@ namespace MHMS.Forms
                 //Include EE data
                 SqlCommand SelectForQIConfirmationData = new SqlCommand("SP_SelectForQIConfirmationData", con);
                 SelectForQIConfirmationData.CommandType = CommandType.StoredProcedure;
+                // Set the timeout for the command
+                SelectForQIConfirmationData.CommandTimeout = 60; // Timeout in seconds
                 SelectForQIConfirmationData.Parameters.AddWithValue("@procedure", "IncludeEEData");
                 SelectForQIConfirmationData.Parameters.AddWithValue("@Status", "For Confirmation");
                 SelectForQIConfirmationData.Parameters.AddWithValue("@Type", "QI Confirmation");
@@ -3892,7 +3897,7 @@ namespace MHMS.Forms
 
         private void ExcludeCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            ExcludeEEData();
+            //ExcludeEEData();
         }
 
         private void RoleDropDown_TextChanged(object sender, EventArgs e)
@@ -3903,6 +3908,100 @@ namespace MHMS.Forms
             }
             else
             {}
+        }
+
+        private void panel5_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void panel6_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void SearchButton_MouseEnter(object sender, EventArgs e)
+        {
+            //SearchButton.BackColor = Color.FromArgb(21, 35, 53);
+        }
+
+        private void SearchButton_Click(object sender, EventArgs e)
+        {
+            SearchRequestForApprovalData();
+        }
+
+        private void CategoryDropdown_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //if (CategoryDropdown.Text == "ST")
+            //{
+            //    Dashboard.STCategoryIsSelected = true;
+            //    CategoryDropdown.Text = "ST";
+            //}
+        }
+
+        private void ApproveAllPendingBtn_Click(object sender, EventArgs e)
+        {
+            PendingForApprovalForm COPQPendingForApprovalForm = new PendingForApprovalForm();
+            COPQPendingForApprovalForm.ShowDialog();
+        }
+
+        private void ApprovalDataGrid_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            
+        }
+
+        private void GeneratePreviousQIForConfirmationBtn_Click(object sender, EventArgs e)
+        {
+
+            SelectAllChkBox.Visible = true; //Show select all checkbox
+            ExcludeCheckBox.Location = new Point(120, 110); //Set location to new point
+            ApprovalDataGrid.Columns["Select"].Visible = true; //Show checkbox colum
+
+       
+           
+            // Check Connection status -> Open connection if the connection is closed
+            if (con.State == ConnectionState.Closed)
+            {
+                con.Open();
+            }
+
+            if (ExcludeCheckBox.Checked == true)
+            {
+                //Exclude EE data
+                SqlCommand SelectForQIConfirmationData = new SqlCommand("SP_SelectForQIConfirmationData_Previous", con);
+                SelectForQIConfirmationData.CommandType = CommandType.StoredProcedure;
+                SelectForQIConfirmationData.Parameters.AddWithValue("@procedure", "ExcludeEEData");
+                SelectForQIConfirmationData.Parameters.AddWithValue("@Status", "For Confirmation");
+                SelectForQIConfirmationData.Parameters.AddWithValue("@Type", "QI Confirmation");
+                SelectForQIConfirmationData.Parameters.AddWithValue("@Role", "");
+                SqlDataAdapter sda = new SqlDataAdapter(SelectForQIConfirmationData);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+                ApprovalDataGrid.DataSource = dt;
+                con.Close();
+            }
+            else
+            {
+                //Include EE data
+                SqlCommand SelectForQIConfirmationData = new SqlCommand("SP_SelectForQIConfirmationData_Previous", con);
+                SelectForQIConfirmationData.CommandType = CommandType.StoredProcedure;
+                SelectForQIConfirmationData.Parameters.AddWithValue("@procedure", "IncludeEEData");
+                SelectForQIConfirmationData.Parameters.AddWithValue("@Status", "For Confirmation");
+                SelectForQIConfirmationData.Parameters.AddWithValue("@Type", "QI Confirmation");
+                SelectForQIConfirmationData.Parameters.AddWithValue("@Role", "QI");
+                SqlDataAdapter sda = new SqlDataAdapter(SelectForQIConfirmationData);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+                ApprovalDataGrid.DataSource = dt;
+                con.Close();
+            }
+
+            ApprovalCount.Visible = false; // hide for approval count
+        }
+
+        private void RoleDropDown_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
 
         //====================================================================================================================>>>>>>>

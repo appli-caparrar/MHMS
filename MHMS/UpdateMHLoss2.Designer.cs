@@ -32,17 +32,16 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UpdateMHLoss2));
             this.TopPanel = new System.Windows.Forms.Panel();
             this.DateAndTimeLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.BrowseButton = new System.Windows.Forms.Button();
-            this.UploadButton = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.ChooseFileButton = new System.Windows.Forms.Button();
             this.FilePath = new System.Windows.Forms.TextBox();
             this.MHLossLastUpdateLabel = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.ExportButton = new System.Windows.Forms.Button();
             this.manhourLossData2BindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.mH_Management_SystemDataSet1 = new MHMS.MH_Management_SystemDataSet1();
             this.UpdateDataTimer = new System.Windows.Forms.Timer(this.components);
@@ -57,34 +56,21 @@
             this.manhourLossData2BindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.manhourLossData2TableAdapter1 = new MHMS.MH_Management_SystemDataSet2TableAdapters.ManhourLossData2TableAdapter();
             this.MHLossUploadDatagrid = new System.Windows.Forms.DataGridView();
-            this.dateEncounteredDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.sectionDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.costCenterDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.modelNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lossFactorDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.responsibleSectionDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lineStopDetailDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.stopTimeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.directMPDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.semiDirectMPDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lossManhourDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.reasonDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.typeOfLossDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cOPQAmountDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dateIssuedDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.causeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.countermeasureDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.applyingApprovalStatusDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.receivingApprovalStatusDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.qIConfirmationDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.uploadDateDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lossMHForCOPQAmountDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.manhourLossData2BindingSource2 = new System.Windows.Forms.BindingSource(this.components);
             this.mH_Management_SystemDataSet3 = new MHMS.MH_Management_SystemDataSet3();
             this.manhourLossData2TableAdapter2 = new MHMS.MH_Management_SystemDataSet3TableAdapters.ManhourLossData2TableAdapter();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.DataTypeDropdownList = new System.Windows.Forms.ComboBox();
+            this.ActionDropdownList = new System.Windows.Forms.ComboBox();
             this.button2 = new System.Windows.Forms.Button();
+            this.rowCount = new System.Windows.Forms.Label();
+            this.LabelTimeElapsed = new System.Windows.Forms.Label();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.UpdateInfo = new System.Windows.Forms.Panel();
+            this.ReadyToUpload = new System.Windows.Forms.PictureBox();
+            this.infoText = new System.Windows.Forms.Label();
+            this.UploadButton = new System.Windows.Forms.Button();
+            this.ExportButton = new System.Windows.Forms.Button();
+            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.TopPanel.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.manhourLossData2BindingSource)).BeginInit();
@@ -98,6 +84,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.manhourLossData2BindingSource2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mH_Management_SystemDataSet3)).BeginInit();
             this.panel3.SuspendLayout();
+            this.panel4.SuspendLayout();
+            this.UpdateInfo.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ReadyToUpload)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // TopPanel
@@ -117,10 +107,10 @@
             this.DateAndTimeLabel.Dock = System.Windows.Forms.DockStyle.Right;
             this.DateAndTimeLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.DateAndTimeLabel.ForeColor = System.Drawing.Color.White;
-            this.DateAndTimeLabel.Location = new System.Drawing.Point(759, 0);
+            this.DateAndTimeLabel.Location = new System.Drawing.Point(758, 0);
             this.DateAndTimeLabel.Name = "DateAndTimeLabel";
             this.DateAndTimeLabel.Padding = new System.Windows.Forms.Padding(0, 20, 9, 0);
-            this.DateAndTimeLabel.Size = new System.Drawing.Size(92, 35);
+            this.DateAndTimeLabel.Size = new System.Drawing.Size(93, 35);
             this.DateAndTimeLabel.TabIndex = 18;
             this.DateAndTimeLabel.Text = "Date and TIme";
             // 
@@ -149,21 +139,6 @@
             this.BrowseButton.Text = "Browse";
             this.BrowseButton.UseVisualStyleBackColor = false;
             this.BrowseButton.Click += new System.EventHandler(this.BrowseButton_Click);
-            // 
-            // UploadButton
-            // 
-            this.UploadButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(217)))), ((int)(((byte)(167)))));
-            this.UploadButton.FlatAppearance.BorderSize = 0;
-            this.UploadButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.UploadButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UploadButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(35)))), ((int)(((byte)(53)))));
-            this.UploadButton.Location = new System.Drawing.Point(699, 102);
-            this.UploadButton.Name = "UploadButton";
-            this.UploadButton.Size = new System.Drawing.Size(140, 35);
-            this.UploadButton.TabIndex = 37;
-            this.UploadButton.Text = "UPLOAD";
-            this.UploadButton.UseVisualStyleBackColor = false;
-            this.UploadButton.Click += new System.EventHandler(this.UploadButton_Click);
             // 
             // panel2
             // 
@@ -218,21 +193,6 @@
             this.label3.Size = new System.Drawing.Size(84, 15);
             this.label3.TabIndex = 41;
             this.label3.Text = "Last Update";
-            // 
-            // ExportButton
-            // 
-            this.ExportButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(168)))), ((int)(((byte)(101)))));
-            this.ExportButton.FlatAppearance.BorderSize = 0;
-            this.ExportButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ExportButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ExportButton.ForeColor = System.Drawing.Color.White;
-            this.ExportButton.Location = new System.Drawing.Point(699, 500);
-            this.ExportButton.Name = "ExportButton";
-            this.ExportButton.Size = new System.Drawing.Size(142, 35);
-            this.ExportButton.TabIndex = 40;
-            this.ExportButton.Text = "EXPORT";
-            this.ExportButton.UseVisualStyleBackColor = false;
-            this.ExportButton.Click += new System.EventHandler(this.ExportButton_Click);
             // 
             // manhourLossData2BindingSource
             // 
@@ -318,7 +278,6 @@
             // MHLossUploadDatagrid
             // 
             this.MHLossUploadDatagrid.AllowUserToAddRows = false;
-            this.MHLossUploadDatagrid.AutoGenerateColumns = false;
             this.MHLossUploadDatagrid.BackgroundColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -329,30 +288,6 @@
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.MHLossUploadDatagrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.MHLossUploadDatagrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.MHLossUploadDatagrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dateEncounteredDataGridViewTextBoxColumn,
-            this.sectionDataGridViewTextBoxColumn,
-            this.costCenterDataGridViewTextBoxColumn,
-            this.modelNameDataGridViewTextBoxColumn,
-            this.lossFactorDataGridViewTextBoxColumn,
-            this.responsibleSectionDataGridViewTextBoxColumn,
-            this.lineStopDetailDataGridViewTextBoxColumn,
-            this.stopTimeDataGridViewTextBoxColumn,
-            this.directMPDataGridViewTextBoxColumn,
-            this.semiDirectMPDataGridViewTextBoxColumn,
-            this.lossManhourDataGridViewTextBoxColumn,
-            this.reasonDataGridViewTextBoxColumn,
-            this.typeOfLossDataGridViewTextBoxColumn,
-            this.cOPQAmountDataGridViewTextBoxColumn,
-            this.dateIssuedDataGridViewTextBoxColumn,
-            this.causeDataGridViewTextBoxColumn,
-            this.countermeasureDataGridViewTextBoxColumn,
-            this.applyingApprovalStatusDataGridViewTextBoxColumn,
-            this.receivingApprovalStatusDataGridViewTextBoxColumn,
-            this.qIConfirmationDataGridViewTextBoxColumn,
-            this.uploadDateDataGridViewTextBoxColumn,
-            this.lossMHForCOPQAmountDataGridViewTextBoxColumn});
-            this.MHLossUploadDatagrid.DataSource = this.manhourLossData2BindingSource2;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -361,7 +296,7 @@
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.MHLossUploadDatagrid.DefaultCellStyle = dataGridViewCellStyle2;
-            this.MHLossUploadDatagrid.Location = new System.Drawing.Point(10, 143);
+            this.MHLossUploadDatagrid.Location = new System.Drawing.Point(10, 164);
             this.MHLossUploadDatagrid.Name = "MHLossUploadDatagrid";
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
@@ -371,140 +306,9 @@
             dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.MHLossUploadDatagrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            this.MHLossUploadDatagrid.Size = new System.Drawing.Size(829, 351);
+            this.MHLossUploadDatagrid.Size = new System.Drawing.Size(829, 330);
             this.MHLossUploadDatagrid.TabIndex = 44;
-            // 
-            // dateEncounteredDataGridViewTextBoxColumn
-            // 
-            this.dateEncounteredDataGridViewTextBoxColumn.DataPropertyName = "DateEncountered";
-            this.dateEncounteredDataGridViewTextBoxColumn.HeaderText = "DateEncountered";
-            this.dateEncounteredDataGridViewTextBoxColumn.Name = "dateEncounteredDataGridViewTextBoxColumn";
-            // 
-            // sectionDataGridViewTextBoxColumn
-            // 
-            this.sectionDataGridViewTextBoxColumn.DataPropertyName = "Section";
-            this.sectionDataGridViewTextBoxColumn.HeaderText = "Section";
-            this.sectionDataGridViewTextBoxColumn.Name = "sectionDataGridViewTextBoxColumn";
-            // 
-            // costCenterDataGridViewTextBoxColumn
-            // 
-            this.costCenterDataGridViewTextBoxColumn.DataPropertyName = "CostCenter";
-            this.costCenterDataGridViewTextBoxColumn.HeaderText = "CostCenter";
-            this.costCenterDataGridViewTextBoxColumn.Name = "costCenterDataGridViewTextBoxColumn";
-            // 
-            // modelNameDataGridViewTextBoxColumn
-            // 
-            this.modelNameDataGridViewTextBoxColumn.DataPropertyName = "ModelName";
-            this.modelNameDataGridViewTextBoxColumn.HeaderText = "ModelName";
-            this.modelNameDataGridViewTextBoxColumn.Name = "modelNameDataGridViewTextBoxColumn";
-            // 
-            // lossFactorDataGridViewTextBoxColumn
-            // 
-            this.lossFactorDataGridViewTextBoxColumn.DataPropertyName = "LossFactor";
-            this.lossFactorDataGridViewTextBoxColumn.HeaderText = "LossFactor";
-            this.lossFactorDataGridViewTextBoxColumn.Name = "lossFactorDataGridViewTextBoxColumn";
-            // 
-            // responsibleSectionDataGridViewTextBoxColumn
-            // 
-            this.responsibleSectionDataGridViewTextBoxColumn.DataPropertyName = "ResponsibleSection";
-            this.responsibleSectionDataGridViewTextBoxColumn.HeaderText = "ResponsibleSection";
-            this.responsibleSectionDataGridViewTextBoxColumn.Name = "responsibleSectionDataGridViewTextBoxColumn";
-            // 
-            // lineStopDetailDataGridViewTextBoxColumn
-            // 
-            this.lineStopDetailDataGridViewTextBoxColumn.DataPropertyName = "LineStopDetail";
-            this.lineStopDetailDataGridViewTextBoxColumn.HeaderText = "LineStopDetail";
-            this.lineStopDetailDataGridViewTextBoxColumn.Name = "lineStopDetailDataGridViewTextBoxColumn";
-            // 
-            // stopTimeDataGridViewTextBoxColumn
-            // 
-            this.stopTimeDataGridViewTextBoxColumn.DataPropertyName = "StopTime";
-            this.stopTimeDataGridViewTextBoxColumn.HeaderText = "StopTime";
-            this.stopTimeDataGridViewTextBoxColumn.Name = "stopTimeDataGridViewTextBoxColumn";
-            // 
-            // directMPDataGridViewTextBoxColumn
-            // 
-            this.directMPDataGridViewTextBoxColumn.DataPropertyName = "DirectMP";
-            this.directMPDataGridViewTextBoxColumn.HeaderText = "DirectMP";
-            this.directMPDataGridViewTextBoxColumn.Name = "directMPDataGridViewTextBoxColumn";
-            // 
-            // semiDirectMPDataGridViewTextBoxColumn
-            // 
-            this.semiDirectMPDataGridViewTextBoxColumn.DataPropertyName = "SemiDirectMP";
-            this.semiDirectMPDataGridViewTextBoxColumn.HeaderText = "SemiDirectMP";
-            this.semiDirectMPDataGridViewTextBoxColumn.Name = "semiDirectMPDataGridViewTextBoxColumn";
-            // 
-            // lossManhourDataGridViewTextBoxColumn
-            // 
-            this.lossManhourDataGridViewTextBoxColumn.DataPropertyName = "LossManhour";
-            this.lossManhourDataGridViewTextBoxColumn.HeaderText = "LossManhour";
-            this.lossManhourDataGridViewTextBoxColumn.Name = "lossManhourDataGridViewTextBoxColumn";
-            // 
-            // reasonDataGridViewTextBoxColumn
-            // 
-            this.reasonDataGridViewTextBoxColumn.DataPropertyName = "Reason";
-            this.reasonDataGridViewTextBoxColumn.HeaderText = "Reason";
-            this.reasonDataGridViewTextBoxColumn.Name = "reasonDataGridViewTextBoxColumn";
-            // 
-            // typeOfLossDataGridViewTextBoxColumn
-            // 
-            this.typeOfLossDataGridViewTextBoxColumn.DataPropertyName = "TypeOfLoss";
-            this.typeOfLossDataGridViewTextBoxColumn.HeaderText = "TypeOfLoss";
-            this.typeOfLossDataGridViewTextBoxColumn.Name = "typeOfLossDataGridViewTextBoxColumn";
-            // 
-            // cOPQAmountDataGridViewTextBoxColumn
-            // 
-            this.cOPQAmountDataGridViewTextBoxColumn.DataPropertyName = "COPQAmount";
-            this.cOPQAmountDataGridViewTextBoxColumn.HeaderText = "COPQAmount";
-            this.cOPQAmountDataGridViewTextBoxColumn.Name = "cOPQAmountDataGridViewTextBoxColumn";
-            // 
-            // dateIssuedDataGridViewTextBoxColumn
-            // 
-            this.dateIssuedDataGridViewTextBoxColumn.DataPropertyName = "DateIssued";
-            this.dateIssuedDataGridViewTextBoxColumn.HeaderText = "DateIssued";
-            this.dateIssuedDataGridViewTextBoxColumn.Name = "dateIssuedDataGridViewTextBoxColumn";
-            // 
-            // causeDataGridViewTextBoxColumn
-            // 
-            this.causeDataGridViewTextBoxColumn.DataPropertyName = "Cause";
-            this.causeDataGridViewTextBoxColumn.HeaderText = "Cause";
-            this.causeDataGridViewTextBoxColumn.Name = "causeDataGridViewTextBoxColumn";
-            // 
-            // countermeasureDataGridViewTextBoxColumn
-            // 
-            this.countermeasureDataGridViewTextBoxColumn.DataPropertyName = "Countermeasure";
-            this.countermeasureDataGridViewTextBoxColumn.HeaderText = "Countermeasure";
-            this.countermeasureDataGridViewTextBoxColumn.Name = "countermeasureDataGridViewTextBoxColumn";
-            // 
-            // applyingApprovalStatusDataGridViewTextBoxColumn
-            // 
-            this.applyingApprovalStatusDataGridViewTextBoxColumn.DataPropertyName = "ApplyingApprovalStatus";
-            this.applyingApprovalStatusDataGridViewTextBoxColumn.HeaderText = "ApplyingApprovalStatus";
-            this.applyingApprovalStatusDataGridViewTextBoxColumn.Name = "applyingApprovalStatusDataGridViewTextBoxColumn";
-            // 
-            // receivingApprovalStatusDataGridViewTextBoxColumn
-            // 
-            this.receivingApprovalStatusDataGridViewTextBoxColumn.DataPropertyName = "ReceivingApprovalStatus";
-            this.receivingApprovalStatusDataGridViewTextBoxColumn.HeaderText = "ReceivingApprovalStatus";
-            this.receivingApprovalStatusDataGridViewTextBoxColumn.Name = "receivingApprovalStatusDataGridViewTextBoxColumn";
-            // 
-            // qIConfirmationDataGridViewTextBoxColumn
-            // 
-            this.qIConfirmationDataGridViewTextBoxColumn.DataPropertyName = "QIConfirmation";
-            this.qIConfirmationDataGridViewTextBoxColumn.HeaderText = "QIConfirmation";
-            this.qIConfirmationDataGridViewTextBoxColumn.Name = "qIConfirmationDataGridViewTextBoxColumn";
-            // 
-            // uploadDateDataGridViewTextBoxColumn
-            // 
-            this.uploadDateDataGridViewTextBoxColumn.DataPropertyName = "UploadDate";
-            this.uploadDateDataGridViewTextBoxColumn.HeaderText = "UploadDate";
-            this.uploadDateDataGridViewTextBoxColumn.Name = "uploadDateDataGridViewTextBoxColumn";
-            // 
-            // lossMHForCOPQAmountDataGridViewTextBoxColumn
-            // 
-            this.lossMHForCOPQAmountDataGridViewTextBoxColumn.DataPropertyName = "LossMH_ForCOPQAmount";
-            this.lossMHForCOPQAmountDataGridViewTextBoxColumn.HeaderText = "LossMH_ForCOPQAmount";
-            this.lossMHForCOPQAmountDataGridViewTextBoxColumn.Name = "lossMHForCOPQAmountDataGridViewTextBoxColumn";
+            this.MHLossUploadDatagrid.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.MHLossUploadDatagrid_DataBindingComplete);
             // 
             // manhourLossData2BindingSource2
             // 
@@ -523,24 +327,25 @@
             // panel3
             // 
             this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel3.Controls.Add(this.DataTypeDropdownList);
+            this.panel3.Controls.Add(this.ActionDropdownList);
             this.panel3.Controls.Add(this.button2);
-            this.panel3.Location = new System.Drawing.Point(12, 102);
+            this.panel3.Location = new System.Drawing.Point(10, 102);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(251, 35);
+            this.panel3.Size = new System.Drawing.Size(253, 35);
             this.panel3.TabIndex = 45;
             // 
-            // DataTypeDropdownList
+            // ActionDropdownList
             // 
-            this.DataTypeDropdownList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DataTypeDropdownList.FormattingEnabled = true;
-            this.DataTypeDropdownList.Items.AddRange(new object[] {
+            this.ActionDropdownList.Enabled = false;
+            this.ActionDropdownList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ActionDropdownList.FormattingEnabled = true;
+            this.ActionDropdownList.Items.AddRange(new object[] {
             "Additional",
-            "Deleted"});
-            this.DataTypeDropdownList.Location = new System.Drawing.Point(84, 4);
-            this.DataTypeDropdownList.Name = "DataTypeDropdownList";
-            this.DataTypeDropdownList.Size = new System.Drawing.Size(161, 24);
-            this.DataTypeDropdownList.TabIndex = 3;
+            "Delete"});
+            this.ActionDropdownList.Location = new System.Drawing.Point(84, 4);
+            this.ActionDropdownList.Name = "ActionDropdownList";
+            this.ActionDropdownList.Size = new System.Drawing.Size(161, 24);
+            this.ActionDropdownList.TabIndex = 3;
             // 
             // button2
             // 
@@ -549,12 +354,105 @@
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button2.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button2.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.button2.Location = new System.Drawing.Point(-2, -2);
+            this.button2.Location = new System.Drawing.Point(0, -2);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(81, 36);
+            this.button2.Size = new System.Drawing.Size(79, 36);
             this.button2.TabIndex = 2;
-            this.button2.Text = "Data Type";
+            this.button2.Text = "Action";
             this.button2.UseVisualStyleBackColor = false;
+            // 
+            // rowCount
+            // 
+            this.rowCount.AutoSize = true;
+            this.rowCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rowCount.Location = new System.Drawing.Point(8, 148);
+            this.rowCount.Name = "rowCount";
+            this.rowCount.Size = new System.Drawing.Size(61, 13);
+            this.rowCount.TabIndex = 46;
+            this.rowCount.Text = "No. of rows";
+            // 
+            // LabelTimeElapsed
+            // 
+            this.LabelTimeElapsed.AutoSize = true;
+            this.LabelTimeElapsed.Dock = System.Windows.Forms.DockStyle.Right;
+            this.LabelTimeElapsed.Location = new System.Drawing.Point(136, 0);
+            this.LabelTimeElapsed.Name = "LabelTimeElapsed";
+            this.LabelTimeElapsed.Padding = new System.Windows.Forms.Padding(0, 9, 0, 0);
+            this.LabelTimeElapsed.Size = new System.Drawing.Size(64, 22);
+            this.LabelTimeElapsed.TabIndex = 48;
+            this.LabelTimeElapsed.Text = "Time elapse";
+            // 
+            // panel4
+            // 
+            this.panel4.Controls.Add(this.LabelTimeElapsed);
+            this.panel4.Location = new System.Drawing.Point(639, 139);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(200, 23);
+            this.panel4.TabIndex = 49;
+            // 
+            // UpdateInfo
+            // 
+            this.UpdateInfo.Controls.Add(this.ReadyToUpload);
+            this.UpdateInfo.Controls.Add(this.infoText);
+            this.UpdateInfo.Location = new System.Drawing.Point(320, 500);
+            this.UpdateInfo.Name = "UpdateInfo";
+            this.UpdateInfo.Size = new System.Drawing.Size(198, 37);
+            this.UpdateInfo.TabIndex = 51;
+            // 
+            // ReadyToUpload
+            // 
+            this.ReadyToUpload.Image = global::MHMS.Properties.Resources.check_mark_verified;
+            this.ReadyToUpload.Location = new System.Drawing.Point(0, 0);
+            this.ReadyToUpload.Name = "ReadyToUpload";
+            this.ReadyToUpload.Size = new System.Drawing.Size(41, 37);
+            this.ReadyToUpload.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.ReadyToUpload.TabIndex = 50;
+            this.ReadyToUpload.TabStop = false;
+            // 
+            // infoText
+            // 
+            this.infoText.AutoSize = true;
+            this.infoText.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.infoText.Location = new System.Drawing.Point(41, 6);
+            this.infoText.Name = "infoText";
+            this.infoText.Size = new System.Drawing.Size(137, 21);
+            this.infoText.TabIndex = 51;
+            this.infoText.Text = "Ready to Upload!";
+            // 
+            // UploadButton
+            // 
+            this.UploadButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(69)))), ((int)(((byte)(180)))));
+            this.UploadButton.FlatAppearance.BorderSize = 0;
+            this.UploadButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.UploadButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UploadButton.ForeColor = System.Drawing.Color.White;
+            this.UploadButton.Image = global::MHMS.Properties.Resources.upload_3_24;
+            this.UploadButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.UploadButton.Location = new System.Drawing.Point(699, 102);
+            this.UploadButton.Name = "UploadButton";
+            this.UploadButton.Size = new System.Drawing.Size(140, 35);
+            this.UploadButton.TabIndex = 37;
+            this.UploadButton.Text = "UPLOAD";
+            this.UploadButton.UseVisualStyleBackColor = false;
+            this.UploadButton.Click += new System.EventHandler(this.UploadButton_Click);
+            // 
+            // ExportButton
+            // 
+            this.ExportButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(69)))), ((int)(((byte)(180)))));
+            this.ExportButton.FlatAppearance.BorderSize = 0;
+            this.ExportButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ExportButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ExportButton.ForeColor = System.Drawing.Color.White;
+            this.ExportButton.Image = global::MHMS.Properties.Resources.download_2_24__2_;
+            this.ExportButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ExportButton.Location = new System.Drawing.Point(699, 500);
+            this.ExportButton.Name = "ExportButton";
+            this.ExportButton.Size = new System.Drawing.Size(140, 35);
+            this.ExportButton.TabIndex = 40;
+            this.ExportButton.Text = "EXPORT";
+            this.ExportButton.UseVisualStyleBackColor = false;
+            this.ExportButton.Visible = false;
+            this.ExportButton.Click += new System.EventHandler(this.ExportButton_Click);
             // 
             // UpdateMHLoss2
             // 
@@ -562,6 +460,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(851, 542);
+            this.Controls.Add(this.UpdateInfo);
+            this.Controls.Add(this.panel4);
+            this.Controls.Add(this.rowCount);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.MHLossUploadDatagrid);
             this.Controls.Add(this.panel1);
@@ -572,6 +473,8 @@
             this.Controls.Add(this.MHLossLastUpdateLabel);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.ExportButton);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "UpdateMHLoss2";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Load += new System.EventHandler(this.UpdateMHLoss2_Load);
@@ -590,6 +493,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.manhourLossData2BindingSource2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mH_Management_SystemDataSet3)).EndInit();
             this.panel3.ResumeLayout(false);
+            this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
+            this.UpdateInfo.ResumeLayout(false);
+            this.UpdateInfo.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ReadyToUpload)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -625,30 +534,15 @@
         private MH_Management_SystemDataSet3 mH_Management_SystemDataSet3;
         private System.Windows.Forms.BindingSource manhourLossData2BindingSource2;
         private MH_Management_SystemDataSet3TableAdapters.ManhourLossData2TableAdapter manhourLossData2TableAdapter2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dateEncounteredDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn sectionDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn costCenterDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn modelNameDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn lossFactorDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn responsibleSectionDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn lineStopDetailDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn stopTimeDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn directMPDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn semiDirectMPDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn lossManhourDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn reasonDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn typeOfLossDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn cOPQAmountDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dateIssuedDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn causeDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn countermeasureDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn applyingApprovalStatusDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn receivingApprovalStatusDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn qIConfirmationDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn uploadDateDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn lossMHForCOPQAmountDataGridViewTextBoxColumn;
         private System.Windows.Forms.Panel panel3;
-        private System.Windows.Forms.ComboBox DataTypeDropdownList;
+        private System.Windows.Forms.ComboBox ActionDropdownList;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.BindingSource bindingSource1;
+        private System.Windows.Forms.Label rowCount;
+        private System.Windows.Forms.Label LabelTimeElapsed;
+        private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.PictureBox ReadyToUpload;
+        private System.Windows.Forms.Panel UpdateInfo;
+        private System.Windows.Forms.Label infoText;
     }
 }

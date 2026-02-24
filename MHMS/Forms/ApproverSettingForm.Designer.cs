@@ -32,6 +32,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ApproverSettingForm));
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel8 = new System.Windows.Forms.Panel();
             this.TypeDropdown = new System.Windows.Forms.ComboBox();
@@ -43,15 +44,15 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.panel4 = new System.Windows.Forms.Panel();
-            this.LossFactorButton = new System.Windows.Forms.Button();
             this.SaveButton = new System.Windows.Forms.Button();
+            this.LossFactorButton = new System.Windows.Forms.Button();
+            this.DownloadTemplateButton = new System.Windows.Forms.Button();
+            this.UploadTemplateButton = new System.Windows.Forms.Button();
             this.panel7 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
             this.SearchBox = new System.Windows.Forms.TextBox();
             this.panel6 = new System.Windows.Forms.Panel();
-            this.label2 = new System.Windows.Forms.Label();
-            this.DownloadTemplateButton = new System.Windows.Forms.Button();
-            this.UploadTemplateButton = new System.Windows.Forms.Button();
+            this.SearchButton = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel8.SuspendLayout();
             this.panel9.SuspendLayout();
@@ -209,35 +210,20 @@
             // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.LossFactorButton);
             this.panel4.Controls.Add(this.SaveButton);
-            this.panel4.Controls.Add(this.panel7);
+            this.panel4.Controls.Add(this.LossFactorButton);
             this.panel4.Controls.Add(this.DownloadTemplateButton);
             this.panel4.Controls.Add(this.UploadTemplateButton);
+            this.panel4.Controls.Add(this.panel7);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel4.Location = new System.Drawing.Point(10, 10);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(941, 101);
             this.panel4.TabIndex = 3;
             // 
-            // LossFactorButton
-            // 
-            this.LossFactorButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(211)))), ((int)(((byte)(255)))));
-            this.LossFactorButton.FlatAppearance.BorderSize = 0;
-            this.LossFactorButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.LossFactorButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LossFactorButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(35)))), ((int)(((byte)(53)))));
-            this.LossFactorButton.Location = new System.Drawing.Point(312, 61);
-            this.LossFactorButton.Name = "LossFactorButton";
-            this.LossFactorButton.Size = new System.Drawing.Size(144, 35);
-            this.LossFactorButton.TabIndex = 6;
-            this.LossFactorButton.Text = "Loss Factor";
-            this.LossFactorButton.UseVisualStyleBackColor = false;
-            this.LossFactorButton.Click += new System.EventHandler(this.LossFactorButton_Click);
-            // 
             // SaveButton
             // 
-            this.SaveButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(137)))), ((int)(((byte)(218)))));
+            this.SaveButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(69)))), ((int)(((byte)(180)))));
             this.SaveButton.FlatAppearance.BorderSize = 0;
             this.SaveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.SaveButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -249,6 +235,55 @@
             this.SaveButton.Text = "SAVE";
             this.SaveButton.UseVisualStyleBackColor = false;
             this.SaveButton.Click += new System.EventHandler(this.SaveSectionButton_Click);
+            // 
+            // LossFactorButton
+            // 
+            this.LossFactorButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(69)))), ((int)(((byte)(180)))));
+            this.LossFactorButton.FlatAppearance.BorderSize = 0;
+            this.LossFactorButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.LossFactorButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LossFactorButton.ForeColor = System.Drawing.Color.White;
+            this.LossFactorButton.Location = new System.Drawing.Point(325, 61);
+            this.LossFactorButton.Name = "LossFactorButton";
+            this.LossFactorButton.Size = new System.Drawing.Size(140, 35);
+            this.LossFactorButton.TabIndex = 6;
+            this.LossFactorButton.Text = "Loss Factor";
+            this.LossFactorButton.UseVisualStyleBackColor = false;
+            this.LossFactorButton.Click += new System.EventHandler(this.LossFactorButton_Click);
+            // 
+            // DownloadTemplateButton
+            // 
+            this.DownloadTemplateButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(69)))), ((int)(((byte)(180)))));
+            this.DownloadTemplateButton.FlatAppearance.BorderSize = 0;
+            this.DownloadTemplateButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.DownloadTemplateButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DownloadTemplateButton.ForeColor = System.Drawing.Color.White;
+            this.DownloadTemplateButton.Image = global::MHMS.Properties.Resources.download_2_24__2_;
+            this.DownloadTemplateButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.DownloadTemplateButton.Location = new System.Drawing.Point(0, 61);
+            this.DownloadTemplateButton.Name = "DownloadTemplateButton";
+            this.DownloadTemplateButton.Size = new System.Drawing.Size(165, 35);
+            this.DownloadTemplateButton.TabIndex = 2;
+            this.DownloadTemplateButton.Text = "       Download Template";
+            this.DownloadTemplateButton.UseVisualStyleBackColor = false;
+            this.DownloadTemplateButton.Click += new System.EventHandler(this.DownloadTemplateButton_Click);
+            // 
+            // UploadTemplateButton
+            // 
+            this.UploadTemplateButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(69)))), ((int)(((byte)(180)))));
+            this.UploadTemplateButton.FlatAppearance.BorderSize = 0;
+            this.UploadTemplateButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.UploadTemplateButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UploadTemplateButton.ForeColor = System.Drawing.Color.White;
+            this.UploadTemplateButton.Image = global::MHMS.Properties.Resources.upload_3_24;
+            this.UploadTemplateButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.UploadTemplateButton.Location = new System.Drawing.Point(171, 61);
+            this.UploadTemplateButton.Name = "UploadTemplateButton";
+            this.UploadTemplateButton.Size = new System.Drawing.Size(148, 35);
+            this.UploadTemplateButton.TabIndex = 3;
+            this.UploadTemplateButton.Text = "       Upload Template";
+            this.UploadTemplateButton.UseVisualStyleBackColor = false;
+            this.UploadTemplateButton.Click += new System.EventHandler(this.UploadTemplateButton_Click);
             // 
             // panel7
             // 
@@ -264,7 +299,7 @@
             this.panel5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel5.Controls.Add(this.SearchBox);
             this.panel5.Controls.Add(this.panel6);
-            this.panel5.Location = new System.Drawing.Point(3, 61);
+            this.panel5.Location = new System.Drawing.Point(4, 61);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(319, 35);
             this.panel5.TabIndex = 4;
@@ -273,9 +308,9 @@
             // 
             this.SearchBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.SearchBox.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SearchBox.Location = new System.Drawing.Point(77, 7);
+            this.SearchBox.Location = new System.Drawing.Point(91, 7);
             this.SearchBox.Name = "SearchBox";
-            this.SearchBox.Size = new System.Drawing.Size(236, 18);
+            this.SearchBox.Size = new System.Drawing.Size(222, 18);
             this.SearchBox.TabIndex = 1;
             this.SearchBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.SearchBox_KeyPress);
             // 
@@ -283,53 +318,30 @@
             // 
             this.panel6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(35)))), ((int)(((byte)(53)))));
             this.panel6.CausesValidation = false;
-            this.panel6.Controls.Add(this.label2);
+            this.panel6.Controls.Add(this.SearchButton);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel6.Location = new System.Drawing.Point(0, 0);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(72, 33);
+            this.panel6.Size = new System.Drawing.Size(85, 33);
             this.panel6.TabIndex = 0;
             // 
-            // label2
+            // SearchButton
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label2.Location = new System.Drawing.Point(11, 6);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(51, 19);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Search";
-            // 
-            // DownloadTemplateButton
-            // 
-            this.DownloadTemplateButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(217)))), ((int)(((byte)(167)))));
-            this.DownloadTemplateButton.FlatAppearance.BorderSize = 0;
-            this.DownloadTemplateButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.DownloadTemplateButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DownloadTemplateButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(35)))), ((int)(((byte)(53)))));
-            this.DownloadTemplateButton.Location = new System.Drawing.Point(0, 61);
-            this.DownloadTemplateButton.Name = "DownloadTemplateButton";
-            this.DownloadTemplateButton.Size = new System.Drawing.Size(144, 35);
-            this.DownloadTemplateButton.TabIndex = 2;
-            this.DownloadTemplateButton.Text = "Download Template";
-            this.DownloadTemplateButton.UseVisualStyleBackColor = false;
-            this.DownloadTemplateButton.Click += new System.EventHandler(this.DownloadTemplateButton_Click);
-            // 
-            // UploadTemplateButton
-            // 
-            this.UploadTemplateButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(217)))), ((int)(((byte)(167)))));
-            this.UploadTemplateButton.FlatAppearance.BorderSize = 0;
-            this.UploadTemplateButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.UploadTemplateButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UploadTemplateButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(35)))), ((int)(((byte)(53)))));
-            this.UploadTemplateButton.Location = new System.Drawing.Point(156, 61);
-            this.UploadTemplateButton.Name = "UploadTemplateButton";
-            this.UploadTemplateButton.Size = new System.Drawing.Size(144, 35);
-            this.UploadTemplateButton.TabIndex = 3;
-            this.UploadTemplateButton.Text = "Upload Template";
-            this.UploadTemplateButton.UseVisualStyleBackColor = false;
-            this.UploadTemplateButton.Click += new System.EventHandler(this.UploadTemplateButton_Click);
+            this.SearchButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(35)))), ((int)(((byte)(53)))));
+            this.SearchButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SearchButton.FlatAppearance.BorderSize = 0;
+            this.SearchButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.SearchButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SearchButton.ForeColor = System.Drawing.Color.White;
+            this.SearchButton.Image = global::MHMS.Properties.Resources.search_2_24;
+            this.SearchButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.SearchButton.Location = new System.Drawing.Point(0, 0);
+            this.SearchButton.Name = "SearchButton";
+            this.SearchButton.Size = new System.Drawing.Size(85, 33);
+            this.SearchButton.TabIndex = 40;
+            this.SearchButton.Text = "       Search";
+            this.SearchButton.UseVisualStyleBackColor = false;
+            this.SearchButton.Click += new System.EventHandler(this.SearchButton_Click);
             // 
             // ApproverSettingForm
             // 
@@ -337,6 +349,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(961, 460);
             this.Controls.Add(this.panel1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ApproverSettingForm";
             this.Text = "Approver Setting";
             this.Load += new System.EventHandler(this.ApproverSettingForm_Load);
@@ -354,7 +367,6 @@
             this.panel5.ResumeLayout(false);
             this.panel5.PerformLayout();
             this.panel6.ResumeLayout(false);
-            this.panel6.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -373,7 +385,6 @@
         private System.Windows.Forms.Panel panel5;
         private System.Windows.Forms.TextBox SearchBox;
         private System.Windows.Forms.Panel panel6;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button UploadTemplateButton;
         private System.Windows.Forms.Panel panel7;
         private System.Windows.Forms.Button LossFactorButton;
@@ -381,5 +392,6 @@
         private System.Windows.Forms.Panel panel9;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox TypeDropdown;
+        private System.Windows.Forms.Button SearchButton;
     }
 }

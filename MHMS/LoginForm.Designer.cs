@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoginForm));
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
             this.ADID = new System.Windows.Forms.TextBox();
@@ -51,7 +52,7 @@
             // 
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.Image = global::MHMS.Properties.Resources.MHMH_Login_Logo;
-            this.pictureBox1.Location = new System.Drawing.Point(421, 92);
+            this.pictureBox1.Location = new System.Drawing.Point(420, 92);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(390, 154);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -130,7 +131,7 @@
             this.ForgotPassword.ForeColor = System.Drawing.Color.RoyalBlue;
             this.ForgotPassword.Location = new System.Drawing.Point(646, 467);
             this.ForgotPassword.Name = "ForgotPassword";
-            this.ForgotPassword.Size = new System.Drawing.Size(166, 16);
+            this.ForgotPassword.Size = new System.Drawing.Size(165, 16);
             this.ForgotPassword.TabIndex = 6;
             this.ForgotPassword.Text = "Forgot your password?";
             this.ForgotPassword.Click += new System.EventHandler(this.ForgotPassword_Click);
@@ -166,12 +167,11 @@
             this.label4.BackColor = System.Drawing.Color.Transparent;
             this.label4.Dock = System.Windows.Forms.DockStyle.Right;
             this.label4.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label4.Location = new System.Drawing.Point(798, 0);
+            this.label4.Location = new System.Drawing.Point(887, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(429, 13);
+            this.label4.Size = new System.Drawing.Size(340, 13);
             this.label4.TabIndex = 9;
-            this.label4.Text = "If you have any concern, Please call BPS-Application group local 3407 and look fo" +
-    "r Arvin.";
+            this.label4.Text = "If you have any concern, Please call BPS-Application group local 3407";
             // 
             // panel1
             // 
@@ -193,7 +193,7 @@
             this.SystemVersionText.Name = "SystemVersionText";
             this.SystemVersionText.Size = new System.Drawing.Size(370, 13);
             this.SystemVersionText.TabIndex = 10;
-            this.SystemVersionText.Text = "©️ 2022 Brother Industries (Philippines) Inc. | Developed by: BPS | Version 1.0";
+            this.SystemVersionText.Text = "©️ 2022 Brother Industries (Philippines) Inc. | Developed by: BPS | Version 2.1";
             // 
             // HidePasswordEyeButton
             // 
@@ -226,6 +226,7 @@
             this.Controls.Add(this.ShowPasswordEyeButton);
             this.Controls.Add(this.HidePasswordEyeButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "LoginForm";
             this.Padding = new System.Windows.Forms.Padding(0, 2, 0, 0);

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace MHMS.Class
 {
-    class MHData_Class
+    public class MHData_Class
     {
+        public string DistinctionCode { get; set; }
         public string ReferenceNo { get; set; }
         public string Section { get; set; }
         public string DateEncountered { get; set; }
@@ -32,5 +33,12 @@ namespace MHMS.Class
         public string QIConfirmation { get; set; }
         public string LossMH_ForCOPQAmount { get; set; }
         public string Remarks { get; set; }
+        public string FiscalYear { get; set; }
+        public string ApplyingCOPQPIC { get; set; }
+        public string Mark { get; set; }
+        public string LeadTime { get; set; }
+        public string TargetClosedDate { get; set; }
+
+        public int RowCounter { get; set; } // Add this property for the row counter
     }
 }

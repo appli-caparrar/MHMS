@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RejectionForm));
             this.TopPanel = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.ContinueButton = new System.Windows.Forms.Button();
@@ -76,14 +77,14 @@
             // 
             // ContinueButton
             // 
-            this.ContinueButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(168)))), ((int)(((byte)(101)))));
+            this.ContinueButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(55)))), ((int)(((byte)(111)))), ((int)(((byte)(238)))));
             this.ContinueButton.FlatAppearance.BorderSize = 0;
             this.ContinueButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ContinueButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ContinueButton.ForeColor = System.Drawing.Color.White;
-            this.ContinueButton.Location = new System.Drawing.Point(52, 9);
+            this.ContinueButton.Location = new System.Drawing.Point(44, 9);
             this.ContinueButton.Name = "ContinueButton";
-            this.ContinueButton.Size = new System.Drawing.Size(74, 30);
+            this.ContinueButton.Size = new System.Drawing.Size(82, 30);
             this.ContinueButton.TabIndex = 30;
             this.ContinueButton.Text = "Continue";
             this.ContinueButton.UseVisualStyleBackColor = false;
@@ -248,6 +249,7 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.TopPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "RejectionForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

@@ -28,9 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DashboardForm2));
             this.EfficiencyButton = new System.Windows.Forms.Button();
             this.panel6 = new System.Windows.Forms.Panel();
             this.label3 = new System.Windows.Forms.Label();
@@ -58,6 +61,7 @@
             this.panel10 = new System.Windows.Forms.Panel();
             this.ApprovedDataGrid = new System.Windows.Forms.DataGridView();
             this.panel11 = new System.Windows.Forms.Panel();
+            this.ExcludeEECheckBox = new System.Windows.Forms.CheckBox();
             this.ApprovedLabel = new System.Windows.Forms.Label();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.label2 = new System.Windows.Forms.Label();
@@ -65,9 +69,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel7 = new System.Windows.Forms.Panel();
+            this.dataGridView2 = new System.Windows.Forms.DataGridView();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.ExcludeEECheckBox = new System.Windows.Forms.CheckBox();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.panel6.SuspendLayout();
             this.panel4.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -85,18 +88,9 @@
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // dataGridView2
-            // 
-            this.dataGridView2.BackgroundColor = System.Drawing.SystemColors.Window;
-            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView2.Location = new System.Drawing.Point(0, 0);
-            this.dataGridView2.Name = "dataGridView2";
-            this.dataGridView2.Size = new System.Drawing.Size(1009, 526);
-            this.dataGridView2.TabIndex = 0;
             // 
             // EfficiencyButton
             // 
@@ -108,7 +102,7 @@
             this.EfficiencyButton.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.EfficiencyButton.Location = new System.Drawing.Point(0, 0);
             this.EfficiencyButton.Name = "EfficiencyButton";
-            this.EfficiencyButton.Size = new System.Drawing.Size(145, 41);
+            this.EfficiencyButton.Size = new System.Drawing.Size(148, 41);
             this.EfficiencyButton.TabIndex = 6;
             this.EfficiencyButton.Text = "Efficiency";
             this.EfficiencyButton.UseVisualStyleBackColor = false;
@@ -117,9 +111,9 @@
             // 
             this.panel6.Controls.Add(this.EfficiencyButton);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel6.Location = new System.Drawing.Point(861, 3);
+            this.panel6.Location = new System.Drawing.Point(858, 3);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(145, 41);
+            this.panel6.Size = new System.Drawing.Size(148, 41);
             this.panel6.TabIndex = 1;
             // 
             // label3
@@ -130,7 +124,7 @@
             this.label3.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.label3.Location = new System.Drawing.Point(0, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(580, 41);
+            this.label3.Size = new System.Drawing.Size(578, 41);
             this.label3.TabIndex = 0;
             this.label3.Text = "REPORT SUMMARY";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -143,9 +137,9 @@
             this.PartsLossButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.PartsLossButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.PartsLossButton.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.PartsLossButton.Location = new System.Drawing.Point(589, 3);
+            this.PartsLossButton.Location = new System.Drawing.Point(587, 3);
             this.PartsLossButton.Name = "PartsLossButton";
-            this.PartsLossButton.Size = new System.Drawing.Size(130, 41);
+            this.PartsLossButton.Size = new System.Drawing.Size(129, 41);
             this.PartsLossButton.TabIndex = 5;
             this.PartsLossButton.Text = "Parts Loss";
             this.PartsLossButton.UseVisualStyleBackColor = false;
@@ -157,7 +151,7 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel4.Location = new System.Drawing.Point(3, 3);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(580, 41);
+            this.panel4.Size = new System.Drawing.Size(578, 41);
             this.panel4.TabIndex = 0;
             // 
             // tableLayoutPanel3
@@ -173,7 +167,7 @@
             this.tableLayoutPanel3.RowCount = 1;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 385F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(443, 385);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(441, 304);
             this.tableLayoutPanel3.TabIndex = 0;
             // 
             // panel3
@@ -187,7 +181,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(3, 3);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(136, 379);
+            this.panel3.Size = new System.Drawing.Size(135, 298);
             this.panel3.TabIndex = 0;
             // 
             // ManpowerForecastButton
@@ -200,7 +194,7 @@
             this.ManpowerForecastButton.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.ManpowerForecastButton.Location = new System.Drawing.Point(0, 176);
             this.ManpowerForecastButton.Name = "ManpowerForecastButton";
-            this.ManpowerForecastButton.Size = new System.Drawing.Size(136, 44);
+            this.ManpowerForecastButton.Size = new System.Drawing.Size(135, 44);
             this.ManpowerForecastButton.TabIndex = 4;
             this.ManpowerForecastButton.Text = "Manpower Forecast";
             this.ManpowerForecastButton.UseVisualStyleBackColor = false;
@@ -215,7 +209,7 @@
             this.AcceptanceFormButton.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.AcceptanceFormButton.Location = new System.Drawing.Point(0, 132);
             this.AcceptanceFormButton.Name = "AcceptanceFormButton";
-            this.AcceptanceFormButton.Size = new System.Drawing.Size(136, 44);
+            this.AcceptanceFormButton.Size = new System.Drawing.Size(135, 44);
             this.AcceptanceFormButton.TabIndex = 3;
             this.AcceptanceFormButton.Text = "COPQ Acceptance Form";
             this.AcceptanceFormButton.UseVisualStyleBackColor = false;
@@ -230,7 +224,7 @@
             this.OpenMHButton.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.OpenMHButton.Location = new System.Drawing.Point(0, 88);
             this.OpenMHButton.Name = "OpenMHButton";
-            this.OpenMHButton.Size = new System.Drawing.Size(136, 44);
+            this.OpenMHButton.Size = new System.Drawing.Size(135, 44);
             this.OpenMHButton.TabIndex = 2;
             this.OpenMHButton.Text = "Open MH System";
             this.OpenMHButton.UseVisualStyleBackColor = false;
@@ -245,7 +239,7 @@
             this.CostWorkCenterButton.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.CostWorkCenterButton.Location = new System.Drawing.Point(0, 44);
             this.CostWorkCenterButton.Name = "CostWorkCenterButton";
-            this.CostWorkCenterButton.Size = new System.Drawing.Size(136, 44);
+            this.CostWorkCenterButton.Size = new System.Drawing.Size(135, 44);
             this.CostWorkCenterButton.TabIndex = 1;
             this.CostWorkCenterButton.Text = "Cost / Work Center";
             this.CostWorkCenterButton.UseVisualStyleBackColor = false;
@@ -261,7 +255,7 @@
             this.STButton.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.STButton.Location = new System.Drawing.Point(0, 0);
             this.STButton.Name = "STButton";
-            this.STButton.Size = new System.Drawing.Size(136, 44);
+            this.STButton.Size = new System.Drawing.Size(135, 44);
             this.STButton.TabIndex = 0;
             this.STButton.Text = "ST";
             this.STButton.UseVisualStyleBackColor = false;
@@ -272,29 +266,33 @@
             this.panel8.Controls.Add(this.PendingDataGrid);
             this.panel8.Controls.Add(this.panel9);
             this.panel8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel8.Location = new System.Drawing.Point(145, 3);
+            this.panel8.Location = new System.Drawing.Point(144, 3);
             this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(295, 379);
+            this.panel8.Size = new System.Drawing.Size(294, 298);
             this.panel8.TabIndex = 1;
             // 
             // PendingDataGrid
             // 
             this.PendingDataGrid.AllowUserToAddRows = false;
+            this.PendingDataGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.PendingDataGrid.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.PendingDataGrid.BackgroundColor = System.Drawing.SystemColors.Menu;
             this.PendingDataGrid.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.PendingDataGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.PendingDataGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.PendingDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.PendingDataGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PendingDataGrid.Location = new System.Drawing.Point(0, 38);
             this.PendingDataGrid.Name = "PendingDataGrid";
-            this.PendingDataGrid.Size = new System.Drawing.Size(295, 341);
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.PendingDataGrid.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            this.PendingDataGrid.Size = new System.Drawing.Size(294, 260);
             this.PendingDataGrid.TabIndex = 4;
             // 
             // panel9
@@ -305,7 +303,7 @@
             this.panel9.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel9.Location = new System.Drawing.Point(0, 0);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(295, 38);
+            this.panel9.Size = new System.Drawing.Size(294, 38);
             this.panel9.TabIndex = 3;
             // 
             // PendingLabel
@@ -315,7 +313,7 @@
             this.PendingLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(197)))), ((int)(((byte)(31)))));
             this.PendingLabel.Location = new System.Drawing.Point(0, 0);
             this.PendingLabel.Name = "PendingLabel";
-            this.PendingLabel.Size = new System.Drawing.Size(293, 36);
+            this.PendingLabel.Size = new System.Drawing.Size(292, 36);
             this.PendingLabel.TabIndex = 0;
             this.PendingLabel.Text = "PENDING";
             this.PendingLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -328,7 +326,7 @@
             this.MHLossButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.MHLossButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MHLossButton.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.MHLossButton.Location = new System.Drawing.Point(725, 3);
+            this.MHLossButton.Location = new System.Drawing.Point(722, 3);
             this.MHLossButton.Name = "MHLossButton";
             this.MHLossButton.Size = new System.Drawing.Size(130, 41);
             this.MHLossButton.TabIndex = 6;
@@ -343,13 +341,13 @@
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 81.14754F));
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 18.85246F));
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 136F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 153F));
             this.tableLayoutPanel5.Controls.Add(this.MHLossButton, 0, 0);
             this.tableLayoutPanel5.Controls.Add(this.PartsLossButton, 0, 0);
             this.tableLayoutPanel5.Controls.Add(this.panel4, 0, 0);
             this.tableLayoutPanel5.Controls.Add(this.panel6, 1, 0);
             this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 438);
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 357);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
             this.tableLayoutPanel5.RowCount = 1;
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -427,9 +425,9 @@
             this.panel5.Controls.Add(this.button3);
             this.panel5.Controls.Add(this.CostWorkCenterFormButton);
             this.panel5.Controls.Add(this.STButton2);
-            this.panel5.Location = new System.Drawing.Point(761, 3);
+            this.panel5.Location = new System.Drawing.Point(758, 3);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(239, 378);
+            this.panel5.Size = new System.Drawing.Size(239, 304);
             this.panel5.TabIndex = 2;
             // 
             // tableLayoutPanel4
@@ -438,11 +436,11 @@
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel4.Controls.Add(this.panel10, 0, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(452, 3);
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(450, 3);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(303, 385);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(302, 304);
             this.tableLayoutPanel4.TabIndex = 1;
             // 
             // panel10
@@ -452,27 +450,39 @@
             this.panel10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel10.Location = new System.Drawing.Point(3, 3);
             this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(297, 379);
+            this.panel10.Size = new System.Drawing.Size(296, 298);
             this.panel10.TabIndex = 0;
             // 
             // ApprovedDataGrid
             // 
             this.ApprovedDataGrid.AllowUserToAddRows = false;
+            this.ApprovedDataGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.ApprovedDataGrid.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.ApprovedDataGrid.BackgroundColor = System.Drawing.SystemColors.Menu;
             this.ApprovedDataGrid.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ApprovedDataGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ApprovedDataGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.ApprovedDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ApprovedDataGrid.DefaultCellStyle = dataGridViewCellStyle4;
             this.ApprovedDataGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ApprovedDataGrid.Location = new System.Drawing.Point(0, 38);
             this.ApprovedDataGrid.Name = "ApprovedDataGrid";
-            this.ApprovedDataGrid.Size = new System.Drawing.Size(297, 341);
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ApprovedDataGrid.RowsDefaultCellStyle = dataGridViewCellStyle5;
+            this.ApprovedDataGrid.Size = new System.Drawing.Size(296, 260);
             this.ApprovedDataGrid.TabIndex = 5;
             // 
             // panel11
@@ -484,8 +494,22 @@
             this.panel11.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel11.Location = new System.Drawing.Point(0, 0);
             this.panel11.Name = "panel11";
-            this.panel11.Size = new System.Drawing.Size(297, 38);
+            this.panel11.Size = new System.Drawing.Size(296, 38);
             this.panel11.TabIndex = 4;
+            // 
+            // ExcludeEECheckBox
+            // 
+            this.ExcludeEECheckBox.AutoSize = true;
+            this.ExcludeEECheckBox.Checked = true;
+            this.ExcludeEECheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ExcludeEECheckBox.ForeColor = System.Drawing.Color.White;
+            this.ExcludeEECheckBox.Location = new System.Drawing.Point(5, 12);
+            this.ExcludeEECheckBox.Name = "ExcludeEECheckBox";
+            this.ExcludeEECheckBox.Size = new System.Drawing.Size(81, 17);
+            this.ExcludeEECheckBox.TabIndex = 1;
+            this.ExcludeEECheckBox.Text = "Exclude EE";
+            this.ExcludeEECheckBox.UseVisualStyleBackColor = true;
+            this.ExcludeEECheckBox.CheckedChanged += new System.EventHandler(this.ExcludeEECheckBox_CheckedChanged);
             // 
             // ApprovedLabel
             // 
@@ -494,7 +518,7 @@
             this.ApprovedLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(236)))), ((int)(((byte)(151)))));
             this.ApprovedLabel.Location = new System.Drawing.Point(0, 0);
             this.ApprovedLabel.Name = "ApprovedLabel";
-            this.ApprovedLabel.Size = new System.Drawing.Size(295, 36);
+            this.ApprovedLabel.Size = new System.Drawing.Size(294, 36);
             this.ApprovedLabel.TabIndex = 0;
             this.ApprovedLabel.Text = "APPROVED";
             this.ApprovedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -505,7 +529,7 @@
             this.tableLayoutPanel2.ColumnCount = 3;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 59.1623F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40.8377F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 250F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 253F));
             this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel3, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel4, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.panel5, 2, 0);
@@ -515,7 +539,7 @@
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 391F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(1009, 391);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(1009, 310);
             this.tableLayoutPanel2.TabIndex = 6;
             // 
             // label2
@@ -567,8 +591,18 @@
             this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel7.Location = new System.Drawing.Point(0, 47);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(1009, 526);
+            this.panel7.Size = new System.Drawing.Size(1009, 590);
             this.panel7.TabIndex = 8;
+            // 
+            // dataGridView2
+            // 
+            this.dataGridView2.BackgroundColor = System.Drawing.SystemColors.Window;
+            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView2.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView2.Name = "dataGridView2";
+            this.dataGridView2.Size = new System.Drawing.Size(1009, 590);
+            this.dataGridView2.TabIndex = 0;
             // 
             // tableLayoutPanel1
             // 
@@ -587,33 +621,19 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1009, 47);
             this.tableLayoutPanel1.TabIndex = 5;
             // 
-            // ExcludeEECheckBox
-            // 
-            this.ExcludeEECheckBox.AutoSize = true;
-            this.ExcludeEECheckBox.Checked = true;
-            this.ExcludeEECheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ExcludeEECheckBox.ForeColor = System.Drawing.Color.White;
-            this.ExcludeEECheckBox.Location = new System.Drawing.Point(5, 12);
-            this.ExcludeEECheckBox.Name = "ExcludeEECheckBox";
-            this.ExcludeEECheckBox.Size = new System.Drawing.Size(81, 17);
-            this.ExcludeEECheckBox.TabIndex = 1;
-            this.ExcludeEECheckBox.Text = "Exclude EE";
-            this.ExcludeEECheckBox.UseVisualStyleBackColor = true;
-            this.ExcludeEECheckBox.CheckedChanged += new System.EventHandler(this.ExcludeEECheckBox_CheckedChanged);
-            // 
             // DashboardForm2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1009, 573);
+            this.ClientSize = new System.Drawing.Size(1009, 637);
             this.Controls.Add(this.tableLayoutPanel5);
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.panel7);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DashboardForm2";
             this.Text = "Dashboard";
             this.Load += new System.EventHandler(this.DashboardForm2_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.panel6.ResumeLayout(false);
             this.panel4.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
@@ -632,14 +652,13 @@
             this.panel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel7.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.DataGridView dataGridView2;
         private System.Windows.Forms.Button EfficiencyButton;
         private System.Windows.Forms.Panel panel6;
         private System.Windows.Forms.Label label3;
@@ -676,5 +695,6 @@
         private System.Windows.Forms.Panel panel11;
         private System.Windows.Forms.Label ApprovedLabel;
         private System.Windows.Forms.CheckBox ExcludeEECheckBox;
+        private System.Windows.Forms.DataGridView dataGridView2;
     }
 }

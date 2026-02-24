@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MHMS.Connection;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
@@ -16,11 +17,11 @@ namespace MHMS.Forms
     public partial class ApproverSettingForm : Form
     {
         //Connection String
-        static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS"].ConnectionString;
+        static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS_ACTUAL"].ConnectionString;
         //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS2"].ConnectionString;
 
         //SQL Connection
-        SqlConnection con = new SqlConnection(MHMS_Conn);
+        SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn);
 
         public ApproverSettingForm()
         {
@@ -175,13 +176,7 @@ namespace MHMS.Forms
             {
                 if (ApproverSettingDataGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString() == "⚙️")
                 {
-                    if (Dashboard.sections.Replace("BIPH-", "") == "BPS")
-                    {
-                        userSection = ApproverSettingDataGrid.Rows[e.RowIndex].Cells["Section"].Value.ToString();
-                        UserSetting userSettings = new UserSetting();
-                        userSettings.ShowDialog();
-                    }
-                    else if (Dashboard.sections.Replace("BIPH-", "") == "Production Engineering")
+                    if (Dashboard.sections.Replace("BIPH-", "") == "BPS" || Dashboard.AccountType == "ADMIN")
                     {
                         userSection = ApproverSettingDataGrid.Rows[e.RowIndex].Cells["Section"].Value.ToString();
                         UserSetting userSettings = new UserSetting();
@@ -281,7 +276,7 @@ namespace MHMS.Forms
 
         private void DownloadTemplateButton_Click(object sender, EventArgs e)
         {
-            Process.Start(@"\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\NewUserTemplate.xlsx");
+            Process.Start(@"\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\Others\NewUserTemplate.xlsx");
         }
 
         //====================================================================================================================>>>>>>>>>>>>
@@ -332,7 +327,11 @@ namespace MHMS.Forms
             //GetSectionApproverSetting();
         }
 
-       
+
+        private void SearchButton_Click(object sender, EventArgs e)
+        {
+            SearchSection();
+        }
 
         //====================================================================================================================>>>>>>>>>>>>
     }

@@ -106,7 +106,7 @@ namespace MHMS
                         InsertPartsLossData.ExecuteNonQuery();
                         con.Close();
                     }
-                    else if ((SectionDropdown.Text == "Production Engineering") && (DataTypeDropdown.Text == "GMMS"))
+                    else if ((SectionDropdown.Text == "BPS") && (DataTypeDropdown.Text == "GMMS"))
                     {
                        //Type insert statement here
                        //Create table of GMMS for PE in DB 
@@ -287,16 +287,16 @@ namespace MHMS
 
                 DefectLastUpdateDateLabel.Visible = false;
             }
-            else if (SectionLabel.Text == "Production Engineering")
+            else if (SectionLabel.Text == "BPS")
             {
-                SqlCommand SelectProductionEngineeringLastUpdated = new SqlCommand("SP_SelectGMMSAndSAPLastUpdated", con);
-                SelectProductionEngineeringLastUpdated.CommandType = CommandType.StoredProcedure;
-                SelectProductionEngineeringLastUpdated.Parameters.AddWithValue("@Procedure", "SelectProductionEngineeringLastUpdated");
-                SqlDataAdapter da = new SqlDataAdapter(SelectProductionEngineeringLastUpdated);
+                SqlCommand SelectBPSLastUpdated = new SqlCommand("SP_SelectGMMSAndSAPLastUpdated", con);
+                SelectBPSLastUpdated.CommandType = CommandType.StoredProcedure;
+                SelectBPSLastUpdated.Parameters.AddWithValue("@Procedure", "SelectBPSLastUpdated");
+                SqlDataAdapter da = new SqlDataAdapter(SelectBPSLastUpdated);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
 
-                SqlDataReader reader = SelectProductionEngineeringLastUpdated.ExecuteReader();
+                SqlDataReader reader = SelectBPSLastUpdated.ExecuteReader();
 
                 while (reader.Read())
                 {
@@ -542,7 +542,7 @@ namespace MHMS
                 Process.Start(@"\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\GMMS&SAP Template\IC_GMMS & SAP Template.xlsm");
                 MessageBox.Show(SectionLabel.Text + " Template Downloaded Successfully");
             }
-            else if (SectionLabel.Text == "Production Engineering")
+            else if (SectionLabel.Text == "BPS")
             {
                 MessageBox.Show(SectionLabel.Text + " Template Downloaded Successfully");
             }
@@ -594,6 +594,11 @@ namespace MHMS
         private void SectionDropdown_TextChanged(object sender, EventArgs e)
         {
             SelectDataTypeWhenSectionChange();
+        }
+
+        private void SheetDropdownList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
 
         //===================================================================================================================================

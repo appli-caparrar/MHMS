@@ -16,18 +16,19 @@ namespace MHMS.Forms
     public partial class DashboardForm2 : Form
     {
         //Connection String
-        static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS"].ConnectionString;
+        static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS_ACTUAL"].ConnectionString;
         //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS2"].ConnectionString;
 
         //SQL Connection
         SqlConnection con = new SqlConnection(MHMS_Conn);
+
 
         public DashboardForm2()
         {
             InitializeComponent();
         }
 
-        public static bool COPQAcceptanceButtonIsClicked= false;
+        public static bool COPQAcceptanceButtonIsClicked = false;
         public static bool STButtonIsClicked = false;
         public static bool WCCCButtonIsClicked = false;
 
@@ -113,10 +114,7 @@ namespace MHMS.Forms
                 PendingDataGrid.DataSource = dt;
                 con.Close();
             }
-           
-
-           
-        }     
+        }
 
         private void LoadAllApprovedRequest()
         {
@@ -220,7 +218,6 @@ namespace MHMS.Forms
                     con.Close();
                 }
             }
-            
         }
 
         private void PartsLossButton_Click(object sender, EventArgs e)

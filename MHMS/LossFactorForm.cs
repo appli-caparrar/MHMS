@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MHMS.Connection;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
@@ -16,11 +17,11 @@ namespace MHMS
     public partial class LossFactorForm : Form
     {
         // Connection string
-        static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS"].ConnectionString;
+        //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS_ACTUAL"].ConnectionString;
         //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS2"].ConnectionString;
 
         // SQL Connection
-        SqlConnection con = new SqlConnection(MHMS_Conn);
+        SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn);
 
         public LossFactorForm()
         {
@@ -338,6 +339,27 @@ namespace MHMS
         {
             //SectionDropdown.Text = "Select section";
         }
+
+        public static string section = "";
+        private void AddLossFactorBtn_Click(object sender, EventArgs e)
+        {
+            section = SectionDropdown.Text;
+
+            if (SectionDropdown.Text == "Select section")
+            {
+                MessageBox.Show("Please select section.", "MHMS Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                SectionDropdown.Select();
+            }
+            else
+            {
+                AddLeadTime AddLossFactorAndLeadTime = new AddLeadTime();
+                AddLossFactorAndLeadTime.Show();
+
+             
+            }
+        }
+
+        
 
         //====================================================================================================================>>>>>>>>>>>>
     }

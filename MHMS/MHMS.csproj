@@ -9,11 +9,14 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MHMS</RootNamespace>
     <AssemblyName>MHMS</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\</PublishUrl>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <PublishUrl>\\apbiphsh07\D0_ShareBrotherGroup\19_BPS\17_Installer\MHMS\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Unc</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -23,10 +26,12 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <UpdateUrl>\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\</UpdateUrl>
+    <UpdateUrl>\\apbiphsh07\D0_ShareBrotherGroup\19_BPS\17_Installer\MHMS\</UpdateUrl>
+    <ProductName>MHMS</ProductName>
+    <PublisherName>BPS_Appli</PublisherName>
     <MinimumRequiredVersion>1.42.1.56</MinimumRequiredVersion>
-    <ApplicationRevision>154</ApplicationRevision>
-    <ApplicationVersion>1.153.1.%2a</ApplicationVersion>
+    <ApplicationRevision>400</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -41,6 +46,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -70,13 +76,36 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ClosedXML, Version=0.105.0.0, Culture=neutral, PublicKeyToken=fd1eb21b62ae805b, processorArchitecture=MSIL">
+      <HintPath>..\packages\ClosedXML.0.105.0\lib\netstandard2.0\ClosedXML.dll</HintPath>
+    </Reference>
+    <Reference Include="ClosedXML.Parser, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1d5f7376574c51ec, processorArchitecture=MSIL">
+      <HintPath>..\packages\ClosedXML.Parser.2.0.0\lib\netstandard2.0\ClosedXML.Parser.dll</HintPath>
+    </Reference>
     <Reference Include="ColorCode, Version=1.0.1.62759, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ColorCode.1.0.1\lib\ColorCode.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ExcelDataReader, Version=3.6.0.0, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
-      <HintPath>..\packages\ExcelDataReader.3.6.0\lib\net45\ExcelDataReader.dll</HintPath>
+    <Reference Include="DocumentFormat.OpenXml, Version=3.3.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.3.3.0\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml.Framework, Version=3.3.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.Framework.3.3.0\lib\net46\DocumentFormat.OpenXml.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus, Version=7.1.3.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.7.1.3\lib\net35\EPPlus.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="EPPlus.Interfaces, Version=6.1.1.0, Culture=neutral, PublicKeyToken=a694d7f3b0907a61, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.Interfaces.6.1.1\lib\net35\EPPlus.Interfaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EPPlus.System.Drawing, Version=6.1.1.0, Culture=neutral, PublicKeyToken=2308d35469c9bac0, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.System.Drawing.6.1.1\lib\net35\EPPlus.System.Drawing.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ExcelDataReader, Version=3.7.0.0, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
+      <HintPath>..\packages\ExcelDataReader.3.7.0\lib\net462\ExcelDataReader.dll</HintPath>
     </Reference>
     <Reference Include="ExcelDataReader.DataSet, Version=3.6.0.0, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
       <HintPath>..\packages\ExcelDataReader.DataSet.3.6.0\lib\net35\ExcelDataReader.DataSet.dll</HintPath>
@@ -86,17 +115,52 @@
       <HintPath>..\packages\ExcelNumberFormat.1.1.0\lib\net20\ExcelNumberFormat.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Bcl.HashCode, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.HashCode.1.1.1\lib\net461\Microsoft.Bcl.HashCode.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1001\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.2903.40, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.2903.40\lib\net462\Microsoft.Web.WebView2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.2903.40, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.2903.40\lib\net462\Microsoft.Web.WebView2.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.Wpf, Version=1.0.2903.40, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.2903.40\lib\net462\Microsoft.Web.WebView2.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="RBush, Version=4.0.0.0, Culture=neutral, PublicKeyToken=c77e27b81f4d0187, processorArchitecture=MSIL">
+      <HintPath>..\packages\RBush.Signed.4.0.0\lib\net47\RBush.dll</HintPath>
+    </Reference>
+    <Reference Include="SixLabors.Fonts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d998eea7b14cab13, processorArchitecture=MSIL">
+      <HintPath>..\packages\SixLabors.Fonts.1.0.0\lib\netstandard2.0\SixLabors.Fonts.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security" />
+    <Reference Include="System.Text.Encoding.CodePages, Version=9.0.0.6, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encoding.CodePages.9.0.6\lib\net462\System.Text.Encoding.CodePages.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
@@ -109,9 +173,8 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
-    <Reference Include="Z.Dapper.Plus, Version=4.0.37.0, Culture=neutral, PublicKeyToken=59b66d028979105b, processorArchitecture=MSIL">
-      <HintPath>..\packages\Z.Dapper.Plus.4.0.37\lib\net45\Z.Dapper.Plus.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Z.Dapper.Plus, Version=9.2.1.0, Culture=neutral, PublicKeyToken=59b66d028979105b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Z.Dapper.Plus.9.2.1\lib\net45\Z.Dapper.Plus.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -121,26 +184,207 @@
     <Compile Include="AddCOPQForm.Designer.cs">
       <DependentUpon>AddCOPQForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="AddLeadTime.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddLeadTime.Designer.cs">
+      <DependentUpon>AddLeadTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AdjustmentForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdjustmentForm.Designer.cs">
+      <DependentUpon>AdjustmentForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Alert\ReadyToUploadAlert.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Alert\ReadyToUploadAlert.Designer.cs">
+      <DependentUpon>ReadyToUploadAlert.cs</DependentUpon>
+    </Compile>
     <Compile Include="ChangePassword.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ChangePassword.Designer.cs">
       <DependentUpon>ChangePassword.cs</DependentUpon>
     </Compile>
+    <Compile Include="CheckLineStopDataForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CheckLineStopDataForm.Designer.cs">
+      <DependentUpon>CheckLineStopDataForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Class\CC_Revision_Class.cs" />
+    <Compile Include="Class\COPQ_ApproveByMGR.cs" />
+    <Compile Include="Class\COPQ_ApproveByProcessInCharge.cs" />
+    <Compile Include="Class\COPQ_ApproveBySPV.cs" />
+    <Compile Include="Class\COPQ_ApproveReceivingCOPQPIC.cs" />
+    <Compile Include="Class\COPQ_SendEmailToApprover.cs" />
     <Compile Include="Class\Defect_Class.cs" />
     <Compile Include="Class\MHData_Class.cs" />
+    <Compile Include="Class\MH_COPQ_Class.cs" />
+    <Compile Include="Class\OpenMHMasterData_Class.cs" />
+    <Compile Include="Class\OpenMH_LineStop_LossMH_LossFactor_Class.cs" />
+    <Compile Include="Class\OpenMH_MH_MPCategory_Class.cs" />
+    <Compile Include="Class\OpenMH_StandardTime_Class.cs" />
     <Compile Include="Class\PartsLossData_Class.cs" />
+    <Compile Include="Class\MH_STMasterData_Class.cs" />
+    <Compile Include="Class\SAP_STMasterData_Class.cs" />
+    <Compile Include="Class\STMasterData_Class.cs" />
+    <Compile Include="Class\ST_Class.cs" />
+    <Compile Include="Class_Efficiency\DirectEfficiency_Class.cs" />
+    <Compile Include="Class_Efficiency\DirectEff_Graph_Class.cs" />
+    <Compile Include="Class_Efficiency\DirectEff_Graph_IC.cs" />
+    <Compile Include="Class_Efficiency\DirectEff_Graph_IH.cs" />
+    <Compile Include="Class_Efficiency\DirectEff_Graph_PR1.cs" />
+    <Compile Include="Class_Efficiency\DirectEff_Graph_PR2.cs" />
+    <Compile Include="Class_Efficiency\DirectEff_Graph_PT.cs" />
+    <Compile Include="Class_Efficiency\DirectEff_Graph_TC.cs" />
+    <Compile Include="Class_Efficiency\EfficiencySummary_Class.cs" />
+    <Compile Include="Class_Efficiency\FactoryEfficiency_Class.cs" />
+    <Compile Include="Class_Efficiency\LossRate_Class.cs" />
+    <Compile Include="Class_Efficiency\SemiDirectEfficiency_Class.cs" />
+    <Compile Include="Class_Efficiency\SemiDirect_Graph_Class.cs" />
+    <Compile Include="Class_Efficiency\TotalEfficiency_Class.cs" />
+    <Compile Include="Class\WCCCMasterData_Class.cs" />
+    <Compile Include="Class\WCCC_Deletion_Class.cs" />
+    <Compile Include="Class\WCCC_New_Class.cs" />
+    <Compile Include="Class\WC_Revision_Class.cs" />
+    <Compile Include="Class_Efficiency\TotalEfficiency_PRT_Class.cs" />
+    <Compile Include="Class_Efficiency\TotalEff_Graph_Class.cs" />
+    <Compile Include="Connection\SQLControl.cs" />
     <Compile Include="COPQConfirmationForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="COPQConfirmationForm.Designer.cs">
       <DependentUpon>COPQConfirmationForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="DirectEfficiencyGraphForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DirectEfficiencyGraphForm.Designer.cs">
+      <DependentUpon>DirectEfficiencyGraphForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditApprovalCategory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditApprovalCategory.Designer.cs">
+      <DependentUpon>EditApprovalCategory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FactoryEfficiencyGraphForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FactoryEfficiencyGraphForm.Designer.cs">
+      <DependentUpon>FactoryEfficiencyGraphForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FactoryEfficiencyMGRCommentForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FactoryEfficiencyMGRCommentForm.Designer.cs">
+      <DependentUpon>FactoryEfficiencyMGRCommentForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\OverallMonitoring_web.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\OverallMonitoring_web.Designer.cs">
+      <DependentUpon>OverallMonitoring_web.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\OverallMonitoring.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\OverallMonitoring.Designer.cs">
+      <DependentUpon>OverallMonitoring.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PartsRegistrationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PartsRegistrationForm.Designer.cs">
+      <DependentUpon>PartsRegistrationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ProductionEfficiencyForm2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ProductionEfficiencyForm2.Designer.cs">
+      <DependentUpon>ProductionEfficiencyForm2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Class_Efficiency\LossRate_Graph_Class.cs" />
+    <Compile Include="LoginRemindersForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LoginRemindersForm.Designer.cs">
+      <DependentUpon>LoginRemindersForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MHMSUpdateInformationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MHMSUpdateInformationForm.Designer.cs">
+      <DependentUpon>MHMSUpdateInformationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PendingForApprovalForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PendingForApprovalForm.Designer.cs">
+      <DependentUpon>PendingForApprovalForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dashboard.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Dashboard.Designer.cs">
       <DependentUpon>Dashboard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DownloadTemplateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DownloadTemplateForm.Designer.cs">
+      <DependentUpon>DownloadTemplateForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditApplication.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditApplication.Designer.cs">
+      <DependentUpon>EditApplication.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DashboardForm3.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DashboardForm3.Designer.cs">
+      <DependentUpon>DashboardForm3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FactoryEfficiencyForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FactoryEfficiencyForm.Designer.cs">
+      <DependentUpon>FactoryEfficiencyForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MPRSettingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MPRSettingForm.Designer.cs">
+      <DependentUpon>MPRSettingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MHApproval.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MHApproval.Designer.cs">
+      <DependentUpon>MHApproval.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ItemCodeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ItemCodeForm.Designer.cs">
+      <DependentUpon>ItemCodeForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MHReasonOfRejection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MHReasonOfRejection.Designer.cs">
+      <DependentUpon>MHReasonOfRejection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MHReportLogsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MHReportLogsForm.Designer.cs">
+      <DependentUpon>MHReportLogsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MH_Management_SystemDataSet2.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -152,17 +396,41 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>MH_Management_SystemDataSet3.xsd</DependentUpon>
     </Compile>
+    <Compile Include="NotificationForm2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NotificationForm2.Designer.cs">
+      <DependentUpon>NotificationForm2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OpenGraphForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OpenGraphForm.Designer.cs">
+      <DependentUpon>OpenGraphForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProcessGroupingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProcessGroupingsForm.Designer.cs">
+      <DependentUpon>ProcessGroupingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProdEfficiencyGraphForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProdEfficiencyGraphForm.Designer.cs">
+      <DependentUpon>ProdEfficiencyGraphForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ResubmitApplicationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ResubmitApplicationForm.Designer.cs">
+      <DependentUpon>ResubmitApplicationForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="SectionMenuForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SectionMenuForm.Designer.cs">
       <DependentUpon>SectionMenuForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Top5DefectRecurrenceForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Top5DefectRecurrenceForm.Designer.cs">
-      <DependentUpon>Top5DefectRecurrenceForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\ApplicationForm.cs">
       <SubType>Form</SubType>
@@ -194,12 +462,6 @@
     <Compile Include="Forms\COPQPartsLossForm.Designer.cs">
       <DependentUpon>COPQPartsLossForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\DashboardForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\DashboardForm.Designer.cs">
-      <DependentUpon>DashboardForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\DashboardForm2.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -212,11 +474,11 @@
     <Compile Include="Forms\DPRForm.Designer.cs">
       <DependentUpon>DPRForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\EfficiencyForm.cs">
+    <Compile Include="Forms\ProductionEfficiencyForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\EfficiencyForm.Designer.cs">
-      <DependentUpon>EfficiencyForm.cs</DependentUpon>
+    <Compile Include="Forms\ProductionEfficiencyForm.Designer.cs">
+      <DependentUpon>ProductionEfficiencyForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\ManpowerForecastForm.cs">
       <SubType>Form</SubType>
@@ -224,22 +486,16 @@
     <Compile Include="Forms\ManpowerForecastForm.Designer.cs">
       <DependentUpon>ManpowerForecastForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\MasterSettingForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\MasterSettingForm.Designer.cs">
-      <DependentUpon>MasterSettingForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\TargetSettingForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\TargetSettingForm.Designer.cs">
       <DependentUpon>TargetSettingForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="LoadingForm.cs">
+    <Compile Include="Alert\LoadingForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LoadingForm.Designer.cs">
+    <Compile Include="Alert\LoadingForm.Designer.cs">
       <DependentUpon>LoadingForm.cs</DependentUpon>
     </Compile>
     <Compile Include="LoginForm.cs">
@@ -313,11 +569,29 @@
     <Compile Include="RejectionForm.Designer.cs">
       <DependentUpon>RejectionForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="TopContributorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TopContributorForm.Designer.cs">
+      <DependentUpon>TopContributorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UpdateFactoryEfficiencyForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UpdateFactoryEfficiencyForm.Designer.cs">
+      <DependentUpon>UpdateFactoryEfficiencyForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UpdateMHLoss2.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UpdateMHLoss2.Designer.cs">
       <DependentUpon>UpdateMHLoss2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UpdateMHLoss3.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UpdateMHLoss3.Designer.cs">
+      <DependentUpon>UpdateMHLoss3.cs</DependentUpon>
     </Compile>
     <Compile Include="UpdatePartsLossData.cs">
       <SubType>Form</SubType>
@@ -343,6 +617,36 @@
     <Compile Include="UpdateSection.Designer.cs">
       <DependentUpon>UpdateSection.cs</DependentUpon>
     </Compile>
+    <Compile Include="UpdateWorkingHours.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UpdateWorkingHours.Designer.cs">
+      <DependentUpon>UpdateWorkingHours.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UploadMasterData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UploadMasterData.Designer.cs">
+      <DependentUpon>UploadMasterData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UploadPCData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UploadPCData.Designer.cs">
+      <DependentUpon>UploadPCData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UploadProdEfficiencyTemplate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UploadProdEfficiencyTemplate.Designer.cs">
+      <DependentUpon>UploadProdEfficiencyTemplate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UploadTemplate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UploadTemplate.Designer.cs">
+      <DependentUpon>UploadTemplate.cs</DependentUpon>
+    </Compile>
     <Compile Include="UploadTemplateForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -355,23 +659,125 @@
     <Compile Include="UserSetting.Designer.cs">
       <DependentUpon>UserSetting.cs</DependentUpon>
     </Compile>
+    <Compile Include="ViewApplicationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewApplicationForm.Designer.cs">
+      <DependentUpon>ViewApplicationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewNewlyAppliedForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewNewlyAppliedForm.Designer.cs">
+      <DependentUpon>ViewNewlyAppliedForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewRejectedMHLoss.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewRejectedMHLoss.Designer.cs">
+      <DependentUpon>ViewRejectedMHLoss.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="AddCOPQForm.resx">
       <DependentUpon>AddCOPQForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddLeadTime.resx">
+      <DependentUpon>AddLeadTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdjustmentForm.resx">
+      <DependentUpon>AdjustmentForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Alert\ReadyToUploadAlert.resx">
+      <DependentUpon>ReadyToUploadAlert.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ChangePassword.resx">
       <DependentUpon>ChangePassword.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="CheckLineStopDataForm.resx">
+      <DependentUpon>CheckLineStopDataForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="COPQConfirmationForm.resx">
       <DependentUpon>COPQConfirmationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DirectEfficiencyGraphForm.resx">
+      <DependentUpon>DirectEfficiencyGraphForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditApprovalCategory.resx">
+      <DependentUpon>EditApprovalCategory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FactoryEfficiencyGraphForm.resx">
+      <DependentUpon>FactoryEfficiencyGraphForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FactoryEfficiencyMGRCommentForm.resx">
+      <DependentUpon>FactoryEfficiencyMGRCommentForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\OverallMonitoring_web.resx">
+      <DependentUpon>OverallMonitoring_web.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\OverallMonitoring.resx">
+      <DependentUpon>OverallMonitoring.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PartsRegistrationForm.resx">
+      <DependentUpon>PartsRegistrationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ProductionEfficiencyForm2.resx">
+      <DependentUpon>ProductionEfficiencyForm2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LoginRemindersForm.resx">
+      <DependentUpon>LoginRemindersForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MHMSUpdateInformationForm.resx">
+      <DependentUpon>MHMSUpdateInformationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PendingForApprovalForm.resx">
+      <DependentUpon>PendingForApprovalForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dashboard.resx">
       <DependentUpon>Dashboard.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="DownloadTemplateForm.resx">
+      <DependentUpon>DownloadTemplateForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditApplication.resx">
+      <DependentUpon>EditApplication.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DashboardForm3.resx">
+      <DependentUpon>DashboardForm3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FactoryEfficiencyForm.resx">
+      <DependentUpon>FactoryEfficiencyForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MPRSettingForm.resx">
+      <DependentUpon>MPRSettingForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MHApproval.resx">
+      <DependentUpon>MHApproval.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ItemCodeForm.resx">
+      <DependentUpon>ItemCodeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MHReasonOfRejection.resx">
+      <DependentUpon>MHReasonOfRejection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MHReportLogsForm.resx">
+      <DependentUpon>MHReportLogsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NotificationForm2.resx">
+      <DependentUpon>NotificationForm2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OpenGraphForm.resx">
+      <DependentUpon>OpenGraphForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProcessGroupingsForm.resx">
+      <DependentUpon>ProcessGroupingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProdEfficiencyGraphForm.resx">
+      <DependentUpon>ProdEfficiencyGraphForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ResubmitApplicationForm.resx">
+      <DependentUpon>ResubmitApplicationForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SectionMenuForm.resx">
       <DependentUpon>SectionMenuForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Top5DefectRecurrenceForm.resx">
-      <DependentUpon>Top5DefectRecurrenceForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ApplicationForm.resx">
       <DependentUpon>ApplicationForm.cs</DependentUpon>
@@ -388,28 +794,22 @@
     <EmbeddedResource Include="Forms\COPQPartsLossForm.resx">
       <DependentUpon>COPQPartsLossForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\DashboardForm.resx">
-      <DependentUpon>DashboardForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\DashboardForm2.resx">
       <DependentUpon>DashboardForm2.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DPRForm.resx">
       <DependentUpon>DPRForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\EfficiencyForm.resx">
-      <DependentUpon>EfficiencyForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\ProductionEfficiencyForm.resx">
+      <DependentUpon>ProductionEfficiencyForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ManpowerForecastForm.resx">
       <DependentUpon>ManpowerForecastForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MasterSettingForm.resx">
-      <DependentUpon>MasterSettingForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\TargetSettingForm.resx">
       <DependentUpon>TargetSettingForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LoadingForm.resx">
+    <EmbeddedResource Include="Alert\LoadingForm.resx">
       <DependentUpon>LoadingForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LoginForm.resx">
@@ -444,8 +844,17 @@
     <EmbeddedResource Include="RejectionForm.resx">
       <DependentUpon>RejectionForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="TopContributorForm.resx">
+      <DependentUpon>TopContributorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UpdateFactoryEfficiencyForm.resx">
+      <DependentUpon>UpdateFactoryEfficiencyForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UpdateMHLoss2.resx">
       <DependentUpon>UpdateMHLoss2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UpdateMHLoss3.resx">
+      <DependentUpon>UpdateMHLoss3.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UpdatePartsLossData.resx">
       <DependentUpon>UpdatePartsLossData.cs</DependentUpon>
@@ -459,12 +868,37 @@
     <EmbeddedResource Include="UpdateSection.resx">
       <DependentUpon>UpdateSection.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UpdateWorkingHours.resx">
+      <DependentUpon>UpdateWorkingHours.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UploadMasterData.resx">
+      <DependentUpon>UploadMasterData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UploadPCData.resx">
+      <DependentUpon>UploadPCData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UploadProdEfficiencyTemplate.resx">
+      <DependentUpon>UploadProdEfficiencyTemplate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UploadTemplate.resx">
+      <DependentUpon>UploadTemplate.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UploadTemplateForm.resx">
       <DependentUpon>UploadTemplateForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserSetting.resx">
       <DependentUpon>UserSetting.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ViewApplicationForm.resx">
+      <DependentUpon>ViewApplicationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewNewlyAppliedForm.resx">
+      <DependentUpon>ViewNewlyAppliedForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewRejectedMHLoss.resx">
+      <DependentUpon>ViewRejectedMHLoss.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="ClassDiagram1.cd" />
     <None Include="MHMS_TemporaryKey.pfx" />
     <None Include="MH_Management_SystemDataSet.xsc">
       <DependentUpon>MH_Management_SystemDataSet.xsd</DependentUpon>
@@ -634,6 +1068,55 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Picture2.ico" />
+    <None Include="Resources\loading.gif" />
+    <None Include="Resources\upload.gif" />
+    <None Include="Resources\check-mark-verified.gif" />
+    <None Include="Resources\pie-chart.png" />
+    <None Include="Resources\stacked-bar.png" />
+    <None Include="Resources\combination-chart.png" />
+    <None Include="Resources\arrow-31-24.ico" />
+    <None Include="Resources\arrow-96-24.ico" />
+    <None Include="Resources\gear %281%29.png" />
+    <None Include="Resources\gear.png" />
+    <None Include="Resources\growth %281%29.png" />
+    <None Include="Resources\sinchronize-24 %281%29.ico" />
+    <None Include="Resources\eye-2-24.ico" />
+    <None Include="Resources\refresh-24.ico" />
+    <None Include="Resources\plus-6-24.ico" />
+    <None Include="Resources\edit-11-24.ico" />
+    <None Include="Resources\save-24.ico" />
+    <None Include="Resources\upload-3-24 %281%29.ico" />
+    <None Include="Resources\excel.png" />
+    <None Include="Resources\settings-4-24 %281%29.ico" />
+    <None Include="Resources\user-guide.png" />
+    <None Include="Resources\user-guide %282%29.png" />
+    <None Include="Resources\user-guide %281%29.png" />
+    <None Include="Resources\spinner2.gif" />
+    <None Include="Resources\giphy.gif" />
+    <None Include="Resources\R %282%29.gif" />
+    <None Include="Resources\log-file.png" />
+    <None Include="Resources\log.png" />
+    <None Include="Resources\download-2-24 %284%29.ico" />
+    <None Include="Resources\delete-24 %281%29.ico" />
+    <None Include="Resources\delete-24.ico" />
+    <None Include="Resources\add-user-24.ico" />
+    <None Include="Resources\presentation.ico" />
+    <None Include="Resources\presentation1.png" />
+    <None Include="Resources\presentation.png" />
+    <None Include="Resources\graph %281%29.png" />
+    <None Include="Resources\bar-chart.png" />
+    <None Include="Resources\analysis.png" />
+    <None Include="Resources\show-property-24.ico" />
+    <None Include="Resources\maintenance.gif" />
+    <None Include="Resources\email-12-24.ico" />
+    <None Include="Resources\available-updates-24.ico" />
+    <None Include="Resources\edit-property-24.ico" />
+    <None Include="Resources\search-2-24.ico" />
+    <None Include="Resources\upload-3-24.ico" />
+    <None Include="Resources\download-2-24 %282%29.ico" />
+    <None Include="Resources\download-2-24 %283%29.ico" />
+    <None Include="Resources\download-2-32.ico" />
+    <None Include="Resources\download-2-24.ico" />
     <None Include="Resources\R %284%29.png" />
     <None Include="Resources\R %283%29.png" />
     <None Include="Resources\SANATA.gif" />
@@ -692,6 +1175,13 @@
     </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Microsoft.Web.WebView2.1.0.2903.40\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.2903.40\build\Microsoft.Web.WebView2.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.2903.40\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.2903.40\build\Microsoft.Web.WebView2.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -8,18 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace MHMS.Forms
+namespace MHMS.Alert
 {
-    public partial class DashboardForm : Form
+    public partial class ReadyToUploadAlert : Form
     {
-        public DashboardForm()
+        public ReadyToUploadAlert()
         {
             InitializeComponent();
         }
 
-        private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e)
+        private void CloseBtn_Click(object sender, EventArgs e)
         {
-
+            this.Close();
         }
     }
 }

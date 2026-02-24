@@ -1,4 +1,5 @@
 ﻿using ExcelDataReader;
+using MHMS.Connection;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,11 +21,11 @@ namespace MHMS.Forms
     public partial class TargetSettingForm : Form
     {
         //Connection String
-        static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS"].ConnectionString;
+        //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS_ACTUAL"].ConnectionString;
         //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS2"].ConnectionString;
 
         //SQL Connection
-        SqlConnection con = new SqlConnection(MHMS_Conn);
+        SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn);
 
         //int ScrollVal;
         //DataSet ds;
@@ -50,7 +51,7 @@ namespace MHMS.Forms
 
             //LoadSection(); //Load all section
 
-            GetSectionApproverSetting(); // load all data from target setting table
+            LoadTargetSetting(); // load all data from target setting table
 
             // Prevent the data grid column to sort
             foreach (DataGridViewColumn column in HistoryDataGrid.Columns)
@@ -103,7 +104,7 @@ namespace MHMS.Forms
 
         //=================================================================================================================>>>>>>>>>>>>>>>
 
-        private void GetSectionApproverSetting()
+        private void LoadTargetSetting()
         {
             // Check Connection status -> Open connection if the connection is closed
             if (con.State == ConnectionState.Closed)
@@ -157,7 +158,7 @@ namespace MHMS.Forms
                 // -> SQL query to select/get Efficiency Files
                 SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFiles", con);
                 SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
-                SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectEfficiencyFiles");
+                SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectProdEfficiencyFiles");
                 SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
                 DataTable dt = new DataTable();
                 sda.Fill(dt);
@@ -169,7 +170,7 @@ namespace MHMS.Forms
             {
                 SqlCommand SelectEfficiencyFilesBaseOnDate = new SqlCommand("SP_SelectTargetFilesBaseOnDate", con);
                 SelectEfficiencyFilesBaseOnDate.CommandType = CommandType.StoredProcedure;
-                SelectEfficiencyFilesBaseOnDate.Parameters.AddWithValue("@Procedure", "SelectEfficiencyFilesBaseOnDate");
+                SelectEfficiencyFilesBaseOnDate.Parameters.AddWithValue("@Procedure", "SelectProdEfficiencyFilesBaseOnDate");
                 SelectEfficiencyFilesBaseOnDate.Parameters.AddWithValue("@UpdateDate", FiscalYearDropdown.Text);
                 SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFilesBaseOnDate);
                 DataTable dt = new DataTable();
@@ -339,11 +340,20 @@ namespace MHMS.Forms
 
         private void TargetSettingDataGrid_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            try
-            {
+            //try
+            //{
                 if (TargetSettingDataGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString() == "HISTORY")
                 {
-                    if (TargetSettingDataGrid.Rows[e.RowIndex].Cells["Category"].Value.ToString() == "Efficiency")
+                    if (TargetSettingDataGrid.Rows[e.RowIndex].Cells["Category"].Value.ToString() == "Production Efficiency")
+                    {
+                        HistoryDataGrid.Visible = true;
+                        HistoryDataGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                        GetEfficiencyFilesHistory(); // Call out the function to execute
+                        TitleCategory.Text = TargetSettingDataGrid.Rows[e.RowIndex].Cells["Category"].Value.ToString() + " History";
+
+                        SelectTargetFilesByEntries();
+                    }
+                    if (TargetSettingDataGrid.Rows[e.RowIndex].Cells["Category"].Value.ToString() == "Factory Efficiency")
                     {
                         HistoryDataGrid.Visible = true;
                         HistoryDataGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -393,11 +403,11 @@ namespace MHMS.Forms
                 }
                 else 
                 {}
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            //}
+            //catch(Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
         }
 
         //=================================================================================================================>>>>>>>>>>>>>>>
@@ -408,6 +418,7 @@ namespace MHMS.Forms
 
         private void ChooseFileButton_Click(object sender, EventArgs e)
         {
+
         }
 
         public DataTable ReadExcel(string fileName, string fileExt)
@@ -489,7 +500,7 @@ namespace MHMS.Forms
             }
 
             // -> SQL query to insert files in Efficiency files table
-            if (CategoryDropdown.Text == "Efficiency")
+            if (CategoryDropdown.Text == "Production Efficiency")
             {
                 SqlCommand InsertEfficiencyFiles = new SqlCommand("SP_InsertTargetFiles", con);
                 InsertEfficiencyFiles.CommandType = CommandType.StoredProcedure;
@@ -501,7 +512,7 @@ namespace MHMS.Forms
                 InsertEfficiencyFiles.ExecuteNonQuery();
                 con.Close();
 
-                MessageBox.Show("Efficiency File Uploaded successfully!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Production Efficiency File Uploaded successfully!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             }
             else if (CategoryDropdown.Text == "MH Loss Rate")
@@ -591,7 +602,7 @@ namespace MHMS.Forms
                 InsertDisposalBudgetFiles.ExecuteNonQuery();
                 con.Close();
 
-                MessageBox.Show("Disposal Budget File Uploaded successfully!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Standard Man-Hour File Uploaded successfully!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 InsertStandardManhourData(); //Insert disposal budget data to DB
 
@@ -611,7 +622,7 @@ namespace MHMS.Forms
             }
 
             // -> SQL query to insert files in Efficiency files table
-            if (CategoryDropdown.Text == "Efficiency")
+            if (CategoryDropdown.Text == "Production Efficiency")
             {
                 SqlCommand InsertEfficiencyFiles = new SqlCommand("SP_InsertTargetFiles", con);
                 InsertEfficiencyFiles.CommandType = CommandType.StoredProcedure;
@@ -623,7 +634,7 @@ namespace MHMS.Forms
                 InsertEfficiencyFiles.ExecuteNonQuery();
                 con.Close();
 
-                MessageBox.Show("Efficiency File Uploaded successfully!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Production Efficiency File Uploaded successfully!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             }
             else if (CategoryDropdown.Text == "MH Loss Rate")
@@ -715,10 +726,10 @@ namespace MHMS.Forms
                 InsertDisposalBudgetFiles.ExecuteNonQuery();
                 con.Close();
 
-                MessageBox.Show("Disposal Budget File Uploaded successfully!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Standard Man-Hour File Uploaded successfully!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 InsertStandardManhourData(); //Insert disposal budget data to DB
-                
+
             }
         }
 
@@ -740,6 +751,7 @@ namespace MHMS.Forms
 
             if (reader.HasRows)
             {
+                
                 foreach (DataGridViewRow row in HistoryDataGrid.Rows)
                 {
                     // FUNCTION FOR CHECKING IF ALREADY EXIST IN DB.
@@ -750,6 +762,7 @@ namespace MHMS.Forms
                             con.Open();
                         }
 
+                        reader.Close();
                         SqlCommand UpdateAnnualDisposalBudgetBySection = new SqlCommand("SP_UpdateAnnualDisposalBudgetBySection", con);
                         UpdateAnnualDisposalBudgetBySection.CommandType = CommandType.StoredProcedure;
                         UpdateAnnualDisposalBudgetBySection.Parameters.AddWithValue("@Month", row.Cells["Month"].Value);
@@ -762,6 +775,8 @@ namespace MHMS.Forms
                         con.Close();
                     }
                 }
+
+                reader.Close();
 
                 MessageBox.Show("Disposal Budget Data Updated successfully!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -778,6 +793,7 @@ namespace MHMS.Forms
                             con.Open();
                         }
 
+                        reader.Close();
                         SqlCommand InsertDisposalBudget = new SqlCommand("SP_InsertDisposalBudget", con);
                         InsertDisposalBudget.CommandType = CommandType.StoredProcedure;
                         InsertDisposalBudget.Parameters.AddWithValue("@Month", row.Cells["Month"].Value);
@@ -812,41 +828,16 @@ namespace MHMS.Forms
                         con.Open();
                     }
 
-                    SqlCommand InsertDisposalBudget = new SqlCommand("SP_InsertMHLossRateData", con);
-                    InsertDisposalBudget.CommandType = CommandType.StoredProcedure;
-                    //InsertDisposalBudget.Parameters.AddWithValue("@Section", row.Cells["Section"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@Category", row.Cells["Category"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@TargetRate", row.Cells["Target Rate"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@April", row.Cells["Target Rate"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@May", row.Cells["Target Rate"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@June", row.Cells["Target Rate"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@July", row.Cells["Target Rate"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@August", row.Cells["Target Rate"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@September", row.Cells["Target Rate"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@October", row.Cells["Target Rate"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@November", row.Cells["Target Rate"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@December", row.Cells["Target Rate"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@January", row.Cells["Target Rate"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@February", row.Cells["Target Rate"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@March", row.Cells["Target Rate"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@Yearly", row.Cells["Target Rate"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@Q1", row.Cells["Target Rate"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@Q2", row.Cells["Target Rate"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@Q3", row.Cells["Target Rate"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@Q4", row.Cells["Target Rate"].Value);
-                    InsertDisposalBudget.Parameters.AddWithValue("@Section", row.Cells["Section"].Value);
-                    InsertDisposalBudget.Parameters.AddWithValue("@Month", row.Cells["Month"].Value);
-                    InsertDisposalBudget.Parameters.AddWithValue("@Target", row.Cells["Target Rate"].Value);
-                    InsertDisposalBudget.Parameters.AddWithValue("@Yearly", row.Cells["Target Rate"].Value);
-                    InsertDisposalBudget.Parameters.AddWithValue("@Q1", row.Cells["Target Rate"].Value);
-                    InsertDisposalBudget.Parameters.AddWithValue("@Q2", row.Cells["Target Rate"].Value);
-                    InsertDisposalBudget.Parameters.AddWithValue("@Q3", row.Cells["Target Rate"].Value);
-                    InsertDisposalBudget.Parameters.AddWithValue("@Q4", row.Cells["Target Rate"].Value);
-                    //InsertDisposalBudget.Parameters.AddWithValue("@Actual", null);
-                    InsertDisposalBudget.Parameters.AddWithValue("@FiscalYear", DateTime.Now.Year.ToString());
-                    InsertDisposalBudget.Parameters.AddWithValue("@UploadBy", LoginForm.FirstName + " " + LoginForm.LastName);
-                    InsertDisposalBudget.Parameters.AddWithValue("@UploadDate", DateTime.Now.ToString());
-                    InsertDisposalBudget.ExecuteNonQuery();
+                    SqlCommand InsertMHLossRateData = new SqlCommand("SP_InsertMHLossRateData", con);
+                    InsertMHLossRateData.CommandType = CommandType.StoredProcedure;
+                    InsertMHLossRateData.Parameters.AddWithValue("@Section", row.Cells["Section"].Value);
+                    InsertMHLossRateData.Parameters.AddWithValue("@Month", row.Cells["Month"].Value);
+                    InsertMHLossRateData.Parameters.AddWithValue("@Target", row.Cells["Target Rate"].Value);
+                    InsertMHLossRateData.Parameters.AddWithValue("@Legend", row.Cells["Legend"].Value);
+                    InsertMHLossRateData.Parameters.AddWithValue("@FiscalYear", FiscalYearDropdown.Text);
+                    InsertMHLossRateData.Parameters.AddWithValue("@UploadBy", LoginForm.FirstName + " " + LoginForm.LastName);
+                    InsertMHLossRateData.Parameters.AddWithValue("@UploadDate", DateTime.Now.ToString());
+                    InsertMHLossRateData.ExecuteNonQuery();
                     con.Close();
                 }
             }
@@ -879,7 +870,7 @@ namespace MHMS.Forms
 
             foreach (DataGridViewRow row in HistoryDataGrid.Rows)
             {
-                // FUNCTION FOR CHECKING IF ALREADY EXIST IN DB.
+                
                 if (!row.IsNewRow)
                 {
                     if (con.State == ConnectionState.Closed)
@@ -913,8 +904,6 @@ namespace MHMS.Forms
                 // FUNCTION FOR CHECKING IF ALREADY EXIST IN DB.
                 if (!row.IsNewRow)
                 {
-                    //intRow = intRow + 1;
-
 
                     if (con.State == ConnectionState.Closed)
                     {
@@ -942,7 +931,7 @@ namespace MHMS.Forms
             //HistoryDataGrid.DataSource = null;
         }
 
-        //=================================================================================================================>>>>>>>>>>>>>>>
+        //============================================================================================================>>>>>>>>>>>>>>>
 
 
         // ---> Update the date of last upload
@@ -970,12 +959,12 @@ namespace MHMS.Forms
             // Change the default datagrid columns size to auto fill
             //HistoryDataGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-            //New file location for the uploaded file
+            //File destination
             SaveDirectory = @"\\apbiphbpswb01\RELEASE\COPQ Files\Target History\";
 
             if (FilePath.Text == "")
             {
-                MessageBox.Show("File not found! Please select file to upload!", "Required", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("File not found, Please select file to upload!", "Required", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
             else if (CategoryDropdown.Text == "")
             {
@@ -983,14 +972,14 @@ namespace MHMS.Forms
             }
             else
             {
-                try
-                {
-                    int maxNum = 100000000;
-                    int minNum = 1000;
-                    Random random = new Random();
-                    int randomNum = random.Next(minNum, maxNum);
+                //try
+                //{
+                //int maxNum = 100000000;
+                //int minNum = 1000;
+                //Random random = new Random();
+                //int randomNum = random.Next(minNum, maxNum);
 
-                    TitleCategory.Text = CategoryDropdown.Text; // Category title will change depends on selected item in category lists
+                TitleCategory.Text = CategoryDropdown.Text; // Category title will change depends on selected item in category lists
 
                     if (!Directory.Exists(SaveDirectory))
                     {
@@ -1001,13 +990,13 @@ namespace MHMS.Forms
                     {
                         //NewFileName = fileName + "_" + DateTime.Now.ToString("mm/dd/yyyy") + fileExt; // Create new filename if already exist
                        
-                        NewFileName = fileName + "_Copy_" + DateTime.Now.ToString("MMddyyyy") + randomNum + fileExt; // Create new filename if already exist
+                        NewFileName = fileName + "_Copy_" + DateTime.Now.ToString("MMddyyyyhhmmss") + fileExt; // Create new filename if already exist
                         string newFileSavePath = Path.Combine(SaveDirectory, NewFileName); // combine the path of new folder to filename
                         File.Copy(FilePath.Text, newFileSavePath, true);
 
                         InsertRevisedFiles(); // ---> insert the revised files
                         UpdateDateUpload(); // ---> Update the date of last upload
-                        GetSectionApproverSetting(); // load all data from target setting table
+                        LoadTargetSetting(); // load all data from target setting table
 
                         //MessageBox.Show("File already exist in directory folder, please rename your file!");
                     }
@@ -1018,71 +1007,19 @@ namespace MHMS.Forms
 
                         InsertFiles(); // Insert the not existing file in database
                         UpdateDateUpload(); // ---> Update the date of last upload
-                        GetSectionApproverSetting(); // load all data from target setting table
-
+                        LoadTargetSetting(); // load all data from target setting table
                     }
-
-
-
-                    //Original code
-                    //| | |
-                    //V V V
-                    //if (File.Exists(SaveDirectory + fileNameWithExt)) // if the file to upload is already exists this function will rename the file and insert the new file to the database
-                    //{
-                    //    //NewFileName = fileName + "_" + DateTime.Now.ToString("mm/dd/yyyy") + fileExt; // Create new filename if already exist
-
-
-                    //    NewFileName = fileName + "_" + randomNum + fileExt; // Create new filename if already exist
-                    //    string newFileSavePath = Path.Combine(SaveDirectory, NewFileName); // combine the path of new folder to filename
-                    //    File.Copy(FilePath.Text, newFileSavePath, true);
-
-                    //    InsertRevisedFiles(); // ---> insert the revised files
-                    //    UpdateDateUpload(); // ---> Update the date of last upload
-                    //    GetSectionApproverSetting(); // load all data from target setting table
-
-                    //    //MessageBox.Show("File already exist in directory folder, please rename your file!");
-                    //}
-                    //else
-                    //{
-                    //    string FileDestination = Path.Combine(SaveDirectory, fileNameWithExt); // combine the path of new folder and filename
-                    //    File.Copy(FilePath.Text, FileDestination, true);
-
-                    //    InsertFiles(); // Insert the not existing file in database
-                    //    UpdateDateUpload(); // ---> Update the date of last upload
-                    //    GetSectionApproverSetting(); // load all data from target setting table
-
-                    //}
-
-                    //------------------------------------------------------------------------------------------------------------------//
-
-                    //int intRow = 0;
-
-                    //foreach (DataGridViewRow row in HistoryDataGrid.Rows)
-                    //{
-                    //    // FUNCTION FOR CHECKING IF ALREADY EXIST IN DB.
-                    //    if (!row.IsNewRow)
-                    //    {
-                    //        intRow = intRow + 1;
-
-                    //        // For Inserting data type code here -------
-
-                    //    }
-                    //}
-
-
 
                     FilePath.Clear();
                     CategoryDropdown.Text = "";
                     HistoryDataGrid.DataSource = null;
 
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
+                //}
+                //catch (Exception ex)
+                //{
+                //    MessageBox.Show(ex.Message);
+                //}
             }
-
-          
         }
 
         //=================================================================================================================>>>>>>>>>>>>>>>
@@ -1090,7 +1027,7 @@ namespace MHMS.Forms
         // ---> Filter the data based on fiscal year when the FY dropdown was change
         private void FiscalYearDropdown_TextChanged(object sender, EventArgs e)
         {
-            if (TitleCategory.Text == "Efficiency History")
+            if (TitleCategory.Text == "Production Efficiency History")
             {
                 GetEfficiencyFilesHistory(); // Call out the function to execute
             }
@@ -1109,7 +1046,7 @@ namespace MHMS.Forms
         }
 
 
-        //=================================================================================================================>>>>>>>>>>>>>>>
+        //===========================================================================================================>>>>>>>>>>>>>>>
 
         private void PreviousButton_Click(object sender, EventArgs e)
         {
@@ -1170,7 +1107,8 @@ namespace MHMS.Forms
             string filePath = string.Empty;
 
             OpenFileDialog file = new OpenFileDialog();//open dialog to choose file
-            if (file.ShowDialog() == System.Windows.Forms.DialogResult.OK)//if there is a file choosen by the user
+
+            if (file.ShowDialog() == DialogResult.OK)//if there is a file choosen by the user
             {
                 filePath = file.FileName;//get the path of the file
                 fileName = Path.GetFileNameWithoutExtension(filePath); // get the file name without extension
@@ -1197,6 +1135,7 @@ namespace MHMS.Forms
                     MessageBox.Show("Please choose .xls or .xlsx file only.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);//custom messageBox to show error
                 }
             }
+
         }
 
 
@@ -1204,250 +1143,311 @@ namespace MHMS.Forms
 
         private void SelectTargetFilesByEntries()
         {
-            if (TitleCategory.Text == "Efficiency History")
+            if (TitleCategory.Text == "Production Efficiency History")
             {
-                if (DropdownValue.Text == "10")
-                {
-                    // -> Select top 10 data of target files
-                    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
-                    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectEfficiencyFiles");
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top10");
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    HistoryDataGrid.DataSource = dt;
-                    con.Close();
+                // -> Select top 10 data of target files
+                SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectProductionEfficiencyFiles");
+                //SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top10"); 
+                SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", DropdownValue.Text);
+                SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+                HistoryDataGrid.DataSource = dt;
+                con.Close();
 
-                    //ds = new DataSet();
-                    //sda.Fill(ds, ScrollVal, 10, "EfficiencyFiles");
-                    //con.Close();
-                    //Dtable = ds.Tables["EfficiencyFiles"];
-                    //HistoryDataGrid.DataSource = Dtable;
-                }
-                else if (DropdownValue.Text == "50")
-                {
-                    // -> Select top data of target files base on entries
-                    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
-                    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectEfficiencyFiles");
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top50");
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    HistoryDataGrid.DataSource = dt;
-                    con.Close();
-                }
-                else if (DropdownValue.Text == "100")
-                {
-                    // -> Select top data of target files base on entries
-                    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
-                    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectEfficiencyFiles");
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top100");
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    HistoryDataGrid.DataSource = dt;
-                    con.Close();
-                }
-                else if (DropdownValue.Text == "All")
-                {
-                    // -> Select top data of target files base on entries
-                    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
-                    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectEfficiencyFiles");
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "All");
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    HistoryDataGrid.DataSource = dt;
-                    con.Close();
-                }
+                //if (DropdownValue.Text == "10")
+                //{
+                //    // -> Select top 10 data of target files
+                //    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                //    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectEfficiencyFiles");
+                //    //SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top10"); 
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", DropdownValue.Text);
+                //    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                //    DataTable dt = new DataTable();
+                //    sda.Fill(dt);
+                //    HistoryDataGrid.DataSource = dt;
+                //    con.Close();
+
+                //    //ds = new DataSet();
+                //    //sda.Fill(ds, ScrollVal, 10, "EfficiencyFiles");
+                //    //con.Close();
+                //    //Dtable = ds.Tables["EfficiencyFiles"];
+                //    //HistoryDataGrid.DataSource = Dtable;
+                //}
+                //else if (DropdownValue.Text == "50")
+                //{
+                //    // -> Select top data of target files base on entries
+                //    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                //    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectEfficiencyFiles");
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top50");
+                //    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                //    DataTable dt = new DataTable();
+                //    sda.Fill(dt);
+                //    HistoryDataGrid.DataSource = dt;
+                //    con.Close();
+                //}
+                //else if (DropdownValue.Text == "100")
+                //{
+                //    // -> Select top data of target files base on entries
+                //    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                //    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectEfficiencyFiles");
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top100");
+                //    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                //    DataTable dt = new DataTable();
+                //    sda.Fill(dt);
+                //    HistoryDataGrid.DataSource = dt;
+                //    con.Close();
+                //}
+                //else if (DropdownValue.Text == "All")
+                //{
+                //    // -> Select top data of target files base on entries
+                //    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                //    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectEfficiencyFiles");
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "All");
+                //    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                //    DataTable dt = new DataTable();
+                //    sda.Fill(dt);
+                //    HistoryDataGrid.DataSource = dt;
+                //    con.Close();
+                //}
+
+            }
+            else if (TitleCategory.Text == "Factory Efficiency History")
+            {
+                // -> Select top 10 data of target files
+                SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectFactoryEfficiencyFiles");
+                //SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top10"); 
+                SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", DropdownValue.Text);
+                SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+                HistoryDataGrid.DataSource = dt;
+                con.Close();
 
             }
             else if (TitleCategory.Text == "MH Loss Rate History")
             {
-                if (DropdownValue.Text == "10")
-                {
-                    // -> Select top 10 data of target files
-                    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
-                    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectMHLossRateFiles");
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top10");
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    HistoryDataGrid.DataSource = dt;
-                    con.Close();
+                // -> Select top 10 data of target files
+                SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectMHLossRateFiles");
+                SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", DropdownValue.Text);
+                SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+                HistoryDataGrid.DataSource = dt;
+                con.Close();
 
-                    //ds = new DataSet();
-                    //sda.Fill(ds, ScrollVal, 10, "EfficiencyFiles");
-                    //con.Close();
-                    //Dtable = ds.Tables["EfficiencyFiles"];
-                    //HistoryDataGrid.DataSource = Dtable;
-                }
-                else if (DropdownValue.Text == "50")
-                {
-                    // -> Select top data of target files base on entries
-                    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
-                    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectMHLossRateFiles");
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top50");
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    HistoryDataGrid.DataSource = dt;
-                    con.Close();
-                }
-                else if (DropdownValue.Text == "100")
-                {
-                    // -> Select top data of target files base on entries
-                    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
-                    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectMHLossRateFiles");
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top100");
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    HistoryDataGrid.DataSource = dt;
-                    con.Close();
-                }
-                else if (DropdownValue.Text == "All")
-                {
-                    // -> Select top data of target files base on entries
-                    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
-                    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectMHLossRateFiles");
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "All");
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    HistoryDataGrid.DataSource = dt;
-                    con.Close();
-                }
+                //if (DropdownValue.Text == "10")
+                //{
+                //    // -> Select top 10 data of target files
+                //    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                //    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectMHLossRateFiles");
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", DropdownValue.Text);
+                //    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                //    DataTable dt = new DataTable();
+                //    sda.Fill(dt);
+                //    HistoryDataGrid.DataSource = dt;
+                //    con.Close();
+
+                //    //ds = new DataSet();
+                //    //sda.Fill(ds, ScrollVal, 10, "EfficiencyFiles");
+                //    //con.Close();
+                //    //Dtable = ds.Tables["EfficiencyFiles"];
+                //    //HistoryDataGrid.DataSource = Dtable;
+                //}
+                //else if (DropdownValue.Text == "50")
+                //{
+                //    // -> Select top data of target files base on entries
+                //    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                //    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectMHLossRateFiles");
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top50");
+                //    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                //    DataTable dt = new DataTable();
+                //    sda.Fill(dt);
+                //    HistoryDataGrid.DataSource = dt;
+                //    con.Close();
+                //}
+                //else if (DropdownValue.Text == "100")
+                //{
+                //    // -> Select top data of target files base on entries
+                //    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                //    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectMHLossRateFiles");
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top100");
+                //    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                //    DataTable dt = new DataTable();
+                //    sda.Fill(dt);
+                //    HistoryDataGrid.DataSource = dt;
+                //    con.Close();
+                //}
+                //else if (DropdownValue.Text == "All")
+                //{
+                //    // -> Select top data of target files base on entries
+                //    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                //    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectMHLossRateFiles");
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "All");
+                //    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                //    DataTable dt = new DataTable();
+                //    sda.Fill(dt);
+                //    HistoryDataGrid.DataSource = dt;
+                //    con.Close();
+                //}
             }
             else if (TitleCategory.Text == "Parts Loss Rate History")
             {
-                if (DropdownValue.Text == "10")
-                {
-                    // -> Select top 10 data of target files
-                    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
-                    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectPartsLossRateFiles");
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top10");
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    HistoryDataGrid.DataSource = dt;
-                    con.Close();
+                // -> Select top 10 data of target files
+                SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectPartsLossRateFiles");
+                SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", DropdownValue.Text);
+                SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+                HistoryDataGrid.DataSource = dt;
+                con.Close();
 
-                    //ds = new DataSet();
-                    //sda.Fill(ds, ScrollVal, 10, "EfficiencyFiles");
-                    //con.Close();
-                    //Dtable = ds.Tables["EfficiencyFiles"];
-                    //HistoryDataGrid.DataSource = Dtable;
-                }
-                else if (DropdownValue.Text == "50")
-                {
-                    // -> Select top data of target files base on entries
-                    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
-                    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectPartsLossRateFiles");
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top50");
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    HistoryDataGrid.DataSource = dt;
-                    con.Close();
-                }
-                else if (DropdownValue.Text == "100")
-                {
-                    // -> Select top data of target files base on entries
-                    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
-                    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectPartsLossRateFiles");
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top100");
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    HistoryDataGrid.DataSource = dt;
-                    con.Close();
-                }
-                else if (DropdownValue.Text == "All")
-                {
-                    // -> Select top data of target files base on entries
-                    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
-                    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectPartsLossRateFiles");
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "All");
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    HistoryDataGrid.DataSource = dt;
-                    con.Close();
-                }
+                //if (DropdownValue.Text == "10")
+                //{
+                //    // -> Select top 10 data of target files
+                //    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                //    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectPartsLossRateFiles");
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top10");
+                //    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                //    DataTable dt = new DataTable();
+                //    sda.Fill(dt);
+                //    HistoryDataGrid.DataSource = dt;
+                //    con.Close();
+
+                //    //ds = new DataSet();
+                //    //sda.Fill(ds, ScrollVal, 10, "EfficiencyFiles");
+                //    //con.Close();
+                //    //Dtable = ds.Tables["EfficiencyFiles"];
+                //    //HistoryDataGrid.DataSource = Dtable;
+                //}
+                //else if (DropdownValue.Text == "50")
+                //{
+                //    // -> Select top data of target files base on entries
+                //    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                //    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectPartsLossRateFiles");
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top50");
+                //    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                //    DataTable dt = new DataTable();
+                //    sda.Fill(dt);
+                //    HistoryDataGrid.DataSource = dt;
+                //    con.Close();
+                //}
+                //else if (DropdownValue.Text == "100")
+                //{
+                //    // -> Select top data of target files base on entries
+                //    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                //    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectPartsLossRateFiles");
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top100");
+                //    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                //    DataTable dt = new DataTable();
+                //    sda.Fill(dt);
+                //    HistoryDataGrid.DataSource = dt;
+                //    con.Close();
+                //}
+                //else if (DropdownValue.Text == "All")
+                //{
+                //    // -> Select top data of target files base on entries
+                //    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                //    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectPartsLossRateFiles");
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "All");
+                //    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                //    DataTable dt = new DataTable();
+                //    sda.Fill(dt);
+                //    HistoryDataGrid.DataSource = dt;
+                //    con.Close();
+                //}
             }
             else if (TitleCategory.Text == "COPQ Manpower Rate History")
             {
-                if (DropdownValue.Text == "10")
-                {
-                    // -> Select top 10 data of target files
-                    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
-                    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectCOPQManpowerRateFiles");
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top10");
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    HistoryDataGrid.DataSource = dt;
-                    con.Close();
+                // -> Select top 10 data of target files
+                SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectCOPQManpowerRateFiles");
+                SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", DropdownValue.Text);
+                SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+                HistoryDataGrid.DataSource = dt;
+                con.Close();
 
-                    //ds = new DataSet();
-                    //sda.Fill(ds, ScrollVal, 10, "EfficiencyFiles");
-                    //con.Close();
-                    //Dtable = ds.Tables["EfficiencyFiles"];
-                    //HistoryDataGrid.DataSource = Dtable;
-                }
-                else if (DropdownValue.Text == "50")
-                {
-                    // -> Select top data of target files base on entries
-                    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
-                    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectPartsLossRateFiles");
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top50");
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    HistoryDataGrid.DataSource = dt;
-                    con.Close();
-                }
-                else if (DropdownValue.Text == "100")
-                {
-                    // -> Select top data of target files base on entries
-                    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
-                    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectPartsLossRateFiles");
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top100");
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    HistoryDataGrid.DataSource = dt;
-                    con.Close();
-                }
-                else if (DropdownValue.Text == "All")
-                {
-                    // -> Select top data of target files base on entries
-                    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
-                    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectPartsLossRateFiles");
-                    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "All");
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    HistoryDataGrid.DataSource = dt;
-                    con.Close();
-                }
+                //if (DropdownValue.Text == "10")
+                //{
+                //    // -> Select top 10 data of target files
+                //    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                //    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectCOPQManpowerRateFiles");
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", DropdownValue.Text);
+                //    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                //    DataTable dt = new DataTable();
+                //    sda.Fill(dt);
+                //    HistoryDataGrid.DataSource = dt;
+                //    con.Close();
+
+                //    //ds = new DataSet();
+                //    //sda.Fill(ds, ScrollVal, 10, "EfficiencyFiles");
+                //    //con.Close();
+                //    //Dtable = ds.Tables["EfficiencyFiles"];
+                //    //HistoryDataGrid.DataSource = Dtable;
+                //}
+                //else if (DropdownValue.Text == "50")
+                //{
+                //    // -> Select top data of target files base on entries
+                //    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                //    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectPartsLossRateFiles");
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top50");
+                //    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                //    DataTable dt = new DataTable();
+                //    sda.Fill(dt);
+                //    HistoryDataGrid.DataSource = dt;
+                //    con.Close();
+                //}
+                //else if (DropdownValue.Text == "100")
+                //{
+                //    // -> Select top data of target files base on entries
+                //    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                //    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectPartsLossRateFiles");
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "Top100");
+                //    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                //    DataTable dt = new DataTable();
+                //    sda.Fill(dt);
+                //    HistoryDataGrid.DataSource = dt;
+                //    con.Close();
+                //}
+                //else if (DropdownValue.Text == "All")
+                //{
+                //    // -> Select top data of target files base on entries
+                //    SqlCommand SelectEfficiencyFiles = new SqlCommand("SP_SelectTargetFilesByEntries", con);
+                //    SelectEfficiencyFiles.CommandType = CommandType.StoredProcedure;
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Procedure", "SelectPartsLossRateFiles");
+                //    SelectEfficiencyFiles.Parameters.AddWithValue("@Entries", "All");
+                //    SqlDataAdapter sda = new SqlDataAdapter(SelectEfficiencyFiles);
+                //    DataTable dt = new DataTable();
+                //    sda.Fill(dt);
+                //    HistoryDataGrid.DataSource = dt;
+                //    con.Close();
+                //}
             }
         }
 
@@ -1498,6 +1498,43 @@ namespace MHMS.Forms
         {
             Process.Start(@"\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\Other Template\Standard MH - Updated.xlsx");
         }
+
+        private void DownloadTemplateBtn_Click(object sender, EventArgs e)
+        {
+            DownloadTemplateForm downloadTemplateForm = new DownloadTemplateForm();
+            downloadTemplateForm.ShowDialog();
+        }
+
+        public static string Category;
+        private void CategoryDropdown_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Category = CategoryDropdown.Text;
+
+            UploadProdEfficiencyTemplate UploadProdEfficiencyTemplate = new UploadProdEfficiencyTemplate();
+            UploadProdEfficiencyTemplate.ShowDialog();
+        }
+
+        public static bool LoadTargetSettings = false;
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (LoadTargetSettings == true)
+            {
+                LoadTargetSetting(); // load all data from target setting table
+
+                LoadTargetSettings = false;
+            }
+        }
+
+        private void SectionDropdownList_DropDown(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void FiscalYearDropdown_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
 
         //=================================================================================================================>>>>>>>>>>>>>>>
 

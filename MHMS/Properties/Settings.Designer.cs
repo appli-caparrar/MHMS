@@ -12,7 +12,7 @@ namespace MHMS.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.12.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -20,6 +20,17 @@ namespace MHMS.Properties {
         public static Settings Default {
             get {
                 return defaultInstance;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=APBIPHBPSDB01;Initial Catalog=MH_Management_System;User ID=MH_User;Pa" +
+            "ssword=P@ssw0rd")]
+        public string MHMS_ACTUAL {
+            get {
+                return ((string)(this["MHMS_ACTUAL"]));
             }
         }
         
@@ -37,11 +48,44 @@ namespace MHMS.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=10.248.1.121;Initial Catalog=MH_Management_System;Persist Security In" +
-            "fo=True;User ID=MH_User;Password=P@ssw0rd")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=apbiph1131;Initial Catalog=MHMS2_DB;Persist Security Info=True;User I" +
+            "D=MH_User;Password=P@ssw0rd")]
         public string MHMS2 {
             get {
                 return ((string)(this["MHMS2"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=apbiphbpsdb01;Initial Catalog=MHMS2_DB;Persist Security Info=True;Use" +
+            "r ID=MH_User;Password=P@ssw0rd")]
+        public string MHMS2_ACTUAL {
+            get {
+                return ((string)(this["MHMS2_ACTUAL"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=APBIPHBPSDB02;Initial Catalog=Centralized_LOGIN_DB;Persist Security I" +
+            "nfo=True;User ID=CAS_access;Password=@BIPH2024")]
+        public string CentralizedLogin {
+            get {
+                return ((string)(this["CentralizedLogin"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=APBIPHBPSDB02;Initial Catalog=biph_calendar;Persist Security Info=Tru" +
+            "e;User ID=biph_calendar_user;Password=P@ssw0rd;TrustServerCertificate=True")]
+        public string biph_calendar {
+            get {
+                return ((string)(this["biph_calendar"]));
             }
         }
     }

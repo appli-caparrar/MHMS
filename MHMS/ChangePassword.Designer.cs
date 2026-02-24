@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChangePassword));
             this.label1 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -56,6 +57,9 @@
             this.ResetPasswordPanel = new System.Windows.Forms.Panel();
             this.label8 = new System.Windows.Forms.Label();
             this.BackToLoginForm = new System.Windows.Forms.Button();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.SystemVersionText = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.HidePasswordButton)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ShowPasswordButton)).BeginInit();
@@ -66,6 +70,7 @@
             this.CodePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             this.ResetPasswordPanel.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -424,6 +429,41 @@
             this.BackToLoginForm.UseVisualStyleBackColor = false;
             this.BackToLoginForm.Click += new System.EventHandler(this.BackToLoginForm_Click);
             // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.Color.Transparent;
+            this.panel1.Controls.Add(this.SystemVersionText);
+            this.panel1.Controls.Add(this.label9);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(0, 592);
+            this.panel1.Name = "panel1";
+            this.panel1.Padding = new System.Windows.Forms.Padding(0, 0, 5, 0);
+            this.panel1.Size = new System.Drawing.Size(1232, 22);
+            this.panel1.TabIndex = 25;
+            // 
+            // SystemVersionText
+            // 
+            this.SystemVersionText.AutoSize = true;
+            this.SystemVersionText.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.SystemVersionText.Location = new System.Drawing.Point(7, 0);
+            this.SystemVersionText.Name = "SystemVersionText";
+            this.SystemVersionText.Size = new System.Drawing.Size(370, 13);
+            this.SystemVersionText.TabIndex = 10;
+            this.SystemVersionText.Text = "©️ 2022 Brother Industries (Philippines) Inc. | Developed by: BPS | Version 1.0";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.BackColor = System.Drawing.Color.Transparent;
+            this.label9.Dock = System.Windows.Forms.DockStyle.Right;
+            this.label9.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.label9.Location = new System.Drawing.Point(798, 0);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(429, 13);
+            this.label9.TabIndex = 9;
+            this.label9.Text = "If you have any concern, Please call BPS-Application group local 3407 and look fo" +
+    "r Arvin.";
+            // 
             // ChangePassword
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -431,10 +471,12 @@
             this.BackgroundImage = global::MHMS.Properties.Resources.mhlogin_bg1;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1232, 614);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.BackToLoginForm);
             this.Controls.Add(this.EmailPanel);
             this.Controls.Add(this.CodePanel);
             this.Controls.Add(this.ResetPasswordPanel);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ChangePassword";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Change Password";
@@ -452,6 +494,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             this.ResetPasswordPanel.ResumeLayout(false);
             this.ResetPasswordPanel.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -486,5 +530,8 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button BackToLoginForm;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label SystemVersionText;
+        private System.Windows.Forms.Label label9;
     }
 }

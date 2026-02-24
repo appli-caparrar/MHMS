@@ -1,4 +1,5 @@
-﻿using MHMS.Forms;
+﻿using MHMS.Connection;
+using MHMS.Forms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,11 +17,11 @@ namespace MHMS
     public partial class ProcessInchargeForm : Form
     {
         // Connection string
-        static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS"].ConnectionString;
+        //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS_ACTUAL"].ConnectionString;
         //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS2"].ConnectionString;
 
         // SQL Connection
-        SqlConnection con = new SqlConnection(MHMS_Conn);
+        SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn);
 
 
         public ProcessInchargeForm()
@@ -34,7 +35,7 @@ namespace MHMS
         {
             LineStopDetailTextBox.Text = ApprovalForm.LineStopDetail;
             LineStopDetailTextBox.ReadOnly = true;
-            SelectCOPQProcessInchargeUsers();
+            
         }
 
         //================================================================================================>>>>>>>>>
@@ -66,7 +67,7 @@ namespace MHMS
 
         private void UserDropdown_DropDown(object sender, EventArgs e)
         {
-            //SelectCOPQProcessInchargeUsers();
+            SelectCOPQProcessInchargeUsers();
         }
 
         private void UserDropdown_DropDownClosed(object sender, EventArgs e)
@@ -89,14 +90,17 @@ namespace MHMS
             {
                 SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateApprovalStatus", con);
                 UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
-                UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "ApprovedBySectionCOPQProcessInCharge");
-                UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetailTextBox.Text);
-                UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
-                UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
-                UpdateApprovalStatus.Parameters.AddWithValue("@Reason", "");
-                UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", "");
+                UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "ApprovedBySectionCOPQPIC");
+                UpdateApprovalStatus.Parameters.AddWithValue("@DistinctionCode", ApprovalForm.DistinctionCode);
+                //UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetailTextBox.Text);
+                //UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
+                //UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
+                UpdateApprovalStatus.Parameters.AddWithValue("@Reason", ""); //this an empty parameter to prevent error 
+                UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", "");//this an empty parameter to prevent error 
                 UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "For Approval by COPQ Process In-Charge");
                 UpdateApprovalStatus.Parameters.AddWithValue("@Type", ApprovalForm.ApprovalType);
+                UpdateApprovalStatus.Parameters.AddWithValue("@CurrentApprover", "Pending Approval");
+                UpdateApprovalStatus.Parameters.AddWithValue("@ApproverName", "Approved by " + LoginForm.FirstName + " " + LoginForm.LastName + " " + DateTime.Now.ToString("MM/dd/yyyy hh:mm"));
                 UpdateApprovalStatus.ExecuteNonQuery();
                 con.Close();
 
@@ -105,7 +109,7 @@ namespace MHMS
                 MessageBox.Show("Approved Successfully!", "DONE", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
-            //ApprovalForm.ApproveButtonIsClicked = true;
+            ApprovalForm.ApproveButtonIsClicked = true;
 
             this.Close();
         }
@@ -123,19 +127,32 @@ namespace MHMS
             SqlCommand UpdateApprovalStatus = new SqlCommand("SP_ProcessInChargeName", con);
             UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
             UpdateApprovalStatus.Parameters.AddWithValue("@ProcessInChargeName", UserDropdown.Text);
-            UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetailTextBox.Text);
-            UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
-            UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
+            UpdateApprovalStatus.Parameters.AddWithValue("@DistinctionCode", ApprovalForm.DistinctionCode);
+            //UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetailTextBox.Text);
+            //UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
+            //UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
             UpdateApprovalStatus.ExecuteNonQuery();
             con.Close();
         }
 
         //================================================================================================>>>>>>>>>
-
+        public static string ProcessInCharge = string.Empty;
         private void ApproveButton_Click(object sender, EventArgs e)
         {
-            //When click the approved button the selected MH data will be automatically transfered to selected user 
-            UpdateApprovalStatus();
+            if (UserDropdown.Text == "")
+            {
+                MessageBox.Show("Please select process in-charge.", "MHMS Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else
+            {
+
+                ProcessInCharge = UserDropdown.Text;
+
+                this.Close();
+            }
+            
+            
+            //UpdateApprovalStatus();
         }
 
         //================================================================================================>>>>>>>>>

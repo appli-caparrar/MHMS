@@ -16,5 +16,20 @@ namespace MHMS.Forms
         {
             InitializeComponent();
         }
+
+        private void EfficiencyForm_Load(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void ViewGraphButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel21_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

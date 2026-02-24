@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProcessInChargeConfirmationForm));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.CauseTextBox = new System.Windows.Forms.TextBox();
             this.TopPanel = new System.Windows.Forms.Panel();
@@ -97,7 +98,7 @@
             // 
             // ApproveButton
             // 
-            this.ApproveButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(168)))), ((int)(((byte)(101)))));
+            this.ApproveButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(55)))), ((int)(((byte)(111)))), ((int)(((byte)(238)))));
             this.ApproveButton.FlatAppearance.BorderSize = 0;
             this.ApproveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ApproveButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -187,6 +188,7 @@
             this.AttachedFileButton.TabIndex = 38;
             this.AttachedFileButton.Text = "Attached File";
             this.AttachedFileButton.UseVisualStyleBackColor = false;
+            this.AttachedFileButton.Click += new System.EventHandler(this.AttachedFileButton_Click);
             // 
             // groupBox3
             // 
@@ -222,6 +224,7 @@
             this.Controls.Add(this.TopPanel);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "ProcessInChargeConfirmationForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

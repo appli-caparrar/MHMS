@@ -16,5 +16,10 @@ namespace MHMS.Forms
         {
             InitializeComponent();
         }
+
+        private void DPRForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using MHMS.Forms;
+﻿using MHMS.Connection;
+using MHMS.Forms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,12 +17,8 @@ namespace MHMS
     public partial class COPQConfirmationForm : Form
     {
 
-        // Connection string
-        static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS"].ConnectionString;
-        //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS2"].ConnectionString;
-
         // SQL Connection
-        SqlConnection con = new SqlConnection(MHMS_Conn);
+        SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn);
 
         public COPQConfirmationForm()
         {
@@ -70,9 +67,10 @@ namespace MHMS
             SqlCommand UpdateCOPQAmount = new SqlCommand("SP_UpdateCOPQAmountIfNoCOPQNeeded", con);
             UpdateCOPQAmount.CommandType = CommandType.StoredProcedure;
             //UpdateCOPQAmount.Parameters.AddWithValue("@MHLossType", MHLossTypeDropdown.Text);
-            UpdateCOPQAmount.Parameters.AddWithValue("@LineStopDetail", LineStopDetail.Text);
-            UpdateCOPQAmount.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
-            UpdateCOPQAmount.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
+            //UpdateCOPQAmount.Parameters.AddWithValue("@LineStopDetail", LineStopDetail.Text);
+            //UpdateCOPQAmount.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
+            //UpdateCOPQAmount.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
+            UpdateCOPQAmount.Parameters.AddWithValue("@DistinctionCode", ApprovalForm.DistinctionCode);
             UpdateCOPQAmount.ExecuteNonQuery();
             con.Close();
         }
@@ -87,17 +85,21 @@ namespace MHMS
 
             if (LoginForm.COPQPIC == "✔️")
             {
-               
                 SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateApprovalStatus", con);
                 UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
+                UpdateApprovalStatus.CommandTimeout = 120; // 120 seconds
+
                 UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "ApprovedBySectionCOPQPIC");
-                UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetail.Text);
+                UpdateApprovalStatus.Parameters.AddWithValue("@DistinctionCode", ApprovalForm.DistinctionCode);
+                //UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetail.Text);
                 UpdateApprovalStatus.Parameters.AddWithValue("@Reason", ReasonTextBox.Text);
                 UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", MHLossTypeDropdown.Text);
-                UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
+                //UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
                 UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "For Approval by SPV");
                 UpdateApprovalStatus.Parameters.AddWithValue("@Type", ApprovalForm.ApprovalType);
-                UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
+                //UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
+                UpdateApprovalStatus.Parameters.AddWithValue("@CurrentApprover", "Pending Approval");
+                UpdateApprovalStatus.Parameters.AddWithValue("@ApproverName", "Approved by " + LoginForm.FirstName + " " + LoginForm.LastName + " " + DateTime.Now.ToString("MM/dd/yyyy hh:mm"));
                 UpdateApprovalStatus.ExecuteNonQuery();
                 con.Close();
 
@@ -112,42 +114,6 @@ namespace MHMS
 
         }
 
-        //private void UpdateMHLossType()
-        //{
-        //    // -> SQL query to insert user account
-        //    if (con.State == ConnectionState.Closed)
-        //    {
-        //        con.Open();
-        //    }
-
-        //    SqlCommand UpdateMHLossType = new SqlCommand("SP_UpdateMHLossType", con);
-        //    UpdateMHLossType.CommandType = CommandType.StoredProcedure;
-        //    UpdateMHLossType.Parameters.AddWithValue("@LineStopDetail", LineStopDetail.Text);
-        //    UpdateMHLossType.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
-        //    UpdateMHLossType.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
-        //    UpdateMHLossType.Parameters.AddWithValue("@MHLossType", MHLossTypeDropdown.Text);
-        //    UpdateMHLossType.ExecuteNonQuery();
-        //    con.Close();
-        //}
-
-        //private void UpdateReason()
-        //{
-        //    // -> SQL query to insert user account
-        //    if (con.State == ConnectionState.Closed)
-        //    {
-        //        con.Open();
-        //    }
-
-        //    SqlCommand UpdateReason = new SqlCommand("SP_UpdateReason", con);
-        //    UpdateReason.CommandType = CommandType.StoredProcedure;
-        //    UpdateReason.Parameters.AddWithValue("@LineStopDetail", LineStopDetail.Text);
-        //    UpdateReason.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
-        //    UpdateReason.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
-        //    UpdateReason.Parameters.AddWithValue("@Reason", ReasonTextBox.Text);
-        //    UpdateReason.ExecuteNonQuery();
-        //    con.Close();
-
-        //}
 
         private void AttachedFileButton_Click(object sender, EventArgs e)
         {
@@ -167,6 +133,5 @@ namespace MHMS
             }
         }
 
-       
     }
 }

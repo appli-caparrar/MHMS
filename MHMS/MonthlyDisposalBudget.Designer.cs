@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonthlyDisposalBudget));
             this.TopPanel = new System.Windows.Forms.Panel();
             this.SectionLabel = new System.Windows.Forms.Label();
             this.DateTimeLabel = new System.Windows.Forms.Label();
@@ -124,6 +125,7 @@
             this.FiscalYearDropdown.Name = "FiscalYearDropdown";
             this.FiscalYearDropdown.Size = new System.Drawing.Size(273, 28);
             this.FiscalYearDropdown.TabIndex = 2;
+            this.FiscalYearDropdown.SelectedIndexChanged += new System.EventHandler(this.FiscalYearDropdown_SelectedIndexChanged);
             this.FiscalYearDropdown.TextChanged += new System.EventHandler(this.FiscalYearDropdown_TextChanged);
             // 
             // panel4
@@ -150,11 +152,11 @@
             // 
             // SaveButton
             // 
-            this.SaveButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(217)))), ((int)(((byte)(167)))));
+            this.SaveButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(69)))), ((int)(((byte)(180)))));
             this.SaveButton.FlatAppearance.BorderSize = 0;
             this.SaveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.SaveButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SaveButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(35)))), ((int)(((byte)(53)))));
+            this.SaveButton.ForeColor = System.Drawing.Color.White;
             this.SaveButton.Location = new System.Drawing.Point(391, 60);
             this.SaveButton.Name = "SaveButton";
             this.SaveButton.Size = new System.Drawing.Size(151, 35);
@@ -193,7 +195,6 @@
             this.DisposalBudgetDataGrid.TabIndex = 16;
             this.DisposalBudgetDataGrid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DisposalBudgetDataGrid_CellClick);
             this.DisposalBudgetDataGrid.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.DisposalBudgetDataGrid_CellFormatting);
-            this.DisposalBudgetDataGrid.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DisposalBudgetDataGrid_ColumnHeaderMouseClick);
             // 
             // Budget
             // 
@@ -279,6 +280,7 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.TopPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MonthlyDisposalBudget";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

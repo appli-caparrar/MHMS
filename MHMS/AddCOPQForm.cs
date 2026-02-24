@@ -22,5 +22,10 @@ namespace MHMS
             DateTime dateTime = DateTime.Now;
             this.DateAndTimeLabel.Text = dateTime.ToString("dddd , MMM dd yyyy, hh : mm : ss");
         }
+
+        private void AddCOPQForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

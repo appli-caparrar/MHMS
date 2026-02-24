@@ -1,4 +1,5 @@
 ﻿using ExcelDataReader;
+using MHMS.Connection;
 using MHMS.Forms;
 using System;
 using System.Collections.Generic;
@@ -20,11 +21,11 @@ namespace MHMS
     public partial class RejectionForm : Form
     {
         // Connection string
-        static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS"].ConnectionString;
+        //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS_ACTUAL"].ConnectionString;
         //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS2"].ConnectionString;
 
         // SQL Connection
-        SqlConnection con = new SqlConnection(MHMS_Conn);
+        SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn);
 
         ////Table collection
         //DataTableCollection tableCollection;
@@ -142,9 +143,10 @@ namespace MHMS
             {
                 SqlCommand UpdateReasonOfRejection = new SqlCommand("SP_UpdateReasonOfRejection", con);
                 UpdateReasonOfRejection.CommandType = CommandType.StoredProcedure;
-                UpdateReasonOfRejection.Parameters.AddWithValue("@LineStopDetail", LineStopDetailTextBox.Text);
-                UpdateReasonOfRejection.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
-                UpdateReasonOfRejection.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
+                UpdateReasonOfRejection.Parameters.AddWithValue("@DistinctionCode", ApprovalForm.DistinctionCode);
+                //UpdateReasonOfRejection.Parameters.AddWithValue("@LineStopDetail", LineStopDetailTextBox.Text);
+                //UpdateReasonOfRejection.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
+                //UpdateReasonOfRejection.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
                 UpdateReasonOfRejection.Parameters.AddWithValue("@ReasonOfRejection", ReasonTextBox.Text);
                 UpdateReasonOfRejection.ExecuteNonQuery();
                 con.Close();
@@ -153,15 +155,16 @@ namespace MHMS
             {
                 SqlCommand UpdateReasonOfRejection = new SqlCommand("SP_UpdateReasonOfRejection", con);
                 UpdateReasonOfRejection.CommandType = CommandType.StoredProcedure;
-                UpdateReasonOfRejection.Parameters.AddWithValue("@LineStopDetail", LineStopDetailTextBox.Text);
-                UpdateReasonOfRejection.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
-                UpdateReasonOfRejection.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
+                UpdateReasonOfRejection.Parameters.AddWithValue("@DistinctionCode", ApprovalForm.DistinctionCode);
+                //UpdateReasonOfRejection.Parameters.AddWithValue("@LineStopDetail", LineStopDetailTextBox.Text);
+                //UpdateReasonOfRejection.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
+                //UpdateReasonOfRejection.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
                 UpdateReasonOfRejection.Parameters.AddWithValue("@ReasonOfRejection", "Transfer to " + SectionDropdown.Text + " - " + ReasonTextBox.Text);
                 UpdateReasonOfRejection.ExecuteNonQuery();
                 con.Close();
 
                 //Send notification email to responsible section 
-                SendEmail();
+                SendEmail(); //NOTE: Temporary enabled due to ongoing email content creation
             }
             
 
@@ -194,12 +197,6 @@ namespace MHMS
 
         private void UpdateApprovalStatus()
         {
-
-            //For Revision 09/30/2022 ****************
-            //if (LoginForm.COPQPIC == "✔️")
-            //{
-
-            // -> SQL query to insert user account
             if (con.State == ConnectionState.Closed)
             {
                 con.Open();
@@ -208,94 +205,46 @@ namespace MHMS
             SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateApprovalStatus", con);
             UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
             UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "Rejected");
-            UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetailTextBox.Text);
+            UpdateApprovalStatus.Parameters.AddWithValue("@DistinctionCode", ApprovalForm.DistinctionCode);
+            //UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetailTextBox.Text);
             UpdateApprovalStatus.Parameters.AddWithValue("@Reason", "");
             UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", "");
-            UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
-            UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
+            //UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
+            //UpdateApprovalStatus.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
             UpdateApprovalStatus.Parameters.AddWithValue("@Type", ApprovalForm.ApprovalType);
+            UpdateApprovalStatus.Parameters.AddWithValue("@CurrentApprover", "");
             UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "Rejected by " + LoginForm.FirstName + " " + LoginForm.LastName + " " + DateTime.Now.ToString("MM/dd/yyyy hh:mm"));
+            UpdateApprovalStatus.Parameters.AddWithValue("@ApproverName", "Approved by " + LoginForm.FirstName + " " + LoginForm.LastName + " " + DateTime.Now.ToString("MM/dd/yyyy hh:mm"));
             UpdateApprovalStatus.ExecuteNonQuery();
             con.Close();
 
             UpdateReasonOfRejection();
-               
-            //}
+            InsertActualSubmissionDate(ApprovalForm.DistinctionCode, DateTime.Now);
+        }
 
-            //if (LoginForm.ProcessInCharge == "✔️")
-            //{
-            //    // -> SQL query to insert user account
-            //    if (con.State == ConnectionState.Closed)
-            //    {
-            //        con.Open();
-            //    }
+        public void InsertActualSubmissionDate(string distinctionCode, DateTime submissionDate)
+        {
+            string insertQuery = @"
+            INSERT INTO ActualSubmissionOfCountermeasure (DistinctionCode, SubmissionDate)
+            VALUES (@DistinctionCode, @SubmissionDate);
+        ";
 
-            //    SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateApprovalStatus", con);
-            //    UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "Rejected");
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetailTextBox.Text);
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@Reason", "");
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", "");
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@Type", ApprovalForm.ApprovalType);
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "Rejected by " + LoginForm.FirstName + " " + LoginForm.LastName + " " + DateTime.Now.ToString("MM/dd/yyyy hh:mm"));
-            //    UpdateApprovalStatus.ExecuteNonQuery();
-            //    con.Close();
+            using (SqlConnection conn = new SqlConnection(Connection.SQLControl.MHMS_Conn))
+            using (SqlCommand cmd = new SqlCommand(insertQuery, conn))
+            {
+                cmd.Parameters.AddWithValue("@DistinctionCode", distinctionCode);
+                cmd.Parameters.AddWithValue("@SubmissionDate", submissionDate);
 
-            //    UpdateReasonOfRejection();
-
-            //}
-
-            //if (LoginForm.SectionSPV == "✔️")
-            //{
-            //    // -> SQL query to insert user account
-            //    if (con.State == ConnectionState.Closed)
-            //    {
-            //        con.Open();
-            //    }
-
-            //    SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateApprovalStatus", con);
-            //    UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "Rejected");
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetailTextBox.Text);
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@Reason", "");
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", "");
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@Type", ApprovalForm.ApprovalType);
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "Rejected by " + LoginForm.FirstName + " " + LoginForm.LastName + " " + DateTime.Now.ToString("MM/dd/yyyy hh:mm"));
-            //    UpdateApprovalStatus.ExecuteNonQuery();
-            //    con.Close();
-
-            //    UpdateReasonOfRejection();
-
-            //}
-
-            //if (LoginForm.SectionMGR == "✔️")
-            //{
-            //    // -> SQL query to insert user account
-            //    if (con.State == ConnectionState.Closed)
-            //    {
-            //        con.Open();
-            //    }
-
-            //    SqlCommand UpdateApprovalStatus = new SqlCommand("SP_UpdateApprovalStatus", con);
-            //    UpdateApprovalStatus.CommandType = CommandType.StoredProcedure;
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@Procedure", "Rejected");
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@LineStopDetail", LineStopDetailTextBox.Text);
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@Reason", "");
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@MHLossType", "");
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@Type", ApprovalForm.ApprovalType);
-            //    UpdateApprovalStatus.Parameters.AddWithValue("@NextApprover", "Rejected by " + LoginForm.FirstName + " " + LoginForm.LastName + " " + DateTime.Now.ToString("MM/dd/yyyy hh:mm"));
-            //    UpdateApprovalStatus.ExecuteNonQuery();
-            //    con.Close();
-
-            //    UpdateReasonOfRejection();
-
-            //}
-
-
-            //MessageBox.Show("Item with reference no. of " + ApprovalForm.SelectedRowReferenceNo + " was rejected successfully!", "DONE", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                try
+                {
+                    conn.Open();
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error inserting submission date: " + ex.Message);
+                }
+            }
         }
 
         private void AttachedFileButton_Click(object sender, EventArgs e)
@@ -322,19 +271,75 @@ namespace MHMS
             //Email header.
             StringBuilder builder = new StringBuilder();
             builder.AppendLine();
-            builder.Append("<h2>[TEST ONLY] Manhour Management System (MHMS)</h2>");
+            builder.Append("<h2>Manhour Management System (MHMS)</h2>");
             builder.Append("<br>" + DateTime.Now);
             builder.Append("<br>");
             builder.Append("<br>");
             builder.Append("Good day!");
             builder.Append("<br>");
             builder.Append("<br>");
-            builder.Append("This is to inform you that " + LoginForm.UserSection + " section have transfered MH data in your section.");
+            builder.Append("This is to inform you that " + LoginForm.UserSection + " section have transfered Manhour loss data in your section.");
             builder.Append("<br>");
             builder.Append("<br>");
-            builder.Append("Please see the details below.");
-            builder.Append("<br>");
-            builder.Append("<br>");
+
+            //builder.Append("Please see the details below.");
+            //builder.Append("<br>");
+            //builder.Append("<br>");
+
+            //ONGOING DEVELOPMENT ==================START========================>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+            //string mailBody = "<table width='100%' style='border:Solid 1px #4E4E4E;'>";
+            //mailBody += "<tr style = 'background-color: #0D204A;'>"
+            //    + "<th style='padding:8px; border:none;'>Date Encountered</th>"
+            //    + "<th style='padding:8px; border:none;'>Line Stop Detail</th>"
+            //    + "<th style='padding:8px; border:none;'>Stop Time</th>"
+            //    + "<th style='padding:8px; border:none;'>Direct MP</th>"
+            //    + "<th style='padding:8px; border:none;'>Semi Direct MP</th>"
+            //    + "<th style='padding:8px; border:none;'>Loss Manhour</th>"
+            //    + "<th style='padding:8px; border:none;'>COPQ Amount</th>";
+            //mailBody += "</tr>";
+
+            //mailBody += "<tr align='Center'>";
+
+            //if (con.State == ConnectionState.Closed)
+            //{
+            //    con.Open();
+            //}
+
+            //SqlCommand SelectTransferedMHData = new SqlCommand("SP_SelectTransferedMHData", con);
+            //SelectTransferedMHData.CommandType = CommandType.StoredProcedure;
+            //SelectTransferedMHData.Parameters.AddWithValue("@LineStopDetail", LineStopDetailTextBox.Text);
+            //SelectTransferedMHData.Parameters.AddWithValue("@PartCode", ApprovalForm.PartCode);
+            //SelectTransferedMHData.Parameters.AddWithValue("@DateEncountered", ApprovalForm.DateEncountered);
+            //SqlDataAdapter da = new SqlDataAdapter(SelectTransferedMHData);
+            //DataTable dt = new DataTable();
+            //da.Fill(dt);
+
+            //if (dt.Rows.Count > 0)
+            //{
+            //    SqlDataReader reader = SelectTransferedMHData.ExecuteReader();
+            //    while (reader.Read())
+            //    {
+            //        mailBody += "<td stlye='color:blue;'>" + reader["Date Encountered"].ToString() + "</td>";
+            //        mailBody += "<td stlye='color:blue;'>" + reader["Line Stop Detail"].ToString() + "</td>";
+            //        mailBody += "<td stlye='color:blue;'>" + reader["Stop Time"].ToString() + "</td>";
+            //        mailBody += "<td stlye='color:blue;'>" + reader["Direct MP"].ToString() + "</td>";
+            //        mailBody += "<td stlye='color:blue;'>" + reader["Semi-Direct MP"].ToString() + "</td>";
+            //        mailBody += "<td stlye='color:blue;'>" + reader["Loss Manhour"].ToString() + "</td>";
+            //        mailBody += "<td stlye='color:blue;'>" + reader["COPQ Amount"].ToString() + "</td>";
+            //    }
+            //}
+
+            //con.Close();
+
+            //mailBody += "</tr>";
+
+            //mailBody += "</table>";
+
+            //builder.Append("" + mailBody);
+
+            //ONGOING DEVELOPMENT 03/07/2023 ==================END========================>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
             builder.Append("<br>");
             builder.Append("<br><b><font color=red>This is automatic generated email, Do not reply!</b><br></font>");
             builder.Append("<br>");
@@ -352,7 +357,7 @@ namespace MHMS
 
         private void EmailNotif()
         {
-            //    Regex regex = new Regex(@"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$");
+            //    Regex r/gex = new Regex(@"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$");
             //bool isValid = regex.IsMatch(Email.Text.Trim());
 
             if (FileName.Text != "")
@@ -377,6 +382,7 @@ namespace MHMS
 
                 //Email structure.
                 MailMessage mail = new MailMessage("mhms@brother-biph.com.ph", EmailTo);
+                mail.Bcc.Add(new MailAddress("arvin.caparros@brother-biph.com.ph"));
                 mail.Bcc.Add(new MailAddress("charlotte.robles@brother-biph.com.ph"));
                 mail.Bcc.Add(new MailAddress("donnalie.balba@brother-biph.com.ph"));
                 SmtpClient client = new SmtpClient();
@@ -390,7 +396,7 @@ namespace MHMS
                     mail.Attachments.Add(attach);
                 }
 
-                mail.Subject = "[MHMS] - Notification";
+                mail.Subject = "[BIPH_MHMS] - Notification";
 
                 mail.Body = innerString;
                 mail.IsBodyHtml = true;

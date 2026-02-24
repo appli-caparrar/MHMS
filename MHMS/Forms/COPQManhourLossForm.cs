@@ -10,6 +10,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
+using MHMS.Connection;
+using OfficeOpenXml;
+using ClosedXML.Excel;
 
 namespace MHMS.Forms
 {
@@ -17,11 +20,11 @@ namespace MHMS.Forms
     {
 
         //Connection String
-        static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS"].ConnectionString;
+        //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS_ACTUAL"].ConnectionString;
         //static string MHMS_Conn = ConfigurationManager.ConnectionStrings["MHMS.Properties.Settings.MHMS2"].ConnectionString;
 
         //SQL Connection
-        SqlConnection con = new SqlConnection(MHMS_Conn);
+        SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn);
 
         public COPQManhourLossForm()
         {
@@ -33,48 +36,6 @@ namespace MHMS.Forms
         private void AddCOPQButton_Click(object sender, EventArgs e)
         {
 
-            //ExportMHData();
-
-            if (LoginForm.UserSection == "Tape Cassette")
-            {
-                MessageBox.Show("The template is preparing to open!", "Please wait a seconds...", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Process.Start(@"\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\COPQ Data Sheet Format\TAPE.xlsx");
-            }
-            else if (LoginForm.UserSection == "Ink Cartridge")
-            {
-                MessageBox.Show("The template is preparing to open!", "Please wait a seconds...", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Process.Start(@"\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\COPQ Data Sheet Format\INK.xlsx");
-            }
-            else if (LoginForm.UserSection == "Production Engineering")
-            {
-                MessageBox.Show("The template is preparing to open!", "Please wait a seconds...", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            else if (LoginForm.UserSection == "Ink Head")
-            {
-                MessageBox.Show("The template is preparing to open!", "Please wait a seconds...", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            else if (LoginForm.UserSection == "Molding Production")
-            {
-                MessageBox.Show("The template is preparing to open!", "Please wait a seconds...", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Process.Start(@"\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\COPQ Data Sheet Format\MOLD.xlsx");
-            }
-            else if (LoginForm.UserSection == "PCBA")
-            {
-                MessageBox.Show("The template is preparing to open!", "Please wait a seconds...", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Process.Start(@"\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\COPQ Data Sheet Format\PCBA.xlsx");
-            }
-            else if (LoginForm.UserSection == "Printer")
-            {
-                MessageBox.Show("The template is preparing to open!", "Please wait a seconds...", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Process.Start(@"\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\COPQ Data Sheet Format\PRT.xlsx");
-            }
-            else if (LoginForm.UserSection == "P-Touch")
-            {
-                MessageBox.Show("The template is preparing to open!", "Please wait a seconds...", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Process.Start(@"\\apbiphsh04\B1_BIPHCommon\19_BPS\02_Application\FY2022\MHMS\COPQ Data Sheet Format\P-TOUCH R01.xlsx");
-            }
-
-            //MessageBox.Show("Not yet ready to use, Ongoing development!", "ONGOING", MessageBoxButtons.OK, MessageBoxIcon.Stop);
         }
 
         //====================================================================================================================>>>>>>>>>>>>
@@ -95,23 +56,46 @@ namespace MHMS.Forms
         public static string SelectedSection;
         private void COPQManhourLossForm_Load(object sender, EventArgs e)
         {
+
             MHLossDataGridView.EnableHeadersVisualStyles = false;
             MHLossDataGridView.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(86, 119, 157);
             MHLossDataGridView.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
 
+            
+
             //Hide Row header in datagrid
             MHLossDataGridView.RowHeadersVisible = false;
+
+            //Hide Send mail button to othet section only PE section can see
+            if (Dashboard.SectionText.Replace("BIPH-", "") == "BPS")
+            {
+                SendEmailButton.Visible = true;
+                ExportPreviousDataBtn.Visible = true;
+                LogsButton.Visible = true; //show logs button
+                LogArrow.Visible = true;
+                CheckDuplicatedLineStopBtn.Visible = true;
+                RejectedMHLossBtn.Visible = true;
+            }
+            else
+            {
+                SendEmailButton.Visible = false;
+                ExportPreviousDataBtn.Visible = false;
+                LogsButton.Visible = false; //Hide logs button
+                LogArrow.Visible = false;
+                CheckDuplicatedLineStopBtn.Visible = false;
+                RejectedMHLossBtn.Visible = false;
+            }
+
+           
 
             DateFrom(); // Call out the function for Date From and show when the form is loaded
 
             DateTo();
 
-            // load section list from db to combobox
-
 
             if (LoginForm.isSingleSectionAccess == true)
             {
-                if (LoginForm.UserSection == "BPS" || LoginForm.UserSection == "Production Engineering")
+                if (LoginForm.UserSection == "BPS")
                 {
                     //LoadSection();
                     SelectedSection = SectionDropdown.Text;
@@ -133,7 +117,7 @@ namespace MHMS.Forms
 
             if (SectionMenuForm.isMultiSectionAccess == true)
             {
-                if (SectionMenuForm.UserSection == "BPS" || SectionMenuForm.UserSection == "Production Engineering")
+                if (SectionMenuForm.UserSection == "BPS")
                 {
                     //LoadSection();
                     SelectedSection = SectionDropdown.Text;
@@ -153,8 +137,6 @@ namespace MHMS.Forms
                 LoginForm.isSingleSectionAccess = false;
             }
 
-            
-
             //LoadMHLossData(); // Load all MH loss data to datagrid view
 
             /* FormatHeaderText();*/ // Format datagridview column header text
@@ -162,17 +144,122 @@ namespace MHMS.Forms
             //SelectMHDataBaseOnDropdownEntries();
 
             HideMonthlyStandardMHButton();
+
+            RenameExportPreviousBtn();
+
+            SynchStandarMH();
         }
 
+        private void SynchStandarMH()
+        {
+            // Check Connection status -> Open connection if the connection is closed
+            if (con.State == ConnectionState.Closed)
+            {
+                con.Open();
+            }
+
+
+            //Count For approval per section pic
+            SqlCommand SelectStandardMH = new SqlCommand("SP_SelectMonthlyStandardMH", con);
+            SelectStandardMH.CommandType = CommandType.StoredProcedure;
+            SelectStandardMH.Parameters.AddWithValue("@Month", DateTime.Now.ToString("MMMM"));
+
+            if (DateTime.Now.ToString("MMMM") == "January")
+            {
+                SelectStandardMH.Parameters.AddWithValue("@FiscalYear", DateTime.Now.AddYears(-1).ToString("yyyy"));
+            }
+            else if (DateTime.Now.ToString("MMMM") == "February")
+            {
+                SelectStandardMH.Parameters.AddWithValue("@FiscalYear", DateTime.Now.AddYears(-1).ToString("yyyy"));
+            }
+            else if (DateTime.Now.ToString("MMMM") == "March")
+            {
+                SelectStandardMH.Parameters.AddWithValue("@FiscalYear", DateTime.Now.AddYears(-1).ToString("yyyy"));
+            }
+            else
+            {
+                SelectStandardMH.Parameters.AddWithValue("@FiscalYear", DateTime.Now.ToString("yyyy"));
+            }
+
+            SqlDataAdapter sda2 = new SqlDataAdapter(SelectStandardMH);
+            DataTable dataTable = new DataTable();
+            sda2.Fill(dataTable);
+
+            if (dataTable.Rows.Count > 0)
+            {
+                SqlDataReader reader2 = SelectStandardMH.ExecuteReader();
+                while (reader2.Read())
+                {
+                    StandardMHTextBox.Text = reader2["StandardMH"].ToString();
+                }
+            }
+            else
+            {
+                
+                StandardMHTextBox.Text = "No Standard MH";
+                StandardMHTextBox.Font = new Font("Microsoft Sans Serif", 10, FontStyle.Regular);
+            }
+
+            con.Close();
+        }
+
+        private void RenameExportPreviousBtn()
+        {
+            if (DateTime.Now.Month.ToString() == "1")
+            {
+                ExportPreviousDataBtn.Text = "EXPORT DECEMBER DATA";
+            }
+            else if (DateTime.Now.Month.ToString() == "2")
+            {
+                ExportPreviousDataBtn.Text = "EXPORT JANUARY DATA";
+            }
+            else if (DateTime.Now.Month.ToString() == "3")
+            {
+                ExportPreviousDataBtn.Text = "EXPORT FEBRUARY DATA";
+            }
+            else if (DateTime.Now.Month.ToString() == "4")
+            {
+                ExportPreviousDataBtn.Text = "EXPORT MARCH DATA";
+            }
+            else if (DateTime.Now.Month.ToString() == "5")
+            {
+                ExportPreviousDataBtn.Text = "EXPORT APRIL DATA";
+            }
+            else if (DateTime.Now.Month.ToString() == "6")
+            {
+                ExportPreviousDataBtn.Text = "EXPORT MAY DATA";
+            }
+            else if (DateTime.Now.Month.ToString() == "7")
+            {
+                ExportPreviousDataBtn.Text = "EXPORT JUNE DATA";
+            }
+            else if (DateTime.Now.Month.ToString() == "8")
+            {
+                ExportPreviousDataBtn.Text = "EXPORT JULY DATA";
+            }
+            else if (DateTime.Now.Month.ToString() == "9")
+            {
+                ExportPreviousDataBtn.Text = "EXPORT AUGUST DATA";
+            }
+            else if (DateTime.Now.Month.ToString() == "10")
+            {
+                ExportPreviousDataBtn.Text = "EXPORT SEPTEMBER DATA";
+            }
+            else if (DateTime.Now.Month.ToString() == "11")
+            {
+                ExportPreviousDataBtn.Text = "EXPORT OCTOBER DATA";
+            }
+            else if (DateTime.Now.Month.ToString() == "12")
+            {
+                ExportPreviousDataBtn.Text = "EXPORT NOVEMBER DATA";
+            }
+           
+        }
         //==================================================================================================================>>>>>>>>>>>>
 
         private void HideMonthlyStandardMHButton()
         {
-            if (LoginForm.UserSection == "Production Engineering")
-            {
-                StandardMHButton.Visible = true;
-            }
-            else if (LoginForm.UserSection == "BPS")
+            if (LoginForm.UserSection == "BPS")
             {
                 StandardMHButton.Visible = true;
             }
@@ -184,7 +271,6 @@ namespace MHMS.Forms
 
         //==================================================================================================================>>>>>>>>>>>>
 
-        //Load Section in combobox
         public void LoadSection()
         {
             // Check Connection status -> Open the connection if the connection is closed
@@ -193,20 +279,37 @@ namespace MHMS.Forms
                 con.Open();
             }
 
-            // -> SQL query to select User Account
-            SqlCommand LoadSection = new SqlCommand("SP_LoadSection", con);
-            LoadSection.CommandType = CommandType.StoredProcedure;
-            LoadSection.Parameters.AddWithValue("@Procedure", "SelectAllProdSections");
-            SqlDataAdapter sda = new SqlDataAdapter(LoadSection);
-            DataSet ds = new DataSet();
-            sda.Fill(ds);
-            LoadSection.ExecuteNonQuery();
-            con.Close();
+            try
+            {
+                // SQL query to select User Account
+                using (SqlCommand loadSectionCmd = new SqlCommand("SP_LoadSection", con))
+                {
+                    loadSectionCmd.CommandType = CommandType.StoredProcedure;
+                    loadSectionCmd.Parameters.AddWithValue("@Procedure", "SelectAllProdSections");
 
-            SectionDropdown.DataSource = ds.Tables[0];
-            SectionDropdown.DisplayMember = ds.Tables[0].Columns[0].ToString();
-            //SectionDropdown.ValueMember = "";
+                    using (SqlDataAdapter sda = new SqlDataAdapter(loadSectionCmd))
+                    {
+                        DataSet ds = new DataSet();
+                        sda.Fill(ds);
+
+                        // Bind data to the dropdown
+                        SectionDropdown.DataSource = ds.Tables[0];
+                        SectionDropdown.DisplayMember = ds.Tables[0].Columns[0].ToString(); // Set the column to display
+                        SectionDropdown.ValueMember = ds.Tables[0].Columns[0].ToString();  // Set the value for the selection
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle any potential exceptions here
+                MessageBox.Show("Error: " + ex.Message);
+            }
+            finally
+            {
+                con.Close(); // Ensure connection is closed
+            }
         }
+
 
         //==================================================================================================================>>>>>>>>>>>>
 
@@ -219,17 +322,10 @@ namespace MHMS.Forms
                 UpdateData.ShowDialog();
                 //UpdateDataButton.BackColor = Color.FromArgb(21, 35, 53);
             }
-            else if (Dashboard.SectionText == "BIPH-Production Engineering")
-            {
-                UpdateDataButton.Enabled = true;
-                UpdateMHLoss2 UpdateData = new UpdateMHLoss2();
-                UpdateData.ShowDialog();
-                //UpdateDataButton.BackColor = Color.FromArgb(21, 35, 53);
-            }
             else
             {
                 //UpdateDataButton.Enabled = false;
-                MessageBox.Show("You are not allowed to update data!", "Reminders", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Sorry, Only admin can update MH data!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -251,7 +347,7 @@ namespace MHMS.Forms
                 con.Open();
             }
 
-            if (LoginForm.UserSection == "BPS" || LoginForm.UserSection == "Production Engineering")
+            if (LoginForm.UserSection == "BPS")
             {
                 SelectMHLossData();
 
@@ -335,9 +431,9 @@ namespace MHMS.Forms
                 con.Open();
             }
 
-            // -> SQL query to select MH loss data
             SqlCommand SearchMHLossData = new SqlCommand("SP_SearchMHLossData", con);
             SearchMHLossData.CommandType = CommandType.StoredProcedure;
+            SearchMHLossData.Parameters.AddWithValue("@Type", TypeDropdown.Text);
             SearchMHLossData.Parameters.AddWithValue("@Search", SearchBox.Text);
             SearchMHLossData.Parameters.AddWithValue("@Section", SectionDropdown.Text);
             SqlDataAdapter sda = new SqlDataAdapter(SearchMHLossData);
@@ -345,7 +441,12 @@ namespace MHMS.Forms
             sda.Fill(dt);
             MHLossDataGridView.DataSource = dt;
             con.Close();
-
+            
+            if (dt.Rows.Count < 1)
+            {
+                MessageBox.Show("No data found!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            
 
             /* FormatHeaderText();*/ // Format header text
             //SearchBox.Clear(); // Clear text box
@@ -356,16 +457,20 @@ namespace MHMS.Forms
 
         private void ExportButton_Click(object sender, EventArgs e)
         {
-            ExportMHData();
+            if (MHLossDataGridView.DataSource == null)
+            {
+                MessageBox.Show("No data found! Please generate data first.", "MHMS Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else
+            {
+                ExportMHData();
+            }
+            
         }
 
         private void copyAlltoClipboardsss()
         {
 
-            //dgvComponentList.SelectAll();
-            //DataObject dataObj = dgvComponentList.GetClipboardContent();
-            //if (dataObj != null)
-            //    Clipboard.SetDataObject(dataObj);
             MHLossDataGridView.SelectAll();
             //Copy to clipboard
             MHLossDataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
@@ -393,76 +498,11 @@ namespace MHMS.Forms
             // xlWorkSheet.Cells[3, "XL"].Cells.NumberFormat = "@";
             CR.Select();
             xlWorkSheet.Cells.NumberFormat = "@";
-            //string DateNowVal = DateTime.Now.ToString("yyyyMMdd_hhmmss");
-            //string folderPath = "C:\\Users\\manalojo\\Desktop\\Export\\";
-            //    xlWorkBook.SaveAs(folderPath + "ViewExport_ " + DateNowVal + ".xlsx", Microsoft.Office.Interop.Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
-            //false, false, Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlNoChange,
-            //Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
 
             xlWorkSheet.PasteSpecial(CR, System.Reflection.Missing.Value, System.Reflection.Missing.Value, System.Reflection.Missing.Value, System.Reflection.Missing.Value, System.Reflection.Missing.Value, true);
             xlWorkSheet.Columns.AutoFit();
 
-            MessageBox.Show("Exported successfully", "DONE", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            //try
-            //{
-            //    Microsoft.Office.Interop.Excel._Application app = new Microsoft.Office.Interop.Excel.Application();
-            //    Microsoft.Office.Interop.Excel._Workbook workbook = app.Workbooks.Add(System.Reflection.Missing.Value);
-            //    Microsoft.Office.Interop.Excel._Worksheet worksheet = null;
-            //    app.Visible = true;
-            //    worksheet = workbook.Sheets["Sheet1"];
-            //    worksheet = workbook.ActiveSheet;
-            //    worksheet.Name = "MH Loss Details";
-
-            //    try
-            //    {
-            //        for (int i = 0; i < MHLossDataGridView.Columns.Count; i++)
-            //        {
-            //            worksheet.Cells[1, i + 1] = MHLossDataGridView.Columns[i].HeaderText;
-            //        }
-
-            //        for (int i = 0; i < MHLossDataGridView.Rows.Count; i++)
-            //        {
-            //            for (int j = 0; j < MHLossDataGridView.Columns.Count; j++)
-            //            {
-            //                if (MHLossDataGridView.Rows[i].Cells[j].Value != null)
-            //                {
-            //                    worksheet.Cells[i + 2, j + 1] = MHLossDataGridView.Rows[i].Cells[j].Value.ToString();
-            //                }
-            //                else
-            //                {
-            //                    worksheet.Cells[i + 2, j + 1] = "";
-            //                }
-            //            }
-            //        }
-
-            //        //Getting the location and file name of the excel to save from user. 
-            //        SaveFileDialog saveDialog = new SaveFileDialog();
-            //        saveDialog.Filter = "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*";
-            //        saveDialog.FilterIndex = 2;
-
-            //        if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            //        {
-            //            workbook.SaveAs(saveDialog.FileName);
-            //            MessageBox.Show("Export Successful", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            //        }
-            //    }
-            //    catch (System.Exception ex)
-            //    {
-            //        MessageBox.Show(ex.Message);
-            //    }
-
-            //    finally
-            //    {
-            //        app.Quit();
-            //        workbook = null;
-            //        worksheet = null;
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.Message.ToString());
-            //}
+           
         }
         //==================================================================================================================>>>>>>>>>>>>
 
@@ -474,7 +514,7 @@ namespace MHMS.Forms
                 con.Open();
             }
 
-            if (LoginForm.UserSection == "BPS" || LoginForm.UserSection == "Production Engineering")
+            if (LoginForm.UserSection == "BPS")
             {
                 SelectMHLossData();
 
@@ -551,29 +591,27 @@ namespace MHMS.Forms
 
         //==================================================================================================================>>>>>>>>>>>>
 
-        private void DropdownEntriesValue_TextChanged(object sender, EventArgs e)
+        private async void DropdownEntriesValue_TextChanged(object sender, EventArgs e)
         {
             if (TypeDropdown.Text == "")
             {
                 MessageBox.Show("Please select the type.", "Reminders", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 TypeDropdown.Focus();
             }
-            else if (DropdownEntriesValue.Text == "")
-            {
-                //No Action
-            }
-            else
+            else if (DropdownEntriesValue.Text != "")
             {
                 //SelectMHDataBaseOnDropdownEntries();
-                FilterDataBySelectedRangeOfDate();
+                await FilterDataBySelectedRangeOfDate();
                 DropdownEntriesValue.ForeColor = Color.FromArgb(21, 35, 53);
             }
+            else
+            { }
             
         }
 
         //==================================================================================================================>>>>>>>>>>>>
-
-        private void GenerateButton_Click(object sender, EventArgs e)
+        public static bool IsGenerateBtnClick = false;
+        private async void GenerateButton_Click(object sender, EventArgs e)
         {
             if (SectionDropdown.Text == "")
             {
@@ -587,52 +625,81 @@ namespace MHMS.Forms
             }
             else
             {
-                if (TypeDropdown.Text == "Receiving")
+                IsGenerateBtnClick = true;
+
+                LoadingForm LoadingForm = new LoadingForm();
+                LoadingForm.Show();
+
+                // Disable the button or other controls if needed to prevent user interaction
+                GenerateButton.Enabled = false;
+
+                try
                 {
-                    LossRatePanel.Height = 150;
-                    LossRateDataGrid.Visible = true;
-                    ViewGraphButton.Visible = false;
-                    LossRateDataGrid.Dock = DockStyle.Fill;
+                    await Task.Delay(5000);
 
-                    LossRateDropdownList.Visible = true;
+                    if (TypeDropdown.Text == "Receiving")
+                    {
+                        LossRatePanel.Height = 150;
+                        LossRateDataGrid.Visible = true;
+                        ViewGraphButton.Visible = false;
+                        LossRateDataGrid.Dock = DockStyle.Fill;
 
-                    SelectLossRateData(); //Show loss rate data
+                        //LossRateDropdownList.Visible = true;
 
-                    //Hide Column in loss rate data grid view
-                    //LossRateDataGrid.Columns["ID"].Visible = false;
-                    //LossRateDataGrid.Columns["Fiscal Year"].Visible = false;
-                    //LossRateDataGrid.Columns["UploadBy"].Visible = false;
-                    //LossRateDataGrid.Columns["UploadDate"].Visible = false;
+                        await SelectLossRateData(); //Show loss rate data
 
-                    //Change column header back color
-                    LossRateDataGrid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(189, 225, 255);
-                    LossRateDataGrid.Columns["Target"].HeaderCell.Style.BackColor = Color.FromArgb(242, 213, 157);
-                    LossRateDataGrid.Columns["Actual"].HeaderCell.Style.BackColor = Color.FromArgb(87, 119, 255);
-                    LossRateDataGrid.Columns["Actual"].HeaderCell.Style.ForeColor = Color.White;
-                    //LossRateDataGrid.Columns["Yearly Target"].HeaderCell.Style.BackColor = Color.FromArgb(242, 213, 157);
-                    //LossRateDataGrid.Columns["Yearly Actual"].HeaderCell.Style.BackColor = Color.FromArgb(87, 119, 255);
-                    //LossRateDataGrid.Columns["Yearly Actual"].HeaderCell.Style.ForeColor = Color.White;
-                    //LossRateDataGrid.Columns["Q1"].HeaderCell.Style.BackColor = Color.Orange;
-                    //LossRateDataGrid.Columns["Q2"].HeaderCell.Style.BackColor = Color.Orange;
-                    //LossRateDataGrid.Columns["Q3"].HeaderCell.Style.BackColor = Color.Orange;
-                    //LossRateDataGrid.Columns["Q4"].HeaderCell.Style.BackColor = Color.Orange;
-                    LossRateDataGrid.EnableHeadersVisualStyles = false;
+                        //Hide Column in loss rate data grid view
+                        //LossRateDataGrid.Columns["ID"].Visible = false;
+                        //LossRateDataGrid.Columns["Fiscal Year"].Visible = false;
+                        //LossRateDataGrid.Columns["UploadBy"].Visible = false;
+                        //LossRateDataGrid.Columns["UploadDate"].Visible = false;
 
-                   
+                        //Change column header back color
+                        LossRateDataGrid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(189, 225, 255);
+                        LossRateDataGrid.Columns["Target Rate"].HeaderCell.Style.BackColor = Color.FromArgb(242, 213, 157);
+                        LossRateDataGrid.Columns["Actual Rate"].HeaderCell.Style.BackColor = Color.FromArgb(87, 119, 255);
+                        LossRateDataGrid.Columns["Actual Rate"].HeaderCell.Style.ForeColor = Color.White;
+
+                        LossRateDataGrid.EnableHeadersVisualStyles = false;
+
+
+                    }
+                    else
+                    {
+                        ViewGraphButton.Visible = true;
+                        LossRatePanel.Height = MinimumSize.Height;
+                        LossRateDataGrid.Visible = false;
+                        ViewGraphButton.Visible = true;
+
+                    }
+
+                    SelectedSection = SectionDropdown.Text;
+
+                    await FilterDataBySelectedRangeOfDate();
+
+                    //Change column name of "Part Code"
+                    MHLossDataGridView.Columns["Part Code"].HeaderText = "Item Code";
+
+
+
+                    SearchBox.Clear();
                 }
-                else
+                catch (Exception ex)
                 {
-                    ViewGraphButton.Visible = true;
-                    LossRatePanel.Height = MinimumSize.Height;
-                    LossRateDataGrid.Visible = false;
-                    ViewGraphButton.Visible = true;
+                    // Handle any errors that occur during the async operation
+                    MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally 
+                {
+                    // Hide the loading image when the operation is complete
+                    LoadingForm.Close();
 
-                    LossRateDropdownList.Visible = false;
+                    // Re-enable the button or controls
+                    GenerateButton.Enabled = true;
                 }
 
-                SelectedSection = SectionDropdown.Text;
 
-                FilterDataBySelectedRangeOfDate();
+
 
             }
             
@@ -640,117 +707,129 @@ namespace MHMS.Forms
 
         //==================================================================================================================>>>>>>>>>>>>
 
-        private void SelectLossRateData()
+        private async Task SelectLossRateData()
         {
-            // Check Connection status -> Open connection if the current connection is closed
-            if (con.State == ConnectionState.Closed)
+            await con.OpenAsync();
+            try
             {
-                con.Open();
-            }
-
-            
                 SqlCommand SelectLossRateData = new SqlCommand("SP_SelectLossRateData", con);
                 SelectLossRateData.CommandType = CommandType.StoredProcedure;
-                SelectLossRateData.Parameters.AddWithValue("@DopdownItem", LossRateDropdownList.Text);
+                //SelectLossRateData.Parameters.AddWithValue("@DopdownItem", LossRateDropdownList.Text);
                 SelectLossRateData.Parameters.AddWithValue("@Section", SectionDropdown.Text);
                 SqlDataAdapter sda = new SqlDataAdapter(SelectLossRateData);
                 DataTable dt = new DataTable();
                 sda.Fill(dt);
                 LossRateDataGrid.DataSource = dt;
+            }
+            catch (Exception ex) 
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+            }
+            finally
+            {
                 con.Close();
-         
+            }
            
         }
 
 
         //==================================================================================================================>>>>>>>>>>>>
 
-        private void FilterDataBySelectedRangeOfDate()
+        public async Task FilterDataBySelectedRangeOfDate()
         {
-            // Check Connection status -> Open connection if the current connection is closed
-            if (con.State == ConnectionState.Closed)
+            await con.OpenAsync();
+
+            try
             {
-                con.Open();
+                if (DropdownEntriesValue.Text == "All")
+                {
+                    if (TypeDropdown.Text == "Applying")
+                    {
+                        // -> SQL query to select MH data base on selected entries
+                        SqlCommand SelectMHDataBaseOnSelectedDetails = new SqlCommand("SP_SelectMHDataByDate", con);
+                        SelectMHDataBaseOnSelectedDetails.CommandTimeout = 100; // Set the command timeout here - Set timeout to 100 seconds
+                        SelectMHDataBaseOnSelectedDetails.CommandType = CommandType.StoredProcedure;
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Procedure", "FilterBySectionAndDateAll");
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Section", SectionDropdown.Text);
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Type", TypeDropdown.Text);
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Entries", "");
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
+                        //SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Type", TypeDropdown.Text);
+                        SqlDataAdapter sda = new SqlDataAdapter(SelectMHDataBaseOnSelectedDetails);
+                        DataTable dt = new DataTable();
+                        sda.Fill(dt);
+                        MHLossDataGridView.DataSource = dt;
+
+                    }
+                    else if (TypeDropdown.Text == "Receiving")
+                    {
+                        // -> SQL query to select MH data base on selected entries
+                        SqlCommand SelectMHDataBaseOnSelectedDetails = new SqlCommand("SP_SelectMHDataByDate", con);
+                        SelectMHDataBaseOnSelectedDetails.CommandTimeout = 100; // Set the command timeout here - Set timeout to 100 seconds
+                        SelectMHDataBaseOnSelectedDetails.CommandType = CommandType.StoredProcedure;
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Procedure", "FilterBySectionAndDateAll");
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Section", SectionDropdown.Text);
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Type", TypeDropdown.Text);
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Entries", "");
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
+                        //SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Type", TypeDropdown.Text);
+                        SqlDataAdapter sda = new SqlDataAdapter(SelectMHDataBaseOnSelectedDetails);
+                        DataTable dt = new DataTable();
+                        sda.Fill(dt);
+                        MHLossDataGridView.DataSource = dt;
+
+                    }
+                }
+                else
+                {
+                    if (TypeDropdown.Text == "Applying")
+                    {
+                        // -> SQL query to select MH data base on selected entries
+                        SqlCommand SelectMHDataBaseOnSelectedDetails = new SqlCommand("SP_SelectMHDataByDate", con);
+                        SelectMHDataBaseOnSelectedDetails.CommandType = CommandType.StoredProcedure;
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Procedure", "FilterBySectionAndDateRange");
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Section", SectionDropdown.Text);
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Type", TypeDropdown.Text);
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Entries", Convert.ToInt32(DropdownEntriesValue.Text));
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
+                        //SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Type", TypeDropdown.Text);
+                        SqlDataAdapter sda = new SqlDataAdapter(SelectMHDataBaseOnSelectedDetails);
+                        DataTable dt = new DataTable();
+                        sda.Fill(dt);
+                        MHLossDataGridView.DataSource = dt;
+
+                    }
+                    else if (TypeDropdown.Text == "Receiving")
+                    {
+                        // -> SQL query to select MH data base on selected entries
+                        SqlCommand SelectMHDataBaseOnSelectedDetails = new SqlCommand("SP_SelectMHDataByDate", con);
+                        SelectMHDataBaseOnSelectedDetails.CommandType = CommandType.StoredProcedure;
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Procedure", "FilterBySectionAndDateRange");
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Section", SectionDropdown.Text);
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Type", TypeDropdown.Text);
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Entries", Convert.ToInt32(DropdownEntriesValue.Text));
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
+                        SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
+                        //SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Type", TypeDropdown.Text);
+                        SqlDataAdapter sda = new SqlDataAdapter(SelectMHDataBaseOnSelectedDetails);
+                        DataTable dt = new DataTable();
+                        sda.Fill(dt);
+                        MHLossDataGridView.DataSource = dt;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+            }
+            finally 
+            {
+                con.Close();
             }
 
-            if (DropdownEntriesValue.Text == "All")
-            {
-                if (TypeDropdown.Text == "Applying")
-                {
-                    // -> SQL query to select MH data base on selected entries
-                    SqlCommand SelectMHDataBaseOnSelectedDetails = new SqlCommand("SP_SelectMHDataByDate", con);
-                    SelectMHDataBaseOnSelectedDetails.CommandType = CommandType.StoredProcedure;
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Procedure", "FilterBySectionAndDateAll");
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Section", SectionDropdown.Text);
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Type", TypeDropdown.Text);
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Entries", "");
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
-                    //SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Type", TypeDropdown.Text);
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectMHDataBaseOnSelectedDetails);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    MHLossDataGridView.DataSource = dt;
-                    con.Close();
-                }
-                else if (TypeDropdown.Text == "Receiving")
-                {
-                    // -> SQL query to select MH data base on selected entries
-                    SqlCommand SelectMHDataBaseOnSelectedDetails = new SqlCommand("SP_SelectMHDataByDate", con);
-                    SelectMHDataBaseOnSelectedDetails.CommandType = CommandType.StoredProcedure;
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Procedure", "FilterBySectionAndDateAll");
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Section", Dashboard.SectionText.Replace("BIPH-",""));
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Type", TypeDropdown.Text);
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Entries", "");
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
-                    //SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Type", TypeDropdown.Text);
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectMHDataBaseOnSelectedDetails);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    MHLossDataGridView.DataSource = dt;
-                    con.Close();
-                }
-            }
-            else
-            {
-                if (TypeDropdown.Text == "Applying")
-                {
-                    // -> SQL query to select MH data base on selected entries
-                    SqlCommand SelectMHDataBaseOnSelectedDetails = new SqlCommand("SP_SelectMHDataByDate", con);
-                    SelectMHDataBaseOnSelectedDetails.CommandType = CommandType.StoredProcedure;
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Procedure", "FilterBySectionAndDateRange");
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Section", SectionDropdown.Text);
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Type", TypeDropdown.Text);
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Entries", Convert.ToInt32(DropdownEntriesValue.Text));
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
-                    //SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Type", TypeDropdown.Text);
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectMHDataBaseOnSelectedDetails);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    MHLossDataGridView.DataSource = dt;
-                    con.Close();
-                }
-                else if (TypeDropdown.Text == "Receiving")
-                {
-                    // -> SQL query to select MH data base on selected entries
-                    SqlCommand SelectMHDataBaseOnSelectedDetails = new SqlCommand("SP_SelectMHDataByDate", con);
-                    SelectMHDataBaseOnSelectedDetails.CommandType = CommandType.StoredProcedure;
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Procedure", "FilterBySectionAndDateRange");
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Section", Dashboard.SectionText.Replace("BIPH-", ""));
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Type", TypeDropdown.Text);
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Entries", Convert.ToInt32(DropdownEntriesValue.Text));
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
-                    SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
-                    //SelectMHDataBaseOnSelectedDetails.Parameters.AddWithValue("@Type", TypeDropdown.Text);
-                    SqlDataAdapter sda = new SqlDataAdapter(SelectMHDataBaseOnSelectedDetails);
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    MHLossDataGridView.DataSource = dt;
-                    con.Close();
-                }
-            }
         }
 
         //====================================================================================================================>>>>>>>>>>>>
@@ -1037,7 +1116,7 @@ namespace MHMS.Forms
                     //GetTotalAdjustedAmount();
                     //FormatHeaderText();
                 }
-                else if (SectionDropdown.Text == "Production Engineering")
+                else if (SectionDropdown.Text == "BPS")
                 {
                     if (DropdownEntriesValue.Text == "All")
                     {
@@ -1046,7 +1125,7 @@ namespace MHMS.Forms
                         SelectMHLossData.CommandType = CommandType.StoredProcedure;
                         SelectMHLossData.Parameters.AddWithValue("@Procedure", "SelectAllMHLossData");
                         SelectMHLossData.Parameters.AddWithValue("@Entries", "");
-                        SelectMHLossData.Parameters.AddWithValue("@Section", "Production Engineering");
+                        SelectMHLossData.Parameters.AddWithValue("@Section", "BPS");
                         SelectMHLossData.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
                         SelectMHLossData.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
                         SqlDataAdapter sda = new SqlDataAdapter(SelectMHLossData);
@@ -1060,9 +1139,9 @@ namespace MHMS.Forms
                         // -> SQL query to select Production Engineering parts loss data
                         SqlCommand SelectMHLossData = new SqlCommand("SP_SelectMHLossData", con);
                         SelectMHLossData.CommandType = CommandType.StoredProcedure;
-                        SelectMHLossData.Parameters.AddWithValue("@Procedure", "SelectProductionEngineeringMHLossData");
+                        SelectMHLossData.Parameters.AddWithValue("@Procedure", "SelectBPSMHLossData");
                         SelectMHLossData.Parameters.AddWithValue("@Entries", DropdownEntriesValue.Text);
-                        SelectMHLossData.Parameters.AddWithValue("@Section", "Production Engineering");
+                        SelectMHLossData.Parameters.AddWithValue("@Section", "BPS");
                         SelectMHLossData.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
                         SelectMHLossData.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
                         SqlDataAdapter sda = new SqlDataAdapter(SelectMHLossData);
@@ -1116,7 +1195,7 @@ namespace MHMS.Forms
                     //FormatHeaderText();
                 }
             }
-            else if (Dashboard.SectionText == "BIPH-Production Engineering")
+            else if (Dashboard.SectionText == "BIPH-BPS")
             {
                 if (SectionDropdown.Text == "Ink Cartridge")
                 {
@@ -1349,7 +1428,7 @@ namespace MHMS.Forms
                     //GetTotalAdjustedAmount();
                     //FormatHeaderText();
                 }
-                else if (SectionDropdown.Text == "Production Engineering")
+                else if (SectionDropdown.Text == "BPS")
                 {
                     if (DropdownEntriesValue.Text == "All")
                     {
@@ -1358,7 +1437,7 @@ namespace MHMS.Forms
                         SelectMHLossData.CommandType = CommandType.StoredProcedure;
                         SelectMHLossData.Parameters.AddWithValue("@Procedure", "SelectAllMHLossData");
                         SelectMHLossData.Parameters.AddWithValue("@Entries", "");
-                        SelectMHLossData.Parameters.AddWithValue("@Section", "Production Engineering");
+                        SelectMHLossData.Parameters.AddWithValue("@Section", "BPS");
                         SelectMHLossData.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
                         SelectMHLossData.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
                         SqlDataAdapter sda = new SqlDataAdapter(SelectMHLossData);
@@ -1372,9 +1451,9 @@ namespace MHMS.Forms
                         // -> SQL query to select Production Engineering parts loss data
                         SqlCommand SelectMHLossData = new SqlCommand("SP_SelectMHLossData", con);
                         SelectMHLossData.CommandType = CommandType.StoredProcedure;
-                        SelectMHLossData.Parameters.AddWithValue("@Procedure", "SelectProductionEngineeringMHLossData");
+                        SelectMHLossData.Parameters.AddWithValue("@Procedure", "SelectBPSMHLossData");
                         SelectMHLossData.Parameters.AddWithValue("@Entries", DropdownEntriesValue.Text);
-                        SelectMHLossData.Parameters.AddWithValue("@Section", "Production Engineering");
+                        SelectMHLossData.Parameters.AddWithValue("@Section", "BPS");
                         SelectMHLossData.Parameters.AddWithValue("@DateFrom", FromDateTimePicker.Value.ToString());
                         SelectMHLossData.Parameters.AddWithValue("@DateTo", ToDateTimePicker.Value.ToString());
                         SqlDataAdapter sda = new SqlDataAdapter(SelectMHLossData);
@@ -1434,6 +1513,8 @@ namespace MHMS.Forms
             {
                 column.SortMode = DataGridViewColumnSortMode.NotSortable;
             }
+
+            
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -1461,7 +1542,7 @@ namespace MHMS.Forms
 
         private void ViewGraphButton_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Hi " + LoginForm.FirstName + "! Sorry, The tableau report visualization is currently under construction. Please try again another time!");
+            Process.Start("https://bi.datalake.brother.co.jp/t/biph/views/ManhourLossReport/IssuedLossRate?:origin=card_share_link&:embed=n");
         }
 
         private void SectionDropdown_SelectedIndexChanged(object sender, EventArgs e)
@@ -1471,7 +1552,7 @@ namespace MHMS.Forms
 
         private void LossRateDataGrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            LossRateDataGrid.Columns["Responsible Section"].Width = 150;
+            LossRateDataGrid.Columns["Section"].Width = 150;
 
             foreach (DataGridViewColumn column in LossRateDataGrid.Columns)
             {
@@ -1500,7 +1581,6 @@ namespace MHMS.Forms
                         row.DefaultCellStyle.BackColor = Color.FromArgb(87, 222, 155);
                     }
                 }
-                    
             }
             else
             {
@@ -1525,7 +1605,6 @@ namespace MHMS.Forms
                         row.DefaultCellStyle.BackColor = Color.FromArgb(222, 217, 87);
                     }
                 }
-
             }
             else
             {
@@ -1564,6 +1643,279 @@ namespace MHMS.Forms
             }
         }
 
+        private void SendEmailButton_Click(object sender, EventArgs e)
+        {
+            ExportCurrenMonthData();
+
+        }
+
+        private void ExportCurrenMonthData()
+        {
+            DataTable dt = new DataTable();
+
+            using (SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn))
+            {
+                con.Open();
+
+                SqlCommand cmd = new SqlCommand("SP_SelectMHLossDataOfCurrentMonth", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 100;
+
+                SqlDataAdapter sda = new SqlDataAdapter(cmd);
+                sda.Fill(dt);
+            }
+
+            if (dt.Rows.Count > 0)
+            {
+                // Get previous month name and year
+                // Get current month name and year
+                DateTime currentMonth = DateTime.Now;
+                string currentMonthName = currentMonth.ToString("MMMM yyyy");
+                string currentMonthFile = currentMonth.ToString("yyyyMM");  
+
+
+                using (SaveFileDialog sfd = new SaveFileDialog()
+                {
+                    Filter = "Excel Workbook|*.xlsx",
+                    Title = $"MH Loss Data - {currentMonthName}",
+                    FileName = $"MH_LossData_{currentMonthFile}.xlsx"
+                })
+                {
+                    if (sfd.ShowDialog() == DialogResult.OK)
+                    {
+                        using (XLWorkbook wb = new XLWorkbook())
+                        {
+                            wb.Worksheets.Add(dt, "MH Loss Data");
+                            wb.SaveAs(sfd.FileName);
+                        }
+
+                        MessageBox.Show("Export successful!", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("No data found to export.", "Export", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void LogsButton_Click(object sender, EventArgs e)
+        {
+            MHReportLogsForm logsForm = new MHReportLogsForm();
+            logsForm.ShowDialog();
+        }
+
+        private void ExportPreviousDataBtn_Click(object sender, EventArgs e)
+        {
+            ExportPreviousData();
+        }
+
+        private void ExportPreviousData()
+        {
+            DataTable dt = new DataTable();
+
+            using (SqlConnection con = new SqlConnection(SQLControl.MHMS_Conn))
+            {
+                con.Open();
+
+                SqlCommand cmd = new SqlCommand("SP_SelectMHLossDataOfPreviousMonth", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 100;
+
+                SqlDataAdapter sda = new SqlDataAdapter(cmd);
+                sda.Fill(dt);
+            }
+
+            if (dt.Rows.Count > 0)
+            {
+                // Get previous month name and year
+                DateTime prevMonth = DateTime.Now.AddMonths(-1);
+                string prevMonthName = prevMonth.ToString("MMMM yyyy"); 
+                string prevMonthFile = prevMonth.ToString("yyyyMM");
+
+                using (SaveFileDialog sfd = new SaveFileDialog()
+                {
+                    Filter = "Excel Workbook|*.xlsx",
+                    Title = $"MH Loss Data - {prevMonthName}",
+                    FileName = $"MH_LossData_{prevMonthFile}.xlsx"
+                })
+                {
+                    if (sfd.ShowDialog() == DialogResult.OK)
+                    {
+                        using (XLWorkbook wb = new XLWorkbook())
+                        {
+                            wb.Worksheets.Add(dt, "MH Loss Data");
+                            wb.SaveAs(sfd.FileName);
+                        }
+
+                        MessageBox.Show("Export successful!", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("No data found to export.", "Export", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        //private void ExportPreviousData()
+        //{
+        //    con.Open();
+        //    // -> SQL query to select MH data base on selected entries
+        //    SqlCommand SelectMHLossDataOfPreviousMonth = new SqlCommand("SP_SelectMHLossDataOfPreviousMonth", con);
+        //    SelectMHLossDataOfPreviousMonth.CommandTimeout = 100; // Set the command timeout here - Set timeout to 120 seconds
+        //    SelectMHLossDataOfPreviousMonth.CommandType = CommandType.StoredProcedure;
+        //    SqlDataAdapter sda = new SqlDataAdapter(SelectMHLossDataOfPreviousMonth);
+        //    DataTable dt = new DataTable();
+        //    sda.Fill(dt);
+        //    MHLossDataGridView.DataSource = dt;
+        //    con.Close();
+
+        //    ExportMHData(); // Export all data in datagrid
+
+        //    MHLossDataGridView.DataSource = null; //Clear datagrid source
+        //}
+
+
+        private void ToDateTimePicker_ValueChanged(object sender, EventArgs e)
+        {
+            if (FromDateTimePicker.Value.ToString("MMMM") == ToDateTimePicker.Value.ToString("MMMM"))
+            {
+                // Check Connection status -> Open connection if the connection is closed
+                if (con.State == ConnectionState.Closed)
+                {
+                    con.Open();
+                }
+
+
+                //Count For approval per section pic
+                SqlCommand SelectStandardMH = new SqlCommand("SP_SelectMonthlyStandardMH", con);
+                SelectStandardMH.CommandType = CommandType.StoredProcedure;
+                SelectStandardMH.Parameters.AddWithValue("@Month", ToDateTimePicker.Value.ToString("MMMM"));
+                if (DateTime.Now.ToString("MMMM") == "January")
+                {
+                    SelectStandardMH.Parameters.AddWithValue("@FiscalYear", DateTime.Now.AddYears(-1).ToString("yyyy"));
+                }
+                else if (DateTime.Now.ToString("MMMM") == "February")
+                {
+                    SelectStandardMH.Parameters.AddWithValue("@FiscalYear", DateTime.Now.AddYears(-1).ToString("yyyy"));
+                }
+                else if (DateTime.Now.ToString("MMMM") == "March")
+                {
+                    SelectStandardMH.Parameters.AddWithValue("@FiscalYear", DateTime.Now.AddYears(-1).ToString("yyyy"));
+                }
+                else
+                {
+                    SelectStandardMH.Parameters.AddWithValue("@FiscalYear", DateTime.Now.ToString("yyyy"));
+                }
+
+                SqlDataAdapter sda2 = new SqlDataAdapter(SelectStandardMH);
+                DataTable dataTable = new DataTable();
+                sda2.Fill(dataTable);
+
+                if (dataTable.Rows.Count > 0)
+                {
+                    SqlDataReader reader2 = SelectStandardMH.ExecuteReader();
+                    while (reader2.Read())
+                    {
+                        StandardMHTextBox.Text = reader2["StandardMH"].ToString();
+                    }
+                }
+                else
+                {
+                    SqlDataReader reader2 = SelectStandardMH.ExecuteReader();
+                    while (reader2.Read())
+                    {
+                        StandardMHTextBox.Text = "No Standard MH";
+                    }
+                }
+
+                con.Close();
+            }
+            else
+            {
+
+            }
+        }
+
+        private void FromDateTimePicker_ValueChanged(object sender, EventArgs e)
+        {
+            if (FromDateTimePicker.Value.ToString("MMMM") == ToDateTimePicker.Value.ToString("MMMM"))
+            {
+                // Check Connection status -> Open connection if the connection is closed
+                if (con.State == ConnectionState.Closed)
+                {
+                    con.Open();
+                }
+
+                SqlCommand SelectStandardMH = new SqlCommand("SP_SelectMonthlyStandardMH", con);
+                SelectStandardMH.CommandType = CommandType.StoredProcedure;
+                SelectStandardMH.Parameters.AddWithValue("@Month", ToDateTimePicker.Value.ToString("MMMM"));
+
+                if (DateTime.Now.ToString("MMMM") == "January")
+                {
+                    SelectStandardMH.Parameters.AddWithValue("@FiscalYear", DateTime.Now.AddYears(-1).ToString("yyyy"));
+                }
+                else if (DateTime.Now.ToString("MMMM") == "February")
+                {
+                    SelectStandardMH.Parameters.AddWithValue("@FiscalYear", DateTime.Now.AddYears(-1).ToString("yyyy"));
+                }
+                else if (DateTime.Now.ToString("MMMM") == "March")
+                {
+                    SelectStandardMH.Parameters.AddWithValue("@FiscalYear", DateTime.Now.AddYears(-1).ToString("yyyy"));
+                }
+                else
+                {
+                    SelectStandardMH.Parameters.AddWithValue("@FiscalYear", DateTime.Now.Year.ToString());
+                }
+
+                SqlDataAdapter sda2 = new SqlDataAdapter(SelectStandardMH);
+                DataTable dataTable = new DataTable();
+                sda2.Fill(dataTable);
+
+                if (dataTable.Rows.Count > 0)
+                {
+                    SqlDataReader reader2 = SelectStandardMH.ExecuteReader();
+                    while (reader2.Read())
+                    {
+                        StandardMHTextBox.Text = reader2["StandardMH"].ToString();
+                    }
+                }
+
+                con.Close();
+            }
+            else
+            {
+
+            }
+        }
+
+        private void SearchButton_Click(object sender, EventArgs e)
+        {
+            SearchMHLossData();
+        }
+
+        private void CheckDuplicatedLineStopBtn_Click(object sender, EventArgs e)
+        {
+            CheckLineStopDataForm checkLineStopDataForm = new CheckLineStopDataForm();
+            checkLineStopDataForm.ShowDialog();
+        }
+
+        private void panel17_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void RejectedMHLossBtn_Click(object sender, EventArgs e)
+        {
+            ViewRejectedMHLoss viewRjectedMHLoss = new ViewRejectedMHLoss();
+            viewRjectedMHLoss.ShowDialog();
+        }
+
+        private void DataSheetButton_Click(object sender, EventArgs e)
+        {
+
+        }
 
 
 
